@@ -1,4 +1,4 @@
-package com.rm.restaurantmangement.model;
+package com.rm.model;
 
 import java.util.List;
 
