@@ -1,33 +1,35 @@
 package com.dm.deliverymanagement.model;
 
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Table
+@Table(name = "delivery_persons")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Delivery {
+public class DeliveryPerson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long agentId;
+    private long deliveryAgentId;
 
-    private String agentName;
-    private String agentAadhar;
-    private String agentPhone;
-    private String agentEmail;
-    private boolean agentAvailability;
+    private String deliveryAgentName;
+    private String delieryAgentAadhar;
+    private String deliveryAgentPhone; 
+    private String deliveryAgentEmail;
+    private boolean isAgentAvailable;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "delivery_Person")
     private List<DeliveryAssignment> deliveryAssignments;
-    
-
     
 }

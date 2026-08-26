@@ -1,4 +1,4 @@
-package com.rm.restaurantmangement.model;
+package com.um.usermanagement.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,23 +9,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Address
- */
 
-@Table(name = "address")
+@Table(name="user_address")
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Address {
-
+public class UserAddress {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long addressId;
-    private String landmark;
+    private String doorNumber;
     private String street;
     private String city;
+    private String district;
     private String country;
     private String pincode;
+
 }
