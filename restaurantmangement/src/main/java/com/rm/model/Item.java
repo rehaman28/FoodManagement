@@ -9,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Item
- */
+
 @Table
 @Entity
 @Data
@@ -27,6 +25,16 @@ public class Item {
     private double itemPrice;
     private String itemCategory;
     private String itemType;
-    private double itemRating; 
+    private double itemRating;
+    
+    public Item(String itemName, String restaurantId, double itemPrice, String itemCategory, String itemType,
+            double itemRating) {
+        this.itemName = itemName;
+        this.restaurantId = restaurantId;
+        this.itemPrice = itemPrice;
+        this.itemCategory = itemCategory;
+        this.itemType = itemType;
+        this.itemRating = itemRating;
+    }
 
 }
