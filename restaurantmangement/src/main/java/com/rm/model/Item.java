@@ -25,8 +25,8 @@ public class Item {
     private String itemName;
     private String restaurantId;
     private double itemPrice;
-    private boolean isAvailable;
     private String itemCategory;
     private String itemType;
+    private double itemRating; 
 
 }

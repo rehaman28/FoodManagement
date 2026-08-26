@@ -24,8 +24,7 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long addressId;
     private String landmark;
-    private String street;
     private String city;
-    private String country;
+    private String state;
     private String pincode;
 }
