@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Table
-public class restaurant {
+public class Restaurant {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

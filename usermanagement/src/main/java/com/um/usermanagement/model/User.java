@@ -1,4 +1,5 @@
-package com.dm.deliverymanagement.model;
+package com.um.usermanagement.model;
+
 
 import java.util.List;
 
@@ -16,13 +17,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class order {
+public class User {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long orderId;
     private long userId;
-    private List<OderItem> itemId;
-    private long restaurantId;
-    private double orderPrice;
-    private String orderStatus;
+    private String userName;
+    private String userPhone;
+    private List<Address> address;
+    private List<Order> orders;
+    private String email;
+    private String password;
 }
