@@ -1,4 +1,4 @@
-package builder;
+package com.rm.builder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class RestaurantBuilder {
         .restaurant_address(buildAddressFromAddressDto(requestDto.getAddressRequestDto()))
         .item(buildItemFromItemRequestDto(requestDto.getItemRequestDto()))
         .build();
-    }
+    }   
 
     private static List<Item> buildItemFromItemRequestDto(List<ItemRequestDto> itemRequestDto) {
        List<Item> listedItems= new ArrayList<>();

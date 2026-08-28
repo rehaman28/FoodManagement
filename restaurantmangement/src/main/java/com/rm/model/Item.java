@@ -21,16 +21,17 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long itemId;
     private String itemName;
-    private String restaurantId;
+    // The restaurant_id foreign key is managed by Restaurant.item's @JoinColumn.
+    // Keeping a second restaurantId property here would map the same database
+    // column twice and cause Hibernate's DuplicateMappingException.
     private double itemPrice;
     private String itemCategory;
     private String itemType;
     private double itemRating;
     
-    public Item(String itemName, String restaurantId, double itemPrice, String itemCategory, String itemType,
+    public Item(String itemName, double itemPrice, String itemCategory, String itemType,
             double itemRating) {
         this.itemName = itemName;
-        this.restaurantId = restaurantId;
         this.itemPrice = itemPrice;
         this.itemCategory = itemCategory;
         this.itemType = itemType;

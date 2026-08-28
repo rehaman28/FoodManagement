@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class ItemResponseDto {
     
     private String itemName;
-    private String restaurantId;
     private double itemPrice;
     private String itemCategory;
     private String itemType;

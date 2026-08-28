@@ -38,7 +38,15 @@ public class Restaurant {
 
     private String restaurant_phoneNumber;
 
+    /*
+     * The restaurant owns the one-to-many relationship, and the foreign key is
+     * stored directly in the item table. Specifying the join column here
+     * prevents Hibernate from creating a separate restaurants_item join table.
+     * CascadeType.ALL also persists the submitted items when the restaurant is
+     * persisted.
+     */
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "restaurant_id")
     private List<Item> item;
 
 
