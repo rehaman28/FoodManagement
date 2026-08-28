@@ -37,5 +37,11 @@ public class RestaurantController {
         return ResponseEntity.status(HttpStatus.OK)
                             .body(restaurantService.getRestaurant(id)); 
     }
+
+    @GetMapping("/getrestaurant/name/{restaurantId}")
+    public ResponseEntity<String> getRestaurantName(@PathVariable(name = "restaurantId") Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                            .body(restaurantService.getRestaurant(id).getRestaurantName()); 
+    }
     
 }
