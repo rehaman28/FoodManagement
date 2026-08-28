@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 public class OrderItemResponseDto {
     
     private long orderItemId;
+    private long quantity;
     private long itemId;
-    private int quantity;
-
 }

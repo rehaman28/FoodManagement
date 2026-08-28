@@ -27,6 +27,12 @@ public class OrderController {
     @PostMapping("/placeorder")    
     public ResponseEntity<OrderResponseDto>placeOrder(@RequestBody OrderRequestDto orderRequest)
     {
+        System.out.println("Request received: " + orderRequest);
+        System.out.println("OrderingItems: " + orderRequest.getOrderItemsRequest());
+        orderRequest.getOrderItemsRequest().forEach(item -> 
+            System.out.println("Item quantity: " + item.getQuantity())
+        );
+
         OrderResponseDto placedOrder = orderService.placeorder(orderRequest);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(placedOrder);
     }

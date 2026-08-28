@@ -64,7 +64,14 @@ public class OrderBuilder {
         List<OrderItemResponseDto> orderResponseDtosList = new ArrayList<>();
         for (OrderItem  orderItem : orderItems) {
             OrderItemResponseDto orderItemResponseDto = new OrderItemResponseDto();
-            BeanUtils.copyProperties(orderItem, orderItemResponseDto);
+
+            orderItemResponseDto.setItemId(orderItem.getItemId());
+            orderItemResponseDto.setOrderItemId(orderItem.getOrderItemId());
+            orderItemResponseDto.setQuantity(orderItem.getQuantity());
+            System.out.println("Rehaman Prints @67: "+orderItem.toString());
+            // BeanUtils.copyProperties(orderItem, orderItemResponseDto);
+            System.out.println("Rehaman Prints @69: "+ orderItemResponseDto.toString());
+
             orderResponseDtosList.add(orderItemResponseDto);
         }
         return orderResponseDtosList;
