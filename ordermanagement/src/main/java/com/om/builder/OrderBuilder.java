@@ -3,7 +3,6 @@ package com.om.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.om.dto.OrderRequestDto;
@@ -42,7 +41,8 @@ public class OrderBuilder {
         List<OrderItem> orderItemsList= new ArrayList<>();
         for (OrderItemRequestDto orderItemRequest : OrderItemRequestDtoList) {
             OrderItem orderItem= new OrderItem();
-            BeanUtils.copyProperties(orderItemRequest, orderItem);
+            orderItem.setItemId(orderItemRequest.getItemId());
+            orderItem.setQuantity(orderItemRequest.getQuantity());
             orderItemsList.addLast(orderItem);
         }
         return orderItemsList;
@@ -64,14 +64,9 @@ public class OrderBuilder {
         List<OrderItemResponseDto> orderResponseDtosList = new ArrayList<>();
         for (OrderItem  orderItem : orderItems) {
             OrderItemResponseDto orderItemResponseDto = new OrderItemResponseDto();
-
             orderItemResponseDto.setItemId(orderItem.getItemId());
             orderItemResponseDto.setOrderItemId(orderItem.getOrderItemId());
             orderItemResponseDto.setQuantity(orderItem.getQuantity());
-            System.out.println("Rehaman Prints @67: "+orderItem.toString());
-            // BeanUtils.copyProperties(orderItem, orderItemResponseDto);
-            System.out.println("Rehaman Prints @69: "+ orderItemResponseDto.toString());
-
             orderResponseDtosList.add(orderItemResponseDto);
         }
         return orderResponseDtosList;

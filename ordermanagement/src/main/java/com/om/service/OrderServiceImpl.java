@@ -23,8 +23,6 @@ public class OrderServiceImpl implements OrderService{
         Order order = OrderBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
         Order savedOrder =orderRepository.save(order);
         return  OrderBuilder.buildOrderResponseDtoFromOrder(savedOrder);
-    }
-
-    
+    }   
     
 }
