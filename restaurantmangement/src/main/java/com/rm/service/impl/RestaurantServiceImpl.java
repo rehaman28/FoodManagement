@@ -2,6 +2,7 @@ package com.rm.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.rm.Exception.RestaurnatNotFoundException;
 import com.rm.builder.RestaurantBuilder;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
@@ -34,14 +35,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public RestaurantInfoResponseDto getRestaurant(Long id) {
         Restaurant restaurant = restaurantRepository.findById(id)
-                                    .orElseThrow(()->new IllegalArgumentException("No Restaurant Found"));
+                                    .orElseThrow(()->new RestaurnatNotFoundException("Restaurant not Found Found with Id: "+ id));
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
     }
 
     @Override
     public ItemResponseDto getItemByRestaurantIdAndItemId(long restaurant_id, long itemId) {
        Restaurant restaurant = restaurantRepository.findById(restaurant_id)
-                                    .orElseThrow(()-> new RuntimeException("Restaurant not Found with Id: "+ restaurant_id)) ;
+                                    .orElseThrow(()-> new RestaurnatNotFoundException("Restaurant not Found with Id: "+ restaurant_id)) ;
                                 
         Item item = restaurant.getItem()
                             .stream()
