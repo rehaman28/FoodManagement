@@ -9,7 +9,7 @@ import com.om.dto.OrderRequestDto;
 import com.om.dto.OrderResponseDto;
 import com.om.model.Order;
 import com.om.model.OrderItem;
-
+import com.om.dto.ItemResponseDto;
 import com.om.dto.OrderItemRequestDto;
 import com.om.dto.OrderItemResponseDto;
 
@@ -28,11 +28,12 @@ public class OrderBuilder {
 
 
     public static Order buildOrderResponseFromOrderRequestDto(OrderRequestDto orderRequest) {
+       double totalPrice = calculateOrderPrice(orderRequest);
        return Order.builder()
         .userId(orderRequest.getUserId())
         .orderStatus("Ordered")
         .restaurantId(orderRequest.getRestaurantId())
-        .orderPrice(orderRequest.getOrderPrice())
+        .orderPrice(totalPrice)
         .orderItems(buildOrderItemsFromOrderRequestDto(orderRequest.getOrderItemsRequest()))
         .build();
     }   
@@ -74,5 +75,24 @@ public class OrderBuilder {
 
     private String fetchRestaurantNameFromId(long restaurantId){
        return restTemplate.getForObject("http://localhost:8001/restaurants/getrestaurant/name/"+ restaurantId, String.class);
+    }
+
+    private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId){
+        String url =
+            "http://localhost:8001/restaurants/{restaurantId}/items/{itemId}";
+       return restTemplate.getForObject(url,ItemResponseDto.class,restaurantId,itemId);
+    }
+
+    private static double calculateOrderPrice(OrderRequestDto orderRequestDto){
+        double totalPrice =0;
+        OrderBuilder orderBuilder = new OrderBuilder();
+        for (OrderItemRequestDto orderItem : orderRequestDto.getOrderItemsRequest()) {
+            ItemResponseDto itemResponseDto = orderBuilder.fetchItemsFromRestaurantIdAndItemId(orderRequestDto.getRestaurantId(), orderItem.getItemId());
+            double itemPrice = itemResponseDto.getItemPrice();
+            long quantity = orderItem.getQuantity();
+            double itemTotal = itemPrice * quantity;
+            totalPrice = totalPrice+itemTotal;            
+        }
+        return totalPrice;
     }
 }
