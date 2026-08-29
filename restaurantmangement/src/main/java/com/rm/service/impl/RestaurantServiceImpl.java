@@ -2,6 +2,7 @@ package com.rm.service.impl;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.rm.Exception.RestaurantNotFoundException;
@@ -127,6 +128,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
         return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(updatedRestaurant);
 
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteRestaurant(Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                            .orElseThrow(()->new RestaurantNotFoundException("Restaurant not Found Found with Id: "+ id));
+        restaurantRepository.delete(restaurant);
+        return ResponseEntity.noContent().build();
     }
     
 }

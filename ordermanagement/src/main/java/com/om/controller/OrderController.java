@@ -24,6 +24,17 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    //Get Order by ID
+    //Get Order by ID --ADMIN role
+    //Get Orders by User
+    //Get Orders by Restaurant
+    //Update Order Status
+    //Cancel order patch or delete
+    //Get Orders by Status
+    //Add Item to Existing Order
+    //Update Quantity
+    //Remove Item From Order
+    
     @PostMapping("/placeorder")    
     public ResponseEntity<OrderResponseDto>placeOrder(@RequestBody OrderRequestDto orderRequest)
     {
