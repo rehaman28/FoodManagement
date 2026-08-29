@@ -3,6 +3,7 @@ package com.rm.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rm.dto.RequestDto.RestaurantRequestDto;
+import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
 import com.rm.service.RestaurantService;
@@ -44,4 +45,12 @@ public class RestaurantController {
                             .body(restaurantService.getRestaurant(id).getRestaurantName()); 
     }
     
+    @GetMapping("/{restaurantId}/items/{itemId}")
+    public ResponseEntity<ItemResponseDto> getItemByRestaurantIdAndItemId(
+            @PathVariable(name = "restaurantId") long restaurant_id,
+            @PathVariable(name = "itemId") long itemId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(restaurantService.getItemByRestaurantIdAndItemId(restaurant_id, itemId));
+
+    }
 }

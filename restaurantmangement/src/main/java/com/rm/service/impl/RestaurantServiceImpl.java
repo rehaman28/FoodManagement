@@ -6,8 +6,10 @@ import com.rm.builder.RestaurantBuilder;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
 import com.rm.dto.RequestDto.RestaurantRequestDto;
+import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
+import com.rm.model.Item;
 import com.rm.model.Restaurant;
 import com.rm.service.RestaurantService;
 
@@ -34,6 +36,25 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(id)
                                     .orElseThrow(()->new IllegalArgumentException("No Restaurant Found"));
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
+    }
+
+    @Override
+    public ItemResponseDto getItemByRestaurantIdAndItemId(long restaurant_id, long itemId) {
+       Restaurant restaurant = restaurantRepository.findById(restaurant_id)
+                                    .orElseThrow(()-> new RuntimeException("Restaurant not Found with Id: "+ restaurant_id)) ;
+                                
+        Item item = restaurant.getItem()
+                            .stream()
+                            .filter(existingItem -> existingItem.getItemId() == itemId)
+                            .findFirst()
+                            .orElseThrow(()-> new RuntimeException("Item not Found in the Restaurant: " + restaurant.getRestaurantName()));
+
+        ItemResponseDto responseDto = new ItemResponseDto();
+        responseDto.setItemCategory(item.getItemCategory());
+        responseDto.setItemName(item.getItemName());
+        responseDto.setItemPrice(item.getItemPrice());
+        responseDto.setItemType(item.getItemType());
+        return responseDto;
     }
     
 }
