@@ -10,11 +10,11 @@ import com.om.model.OrderItem;
 
 public class OrderResponseBuilder {
 
-    public static OrderResponseDto buildOrderResponseDtoFromOrder(Order order) {
+    public static OrderResponseDto buildOrderResponseDtoFromOrder(Order order, double price) {
         return OrderResponseDto.builder()
                 .orderId(order.getOrderId())
                 .orderStatus(order.getOrderStatus())
-                .orderPrice(order.getOrderPrice())
+                .orderPrice(price)
                 .orderItems(buildOrderItemsResponseFromOrder(order.getOrderItems()))
                 .build();
 

@@ -17,7 +17,6 @@ public class OrderRequestDto {
 
     private long userId;
     private long restaurantId;
-    private double orderPrice;
     @JsonProperty("OrderingItems")
     private List<OrderItemRequestDto> orderItemsRequest;    
 }

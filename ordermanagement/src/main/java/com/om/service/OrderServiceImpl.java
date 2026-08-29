@@ -28,10 +28,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderResponseDto placeorder(OrderRequestDto orderRequest) {
         double totalPrice = calculateOrderPrice(orderRequest);
-        orderRequest.setOrderPrice(totalPrice);
         Order order = OrderRequestBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
         Order savedOrder =orderRepository.save(order);
-        OrderResponseDto orderResponseDto = OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder);
+        OrderResponseDto orderResponseDto = OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder,totalPrice);
         String restauratName = fetchRestaurantNameFromId(savedOrder.getRestaurantId());
         orderResponseDto.setRestaurantName(restauratName);
         return orderResponseDto;

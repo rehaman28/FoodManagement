@@ -15,7 +15,6 @@ public class OrderRequestBuilder {
         .userId(orderRequest.getUserId())
         .orderStatus("Ordered")
         .restaurantId(orderRequest.getRestaurantId())
-        .orderPrice(orderRequest.getOrderPrice())
         .orderItems(buildOrderItemsFromOrderRequestDto(orderRequest.getOrderItemsRequest()))
         .build();
     }   
