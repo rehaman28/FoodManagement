@@ -1,5 +1,8 @@
 package com.rm.service;
 
+import java.util.List;
+
+
 import com.rm.dto.RequestDto.RestaurantRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
@@ -10,4 +13,6 @@ public interface RestaurantService {
     RestaurantResponseDto addRestaurant(RestaurantRequestDto requestDto);    
     RestaurantInfoResponseDto getRestaurant(Long id);
     ItemResponseDto getItemByRestaurantIdAndItemId(long restaurant_id, long itemId);
+    List<RestaurantResponseDto> getAllRestaurants();
+    RestaurantResponseDto updateRestaurant(Long id, RestaurantRequestDto requestDto);
 }

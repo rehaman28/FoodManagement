@@ -33,7 +33,7 @@ public class RestaurantInfoResponseDto {
     @JsonProperty("Rating")
     private double restaurantRating;
     @JsonProperty("PhoneNumber")
-    private String restaurant_phoneNumber;
+    private String restaurantPhoneNumber;
     @JsonProperty("Address")
     private AddressResponseDto addressResponseDto;
     @JsonProperty("Menu Items")

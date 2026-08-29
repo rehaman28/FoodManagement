@@ -19,8 +19,8 @@ public class RestaurantInfoBuilder {
                 .restaurantId(restaurantresponse.getRestaurantId())
                 .restaurantName(restaurantresponse.getRestaurantName())
                 .restaurantRating(restaurantresponse.getRestaurantRating())
-                .restaurant_phoneNumber(restaurantresponse.getRestaurant_phoneNumber())
-                .addressResponseDto(buildAddressResponseFromAddress(restaurantresponse.getRestaurant_address()))
+                .restaurantPhoneNumber(restaurantresponse.getRestaurantPhoneNumber())
+                .addressResponseDto(buildAddressResponseFromAddress(restaurantresponse.getRestaurantAddress()))
                 .itemResponseDto(buildItemResponseFromItem(restaurantresponse.getItem()))
                 .build();
     }

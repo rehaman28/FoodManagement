@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-     @ExceptionHandler(RestaurnatNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleProductNotFoundException(RestaurnatNotFoundException ex) {
+     @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleProductNotFoundException(RestaurantNotFoundException ex) {
         Map<String, Object> body = Map.of(
             "timestamp", LocalDateTime.now().toString(),
             "status", HttpStatus.NOT_FOUND.value(),

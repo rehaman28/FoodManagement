@@ -32,11 +32,11 @@ public class Restaurant {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
-    private Address restaurant_address;
+    private Address restaurantAddress;
 
-    private double restaurantRating;
+    private Double restaurantRating;
 
-    private String restaurant_phoneNumber;
+    private String restaurantPhoneNumber;
 
     /*
      * The restaurant owns the one-to-many relationship, and the foreign key is
@@ -50,22 +50,22 @@ public class Restaurant {
     private List<Item> item;
 
 
-    public Restaurant(String restaurantName, Address restaurant_address, double restaurantRating,
-            String restaurant_phoneNumber, List<Item> item) {
+    public Restaurant(String restaurantName, Address restaurantAddress, double restaurantRating,
+            String restaurantPhoneNumber, List<Item> item) {
         this.restaurantName = restaurantName;
-        this.restaurant_address = restaurant_address;
+        this.restaurantAddress = restaurantAddress;
         this.restaurantRating = restaurantRating;
-        this.restaurant_phoneNumber = restaurant_phoneNumber;
+        this.restaurantPhoneNumber = restaurantPhoneNumber;
         this.item = item;
     }
 
 
 
-    @Override
-    public String toString() {
-        return "restaurant [restaurantId=" + restaurantId + ", restaurantName=" + restaurantName
-                + ", restaurant_address=" + restaurant_address + ", restaurant_phoneNumber=" + restaurant_phoneNumber
-                + ", item=" + item + "]";
-    }
+    // @Override
+    // public String toString() {
+    //     return "restaurant [restaurantId=" + restaurantId + ", restaurantName=" + restaurantName
+    //             + ", restaurant_address=" + restaurant_address + ", restaurant_phoneNumber=" + restaurant_phoneNumber
+    //             + ", item=" + item + "]";
+    // }
 
 }

@@ -13,6 +13,7 @@ public class RestaurantRequestDto {
     
     private String restaurantName;
     private String phoneNumber;
+    private Double rating;
     private AddressRequestDto addressRequestDto;
     private List<ItemRequestDto> itemRequestDto;
 
