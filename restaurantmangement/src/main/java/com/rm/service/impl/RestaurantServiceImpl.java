@@ -1,9 +1,7 @@
 package com.rm.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +10,10 @@ import com.rm.builder.RestaurantBuilder;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
 import com.rm.dto.RequestDto.AddressRequestDto;
-import com.rm.dto.RequestDto.ItemRequestDto;
 import com.rm.dto.RequestDto.RestaurantRequestDto;
-import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
 import com.rm.model.Address;
-import com.rm.model.Item;
 import com.rm.model.Restaurant;
 import com.rm.service.RestaurantService;
 
@@ -44,24 +39,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantInfoResponseDto getRestaurant(Long id) {
         Restaurant restaurant = findRestaurantById(id);
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
-    }
-
-    @Override
-    public ItemResponseDto getItemByRestaurantIdAndItemId(long restaurant_id, long itemId) {
-       Restaurant restaurant = findRestaurantById(restaurant_id);
-                                
-        Item item = restaurant.getItem()
-                            .stream()
-                            .filter(existingItem -> existingItem.getItemId() == itemId)
-                            .findFirst()
-                            .orElseThrow(()-> new RuntimeException("Item not Found in the Restaurant: " + restaurant.getRestaurantName()));
-
-        ItemResponseDto responseDto = new ItemResponseDto();
-        responseDto.setItemCategory(item.getItemCategory());
-        responseDto.setItemName(item.getItemName());
-        responseDto.setItemPrice(item.getItemPrice());
-        responseDto.setItemType(item.getItemType());
-        return responseDto;
     }
 
     @Override
@@ -126,23 +103,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurantRepository.delete(restaurant);
         return ResponseEntity.noContent().build();
     }
-
-    @Override
-    public RestaurantInfoResponseDto addItemToRestaurant(Long Id, List<ItemRequestDto> itemRequestDto) {
-        Restaurant restaurant = findRestaurantById(Id);
-        if(itemRequestDto != null){
-           List<Item> items = restaurant.getItem();
-           for (ItemRequestDto itemRequest : itemRequestDto) {
-               Item item = new Item();
-               BeanUtils.copyProperties(itemRequest, item);
-               items.add(item);
-           }
-           Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
-           return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
-        }
-        return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
-    }
-
 
     @Override
     public RestaurantResponseDto updateRestaurantRating(Long id, Double rating) {
