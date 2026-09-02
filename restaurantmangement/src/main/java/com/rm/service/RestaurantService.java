@@ -19,4 +19,5 @@ public interface RestaurantService {
     RestaurantResponseDto updateRestaurant(Long id, RestaurantRequestDto requestDto);
     ResponseEntity<Void> deleteRestaurant(Long id);
     RestaurantInfoResponseDto addItemToRestaurant(Long Id, List<ItemRequestDto> itemRequestDto);
+    RestaurantResponseDto updateRestaurantRating(Long id, Double rating);
 }

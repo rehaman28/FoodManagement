@@ -131,20 +131,31 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantInfoResponseDto addItemToRestaurant(Long Id, List<ItemRequestDto> itemRequestDto) {
         Restaurant restaurant = findRestaurantById(Id);
         if(itemRequestDto != null){
-           List<Item> items = new ArrayList<>();
+           List<Item> items = restaurant.getItem();
            for (ItemRequestDto itemRequest : itemRequestDto) {
                Item item = new Item();
                BeanUtils.copyProperties(itemRequest, item);
                items.add(item);
            }
-           restaurant.setItem(items);
+           Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
+           return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
         }
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
+    }
+
+
+    @Override
+    public RestaurantResponseDto updateRestaurantRating(Long id, Double rating) {
+        Restaurant restaurant = findRestaurantById(id);
+        restaurant.setRestaurantRating(rating);
+        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
+        return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(updatedRestaurant);
     }
 
     private Restaurant findRestaurantById(Long id) {
         return restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id " + id));
     }
+
     
 }

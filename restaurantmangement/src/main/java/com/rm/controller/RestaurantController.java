@@ -14,15 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rm.dto.RequestDto.ItemRequestDto;
-// import com.rm.dto.RequestDto.ItemRequestDto;
 import com.rm.dto.RequestDto.RestaurantRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
 import com.rm.service.RestaurantService;
-
-
-
 
 @RestController
 @RequestMapping("/restaurants")
@@ -89,11 +85,25 @@ public class RestaurantController {
    @PutMapping("/addItem/{restaurantId}")
    public ResponseEntity<RestaurantInfoResponseDto> AddItemToRestaurant(@PathVariable(name = "restaurantId") Long id,
         @RequestBody List<ItemRequestDto> itemRequestDto){       
-       return ResponseEntity.status(HttpStatus.OK).body(restaurantService.addItemToRestaurant(id, itemRequestDto));
+       return ResponseEntity.status(HttpStatus.OK)
+                    .body(restaurantService.addItemToRestaurant(id, itemRequestDto));
    }
-   //Update Item
+
+   //Update Item - 
+
+   //update restaurant rating 
+   @PutMapping("rating/{restaurantId}")
+   public ResponseEntity<RestaurantResponseDto> updateRestaurantRating(@PathVariable(name = "restaurantId") Long id,
+    @RequestBody RestaurantRequestDto requestDto) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(restaurantService.updateRestaurantRating(id, requestDto.getRating()));
+   }
    //Delete Item - Delete item from particular restaurant
    //search Item - search item with name or Id or category
-   //Get Items by Category -
+
+   //Get Items by Category 
+
    //Get Vegetarian / Non-Vegetarian Items
+
+   
 }
