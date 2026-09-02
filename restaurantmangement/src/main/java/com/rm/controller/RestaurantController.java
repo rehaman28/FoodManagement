@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rm.dto.RequestDto.ItemRequestDto;
+// import com.rm.dto.RequestDto.ItemRequestDto;
 import com.rm.dto.RequestDto.RestaurantRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
@@ -77,14 +79,18 @@ public class RestaurantController {
                             .body(restaurantService.updateRestaurant(id,requestDto)); 
     }
 
-
-   //Delete Restaurant - Delete entire restaurant
+    //Delete Restaurant - Delete entire restaurant
     @DeleteMapping("/deleterestaurant/{restaurantId}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable(name = "restaurantId") Long id) {
         return restaurantService.deleteRestaurant(id); 
     }
 
    //Add Item to Restaurant
+   @PutMapping("/addItem/{restaurantId}")
+   public ResponseEntity<RestaurantInfoResponseDto> AddItemToRestaurant(@PathVariable(name = "restaurantId") Long id,
+        @RequestBody List<ItemRequestDto> itemRequestDto){       
+       return ResponseEntity.status(HttpStatus.OK).body(restaurantService.addItemToRestaurant(id, itemRequestDto));
+   }
    //Update Item
    //Delete Item - Delete item from particular restaurant
    //search Item - search item with name or Id or category

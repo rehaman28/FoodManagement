@@ -1,7 +1,9 @@
 package com.rm.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import com.rm.builder.RestaurantBuilder;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
 import com.rm.dto.RequestDto.AddressRequestDto;
+import com.rm.dto.RequestDto.ItemRequestDto;
 import com.rm.dto.RequestDto.RestaurantRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
@@ -39,15 +42,13 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantInfoResponseDto getRestaurant(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id)
-                                    .orElseThrow(()->new RestaurantNotFoundException("Restaurant not Found Found with Id: "+ id));
+        Restaurant restaurant = findRestaurantById(id);
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
     }
 
     @Override
     public ItemResponseDto getItemByRestaurantIdAndItemId(long restaurant_id, long itemId) {
-       Restaurant restaurant = restaurantRepository.findById(restaurant_id)
-                                    .orElseThrow(()-> new RestaurantNotFoundException("Restaurant not Found with Id: "+ restaurant_id)) ;
+       Restaurant restaurant = findRestaurantById(restaurant_id);
                                 
         Item item = restaurant.getItem()
                             .stream()
@@ -83,8 +84,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public RestaurantResponseDto updateRestaurant(Long id,RestaurantRequestDto requestDto ) 
     {
-        Restaurant restaurant = restaurantRepository.findById(id)
-        .orElseThrow(() -> new RestaurantNotFoundException("Restaurant NotFound with id "+ id));
+        Restaurant restaurant = findRestaurantById(id);
 
         if(requestDto.getRestaurantName()!= null){
             restaurant.setRestaurantName(requestDto.getRestaurantName());
@@ -92,20 +92,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         if (requestDto.getPhoneNumber()!=null){
             restaurant.setRestaurantPhoneNumber(requestDto.getPhoneNumber());
         }
-        System.out.println("Before updating rating" +
-        requestDto.getRating());
         if (requestDto.getRating()!=null) 
         {
-            System.out.println("attempting to  updating rating");
-            System.out.println(
-                "GetRating" +requestDto.getRating()
-            );
             restaurant.setRestaurantRating(requestDto.getRating());
-            System.out.println(
-                "setRating" +restaurant.getRestaurantRating()
-            );
         }
-        System.out.println("updated rating");
         if(requestDto.getAddressRequestDto()!= null)
         {
             Address existingAddress = restaurant.getRestaurantAddress();
@@ -132,10 +122,29 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public ResponseEntity<Void> deleteRestaurant(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id)
-                            .orElseThrow(()->new RestaurantNotFoundException("Restaurant not Found Found with Id: "+ id));
+        Restaurant restaurant = findRestaurantById(id);
         restaurantRepository.delete(restaurant);
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public RestaurantInfoResponseDto addItemToRestaurant(Long Id, List<ItemRequestDto> itemRequestDto) {
+        Restaurant restaurant = findRestaurantById(Id);
+        if(itemRequestDto != null){
+           List<Item> items = new ArrayList<>();
+           for (ItemRequestDto itemRequest : itemRequestDto) {
+               Item item = new Item();
+               BeanUtils.copyProperties(itemRequest, item);
+               items.add(item);
+           }
+           restaurant.setItem(items);
+        }
+        return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
+    }
+
+    private Restaurant findRestaurantById(Long id) {
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id " + id));
     }
     
 }
