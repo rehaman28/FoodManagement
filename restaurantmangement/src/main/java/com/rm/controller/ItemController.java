@@ -34,13 +34,15 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemResponseDto> getItemByRestaurantIdAndItemId(
             @PathVariable Long restaurantId, @PathVariable Long itemId) {
-        return ResponseEntity.ok(itemService.getItemByRestaurantIdAndItemId(restaurantId, itemId));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(itemService.getItemByRestaurantIdAndItemId(restaurantId, itemId));
     }
 
     //Get all Items of restaurant
     @GetMapping
     public ResponseEntity<List<ItemResponseDto>>getAllRestaurantItems(@PathVariable Long restaurantId) {
-        return ResponseEntity.ok(itemService.getRestaurantItems(restaurantId));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(itemService.getRestaurantItems(restaurantId));
     }
     
 
@@ -49,14 +51,14 @@ public class ItemController {
     public ResponseEntity<RestaurantInfoResponseDto> addItemsToRestaurant(
             @PathVariable Long restaurantId, @RequestBody List<ItemRequestDto> itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.addItemsToRestaurant(restaurantId, itemRequestDtos));
+                .body(itemService.addItems(restaurantId, itemRequestDtos));
     }
     //single item updates
     @PostMapping
     public ResponseEntity<RestaurantInfoResponseDto> addItemToRestaurant(
             @PathVariable Long restaurantId, @RequestBody ItemRequestDto itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.addItemToRestaurant(restaurantId, itemRequestDtos));
+                .body(itemService.addItem(restaurantId, itemRequestDtos));
     }
     
     //Delete Item by Item Id 
@@ -81,6 +83,6 @@ public class ItemController {
             @PathVariable Long itemId,
             @PathVariable Long restaurantId, @RequestBody ItemRequestDto itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.updateItemsToRestaurant(itemId,restaurantId, itemRequestDtos));
+                .body(itemService.updateItems(itemId,restaurantId, itemRequestDtos));
     }
 }

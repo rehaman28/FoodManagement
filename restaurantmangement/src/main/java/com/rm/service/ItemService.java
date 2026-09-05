@@ -10,15 +10,15 @@ public interface ItemService {
 
     ItemResponseDto getItemByRestaurantIdAndItemId(Long restaurantId, Long itemId);
 
-    RestaurantInfoResponseDto addItemsToRestaurant(Long restaurantId, List<ItemRequestDto> itemRequestDtos);
+    RestaurantInfoResponseDto addItems(Long restaurantId, List<ItemRequestDto> itemRequestDtos);
 
     void deleteItemById(Long restaurantId, Long itemId);
 
     ItemResponseDto updateRating(Long restaurantId, Long itemId, ItemRequestDto itemRequestDto);
 
-    ItemResponseDto updateItemsToRestaurant(Long itemId, Long restaurantId, ItemRequestDto itemRequestDtos);
+    ItemResponseDto updateItems(Long itemId, Long restaurantId, ItemRequestDto itemRequestDtos);
 
     List<ItemResponseDto> getRestaurantItems(Long restaurantId);
 
-    RestaurantInfoResponseDto addItemToRestaurant(Long restaurantId, ItemRequestDto itemRequestDtos);
+    RestaurantInfoResponseDto addItem(Long restaurantId, ItemRequestDto itemRequestDtos);
 }

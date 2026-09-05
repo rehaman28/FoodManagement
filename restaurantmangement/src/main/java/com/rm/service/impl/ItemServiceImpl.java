@@ -34,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public RestaurantInfoResponseDto addItemsToRestaurant(Long restaurantId, List<ItemRequestDto> itemRequestDtos) {
+    public RestaurantInfoResponseDto addItems(Long restaurantId, List<ItemRequestDto> itemRequestDtos) {
         Restaurant restaurant = findRestaurantById(restaurantId);
         List<Item> items = restaurant.getItem();
         if (items == null) {
@@ -81,7 +81,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemResponseDto updateItemsToRestaurant(Long itemId,
+    public ItemResponseDto updateItems(Long itemId,
         Long restaurantId, 
         ItemRequestDto itemRequestDtos) 
     {
@@ -102,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
 
     
     @Override
-    public RestaurantInfoResponseDto addItemToRestaurant(Long restaurantId, 
+    public RestaurantInfoResponseDto addItem(Long restaurantId, 
                                     ItemRequestDto itemRequestDtos) {
         Restaurant restaurant = findRestaurantById(restaurantId);
         List<Item> items = restaurant.getItem();
