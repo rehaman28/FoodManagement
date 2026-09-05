@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,9 +54,9 @@ public class ItemController {
     }
     //single item updates
     @PostMapping
-    public ResponseEntity<RestaurantInfoResponseDto> addItemToRestaurant(
+    public ResponseEntity<ItemResponseDto> addItemToRestaurant(
             @PathVariable Long restaurantId, @RequestBody ItemRequestDto itemRequestDtos) {
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(itemService.addItem(restaurantId, itemRequestDtos));
     }
     
@@ -69,15 +68,7 @@ public class ItemController {
         return ResponseEntity.noContent().build();
     }
 
-    //update Rating
-    @PutMapping("/{itemId}/rating")
-    public ResponseEntity<ItemResponseDto> updateRating(@PathVariable Long restaurantId,
-        @PathVariable Long itemId, @RequestBody ItemRequestDto itemRequestDto){
-        return ResponseEntity.status(HttpStatus.OK)
-        .body(itemService.updateRating(restaurantId,itemId,itemRequestDto));
-    }
-
-    // update item details 
+    // Update item details, including the optional rating.
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemResponseDto> updateItemsToRestaurant(
             @PathVariable Long itemId,

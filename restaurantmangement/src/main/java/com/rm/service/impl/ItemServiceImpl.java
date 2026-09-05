@@ -70,17 +70,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemResponseDto updateRating(Long restaurantId, 
-                                        Long itemId, 
-                                        ItemRequestDto itemRequestDto) {
-        Restaurant restaurant = findRestaurantById(restaurantId);
-        Item item = findItemInRestaurant(restaurant, itemId);
-        item.setItemRating(itemRequestDto.getItemRating());
-        restaurantRepository.save(restaurant);
-        return toItemResponse(item);
-    }
-
-    @Override
     public ItemResponseDto updateItems(Long itemId,
         Long restaurantId, 
         ItemRequestDto itemRequestDtos) 
@@ -102,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
 
     
     @Override
-    public RestaurantInfoResponseDto addItem(Long restaurantId, 
+    public ItemResponseDto addItem(Long restaurantId, 
                                     ItemRequestDto itemRequestDtos) {
         Restaurant restaurant = findRestaurantById(restaurantId);
         List<Item> items = restaurant.getItem();
@@ -111,14 +100,16 @@ public class ItemServiceImpl implements ItemService {
             restaurant.setItem(items);
         }
 
-        if (itemRequestDtos != null) {
-            Item item = new Item();
-            BeanUtils.copyProperties(itemRequestDtos, item);
-            items.add(item);
+        if (itemRequestDtos == null) {
+            throw new IllegalArgumentException("Item request must not be null");
         }
 
+        Item item = new Item();
+        BeanUtils.copyProperties(itemRequestDtos, item);
+        items.add(item);
         Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
-        return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
+        Item savedItem = findItemInRestaurant(updatedRestaurant, item.getItemId());
+        return toItemResponse(savedItem);
     }
 
 
