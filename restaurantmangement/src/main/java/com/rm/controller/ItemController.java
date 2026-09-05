@@ -47,9 +47,9 @@ public class ItemController {
 
     // Add items to a restaurant; existing items are preserved for bulk updates
     @PostMapping("/bulk")
-    public ResponseEntity<RestaurantInfoResponseDto> addItemsToRestaurant(
+    public ResponseEntity<RestaurantInfoResponseDto> addItems(
             @PathVariable Long restaurantId, @RequestBody List<ItemRequestDto> itemRequestDtos) {
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(itemService.addItems(restaurantId, itemRequestDtos));
     }
     //single item updates
@@ -70,7 +70,7 @@ public class ItemController {
 
     // Update item details, including the optional rating.
     @PatchMapping("/{itemId}")
-    public ResponseEntity<ItemResponseDto> updateItemsToRestaurant(
+    public ResponseEntity<ItemResponseDto> updateItems(
             @PathVariable Long itemId,
             @PathVariable Long restaurantId, @RequestBody ItemRequestDto itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.OK)

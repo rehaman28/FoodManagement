@@ -61,7 +61,6 @@ public class RestaurantController {
     @PatchMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDto> updateRestaurant(@PathVariable(name = "restaurantId") Long id,
             @RequestBody RestaurantRequestDto requestDto) {
-        System.out.println("Request:" + requestDto.getRating());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(restaurantService.updateRestaurant(id, requestDto));
     }
@@ -69,7 +68,8 @@ public class RestaurantController {
     // Delete Restaurant - Delete entire restaurant
     @DeleteMapping("/{restaurantId}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable(name = "restaurantId") Long id) {
-        return restaurantService.deleteRestaurant(id);
+        restaurantService.deleteRestaurant(id);
+        return ResponseEntity.noContent().build();
     }
 
     // update restaurant rating

@@ -72,10 +72,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public ResponseEntity<Void> deleteRestaurant(Long id) {
+    public void deleteRestaurant(Long id) {
         Restaurant restaurant = findRestaurantById(id);
         restaurantRepository.delete(restaurant);
-        return ResponseEntity.noContent().build();
     }
 
     @Override

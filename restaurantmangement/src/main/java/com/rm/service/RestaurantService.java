@@ -2,8 +2,6 @@ package com.rm.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.rm.dto.RequestDto.RestaurantRequestDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
@@ -14,6 +12,6 @@ public interface RestaurantService {
     RestaurantInfoResponseDto getRestaurant(Long id);
     List<RestaurantResponseDto> getAllRestaurants();
     RestaurantResponseDto updateRestaurant(Long id, RestaurantRequestDto requestDto);
-    ResponseEntity<Void> deleteRestaurant(Long id);
+    void deleteRestaurant(Long id);
     RestaurantResponseDto updateRestaurantRating(Long id, Double rating);
 }
