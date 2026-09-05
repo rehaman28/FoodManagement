@@ -98,6 +98,31 @@ public class ItemServiceImpl implements ItemService {
         return toItemResponses(restaurant.getItem());
     }
 
+    
+
+    
+    @Override
+    public RestaurantInfoResponseDto addItemToRestaurant(Long restaurantId, 
+                                    ItemRequestDto itemRequestDtos) {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        List<Item> items = restaurant.getItem();
+        if (items == null) {
+            items = new ArrayList<>();
+            restaurant.setItem(items);
+        }
+
+        if (itemRequestDtos != null) {
+            Item item = new Item();
+            BeanUtils.copyProperties(itemRequestDtos, item);
+            items.add(item);
+        }
+
+        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
+        return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
+    }
+
+
+    //Helper Methods starts
     private Item findItemInRestaurant(Restaurant restaurant, Long itemId) {
         List<Item> items = restaurant.getItem();
         if (items == null) {
@@ -156,9 +181,7 @@ public class ItemServiceImpl implements ItemService {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(
                         "Restaurant not found with id " + restaurantId));
-    }
-
-    
+    }  
 
    
 }
