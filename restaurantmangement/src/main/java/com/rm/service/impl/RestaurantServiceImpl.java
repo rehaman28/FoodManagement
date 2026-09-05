@@ -63,34 +63,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     {
         Restaurant restaurant = findRestaurantById(id);
 
-        if(requestDto.getRestaurantName()!= null){
-            restaurant.setRestaurantName(requestDto.getRestaurantName());
-        }
-        if (requestDto.getPhoneNumber()!=null){
-            restaurant.setRestaurantPhoneNumber(requestDto.getPhoneNumber());
-        }
-        if (requestDto.getRating()!=null) 
-        {
-            restaurant.setRestaurantRating(requestDto.getRating());
-        }
-        if(requestDto.getAddressRequestDto()!= null)
-        {
-            Address existingAddress = restaurant.getRestaurantAddress();
-            AddressRequestDto requestAddress = requestDto.getAddressRequestDto();
-
-            if (requestAddress.getCity() != null) {
-                existingAddress.setCity(requestAddress.getCity());
-            }
-            if (requestAddress.getLandmark() != null) {
-                existingAddress.setLandmark(requestAddress.getLandmark());
-            }
-            if (requestAddress.getPincode()!=null) {
-                existingAddress.setPincode(requestAddress.getPincode());
-            }
-            if (requestAddress.getState()!=null) {
-                existingAddress.setState(requestAddress.getState());
-            }
-        }
+        updateRestaurantFields(restaurant, requestDto);
+        updateAddressFields(restaurant, requestDto.getAddressRequestDto());
         Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
 
         return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(updatedRestaurant);
@@ -110,6 +84,38 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setRestaurantRating(rating);
         Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
         return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(updatedRestaurant);
+    }
+
+    private void updateRestaurantFields(Restaurant restaurant, RestaurantRequestDto requestDto) {
+        if (requestDto.getRestaurantName() != null) {
+            restaurant.setRestaurantName(requestDto.getRestaurantName());
+        }
+        if (requestDto.getPhoneNumber() != null) {
+            restaurant.setRestaurantPhoneNumber(requestDto.getPhoneNumber());
+        }
+        if (requestDto.getRating() != null) {
+            restaurant.setRestaurantRating(requestDto.getRating());
+        }
+    }
+
+    private void updateAddressFields(Restaurant restaurant, AddressRequestDto requestAddress) {
+        if (requestAddress == null) {
+            return;
+        }
+
+        Address existingAddress = restaurant.getRestaurantAddress();
+        if (requestAddress.getCity() != null) {
+            existingAddress.setCity(requestAddress.getCity());
+        }
+        if (requestAddress.getLandmark() != null) {
+            existingAddress.setLandmark(requestAddress.getLandmark());
+        }
+        if (requestAddress.getPincode() != null) {
+            existingAddress.setPincode(requestAddress.getPincode());
+        }
+        if (requestAddress.getState() != null) {
+            existingAddress.setState(requestAddress.getState());
+        }
     }
 
     private Restaurant findRestaurantById(Long id) {

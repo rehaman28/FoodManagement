@@ -24,6 +24,14 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+       
+    @PostMapping("/placeorder")    
+    public ResponseEntity<OrderResponseDto>placeOrder(@RequestBody OrderRequestDto orderRequest)
+    {
+        OrderResponseDto placedOrder = orderService.placeorder(orderRequest);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(placedOrder);
+    }
+
     //Get Order by ID
     //Get Order by ID --ADMIN role
     //Get Orders by User
@@ -34,12 +42,5 @@ public class OrderController {
     //Add Item to Existing Order
     //Update Quantity
     //Remove Item From Order
-    
-    @PostMapping("/placeorder")    
-    public ResponseEntity<OrderResponseDto>placeOrder(@RequestBody OrderRequestDto orderRequest)
-    {
-        OrderResponseDto placedOrder = orderService.placeorder(orderRequest);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(placedOrder);
-    }
     
 }

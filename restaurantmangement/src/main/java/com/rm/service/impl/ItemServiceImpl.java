@@ -92,6 +92,12 @@ public class ItemServiceImpl implements ItemService {
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
     }
 
+    @Override
+    public List<ItemResponseDto> getRestaurantItems(Long restaurantId) {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        return toItemResponses(restaurant.getItem());
+    }
+
     private Item findItemInRestaurant(Restaurant restaurant, Long itemId) {
         List<Item> items = restaurant.getItem();
         if (items == null) {
@@ -133,12 +139,26 @@ public class ItemServiceImpl implements ItemService {
         return responseDto;
     }
 
+    private List<ItemResponseDto> toItemResponses(List<Item> items) {
+        if (items == null || items.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<ItemResponseDto> responses = new ArrayList<>();
+        for (Item item : items) {
+            responses.add(toItemResponse(item));
+        }
+        return responses;
+    }
+
 
     private Restaurant findRestaurantById(Long restaurantId) {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(
                         "Restaurant not found with id " + restaurantId));
     }
+
+    
 
    
 }

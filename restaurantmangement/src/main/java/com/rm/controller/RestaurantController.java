@@ -29,35 +29,35 @@ public class RestaurantController {
     }
 
     // Add restaurant
-    @PostMapping("/addrestaurant")
+    @PostMapping
     public ResponseEntity<RestaurantResponseDto> addRestaurant(@RequestBody RestaurantRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(restaurantService.addRestaurant(requestDto));
     }
 
     // Fetch Restaurant By Id
-    @GetMapping("/getrestaurant/{restaurantId}")
+    @GetMapping("/{restaurantId}")
     public ResponseEntity<RestaurantInfoResponseDto> getRestaurant(@PathVariable(name = "restaurantId") Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(restaurantService.getRestaurant(id));
     }
 
     // Fetch RestaurantName by Id
-    @GetMapping("/getrestaurant/name/{restaurantId}")
+    @GetMapping("/{restaurantId}/name")
     public ResponseEntity<String> getRestaurantName(@PathVariable(name = "restaurantId") Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(restaurantService.getRestaurant(id).getRestaurantName());
     }
 
     // Get All Restaurants-Expose only Restaurant Names and rating
-    @GetMapping("/findallrestaurants")
+    @GetMapping
     public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurants() {
         return ResponseEntity.status(HttpStatus.OK).body(restaurantService.getAllRestaurants());
     }
 
     // Update Restaurant - restaurantName, Address,phone number dynamically as
     // through request
-    @PutMapping("/update/{restaurantId}")
+    @PutMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDto> updateRestaurant(@PathVariable(name = "restaurantId") Long id,
             @RequestBody RestaurantRequestDto requestDto) {
         System.out.println("Request:" + requestDto.getRating());
@@ -66,13 +66,13 @@ public class RestaurantController {
     }
 
     // Delete Restaurant - Delete entire restaurant
-    @DeleteMapping("/deleterestaurant/{restaurantId}")
+    @DeleteMapping("/{restaurantId}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable(name = "restaurantId") Long id) {
         return restaurantService.deleteRestaurant(id);
     }
 
     // update restaurant rating
-    @PutMapping("rating/{restaurantId}")
+    @PutMapping("/{restaurantId}/rating")
     public ResponseEntity<RestaurantResponseDto> updateRestaurantRating(@PathVariable(name = "restaurantId") Long id,
             @RequestBody RestaurantRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)

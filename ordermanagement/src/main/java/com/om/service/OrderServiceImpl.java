@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService{
     } 
 
     private String fetchRestaurantNameFromId(long restaurantId){
-       return restTemplate.getForObject("http://localhost:8001/restaurants/getrestaurant/name/"+ restaurantId, String.class);
+    return restTemplate.getForObject("http://localhost:8001/restaurants/" + restaurantId + "/name", String.class);
     }
 
     private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId){

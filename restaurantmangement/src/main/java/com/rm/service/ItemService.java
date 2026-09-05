@@ -17,4 +17,6 @@ public interface ItemService {
     ItemResponseDto updateRating(Long restaurantId, Long itemId, ItemRequestDto itemRequestDto);
 
     RestaurantInfoResponseDto updateItemsToRestaurant(Long itemId, Long restaurantId, ItemRequestDto itemRequestDtos);
+
+    List<ItemResponseDto> getRestaurantItems(Long restaurantId);
 }

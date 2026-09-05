@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,9 @@ import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.service.ItemService;
 
+
 @RestController
-@RequestMapping("/restaurant/{restaurantId}/items")
+@RequestMapping("/restaurants/{restaurantId}/items")
 public class ItemController {
 
     private final ItemService itemService;
@@ -34,8 +36,15 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getItemByRestaurantIdAndItemId(restaurantId, itemId));
     }
 
+    //Get all Items of restaurant
+    @GetMapping
+    public ResponseEntity<List<ItemResponseDto>>getAllRestaurantItems(@PathVariable Long restaurantId) {
+        return ResponseEntity.ok(itemService.getRestaurantItems(restaurantId));
+    }
+    
+
     // Add items to a restaurant; existing items are preserved.
-    @PutMapping("/addItem")
+    @PostMapping("/addItem")
     public ResponseEntity<RestaurantInfoResponseDto> addItemsToRestaurant(
             @PathVariable Long restaurantId, @RequestBody List<ItemRequestDto> itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -51,7 +60,7 @@ public class ItemController {
     }
 
     //update Rating
-    @PutMapping("/rating/{itemId}")
+    @PutMapping("/{itemId}/rating")
     public ResponseEntity<ItemResponseDto> updateRating(@PathVariable Long restaurantId,
         @PathVariable Long itemId, @RequestBody ItemRequestDto itemRequestDto){
         return ResponseEntity.status(HttpStatus.OK)
@@ -59,7 +68,7 @@ public class ItemController {
     }
 
     // update item details 
-    @PutMapping("/updateitem/{itemId}")
+    @PutMapping("/{itemId}")
     public ResponseEntity<RestaurantInfoResponseDto> updateItemsToRestaurant(
             @PathVariable Long itemId,
             @PathVariable Long restaurantId, @RequestBody ItemRequestDto itemRequestDtos) {
