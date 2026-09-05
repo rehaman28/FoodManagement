@@ -81,15 +81,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public RestaurantInfoResponseDto updateItemsToRestaurant(Long itemId,
+    public ItemResponseDto updateItemsToRestaurant(Long itemId,
         Long restaurantId, 
         ItemRequestDto itemRequestDtos) 
     {
         Restaurant restaurant = findRestaurantById(restaurantId);
         Item item = findItemInRestaurant(restaurant, itemId);
         applyUpdates(item, itemRequestDtos);
-        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
-        return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
+        restaurantRepository.save(restaurant);
+        return toItemResponse(item);
     }
 
     @Override
