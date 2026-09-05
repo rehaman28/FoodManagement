@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.rm.Exception.ItemNotFoundException;
 import com.rm.Exception.RestaurantNotFoundException;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
@@ -28,15 +30,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponseDto getItemByRestaurantIdAndItemId(Long restaurantId, Long itemId) {
         Restaurant restaurant = findRestaurantById(restaurantId);
-        Item item = restaurant.getItem().stream()
-                .filter(existingItem -> existingItem.getItemId() == itemId)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(
-                        "Item not found in the restaurant: " + restaurant.getRestaurantName()));
-
-        ItemResponseDto responseDto = new ItemResponseDto();
-        BeanUtils.copyProperties(item, responseDto);
-        return responseDto;
+        return toItemResponse(findItemInRestaurant(restaurant, itemId));
     }
 
     @Override
@@ -60,9 +54,91 @@ public class ItemServiceImpl implements ItemService {
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
     }
 
+    @Override
+    @Transactional
+    public void deleteItemById(Long restaurantId, Long itemId) {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        List<Item> items = restaurant.getItem();
+        Item item = items == null ? null : items.stream()
+                .filter(existingItem -> existingItem.getItemId() == itemId)
+                .findFirst()
+                .orElseThrow(() -> new ItemNotFoundException(
+                        "Item not found with id " + itemId + " in restaurant " + restaurantId));
+        items.remove(item);
+        restaurantRepository.save(restaurant);
+    }
+
+    @Override
+    @Transactional
+    public ItemResponseDto updateRating(Long restaurantId, 
+                                        Long itemId, 
+                                        ItemRequestDto itemRequestDto) {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        Item item = findItemInRestaurant(restaurant, itemId);
+        item.setItemRating(itemRequestDto.getItemRating());
+        restaurantRepository.save(restaurant);
+        return toItemResponse(item);
+    }
+
+    @Override
+    public RestaurantInfoResponseDto updateItemsToRestaurant(Long itemId,
+        Long restaurantId, 
+        ItemRequestDto itemRequestDtos) 
+    {
+        Restaurant restaurant = findRestaurantById(restaurantId);
+        Item item = findItemInRestaurant(restaurant, itemId);
+        applyUpdates(item, itemRequestDtos);
+        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
+        return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
+    }
+
+    private Item findItemInRestaurant(Restaurant restaurant, Long itemId) {
+        List<Item> items = restaurant.getItem();
+        if (items == null) {
+            throw itemNotFound(restaurant.getRestaurantId(), itemId);
+        }
+
+        return items.stream()
+                .filter(existingItem -> existingItem.getItemId() == itemId)
+                .findFirst()
+                .orElseThrow(() -> itemNotFound(restaurant.getRestaurantId(), itemId));
+    }
+
+    private ItemNotFoundException itemNotFound(long restaurantId, Long itemId) {
+        return new ItemNotFoundException(
+                "Item not found with id " + itemId + " in restaurant " + restaurantId);
+    }
+
+    private void applyUpdates(Item item, ItemRequestDto request) {
+        if (request.getItemName() != null) {
+            item.setItemName(request.getItemName());
+        }
+        if (request.getItemCategory() != null) {
+            item.setItemCategory(request.getItemCategory());
+        }
+        if (request.getItemPrice() != null) {
+            item.setItemPrice(request.getItemPrice());
+        }
+        if (request.getItemType() != null) {
+            item.setItemType(request.getItemType());
+        }
+        if (request.getItemRating() != null) {
+            item.setItemRating(request.getItemRating());
+        }
+    }
+
+    private ItemResponseDto toItemResponse(Item item) {
+        ItemResponseDto responseDto = new ItemResponseDto();
+        BeanUtils.copyProperties(item, responseDto);
+        return responseDto;
+    }
+
+
     private Restaurant findRestaurantById(Long restaurantId) {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(
                         "Restaurant not found with id " + restaurantId));
     }
+
+   
 }

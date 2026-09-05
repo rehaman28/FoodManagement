@@ -45,7 +45,7 @@ public class Restaurant {
      * CascadeType.ALL also persists the submitted items when the restaurant is
      * persisted.
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "restaurant_id")
     private List<Item> item;
 
