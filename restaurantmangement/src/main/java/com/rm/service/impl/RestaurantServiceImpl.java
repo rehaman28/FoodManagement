@@ -2,7 +2,6 @@ package com.rm.service.impl;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.rm.Exception.RestaurantNotFoundException;

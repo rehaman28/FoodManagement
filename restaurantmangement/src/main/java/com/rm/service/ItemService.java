@@ -14,7 +14,7 @@ public interface ItemService {
 
     void deleteItemById(Long restaurantId, Long itemId);
 
-    ItemResponseDto updateItems(Long itemId, Long restaurantId, ItemRequestDto itemRequestDtos);
+    ItemResponseDto updateItem(Long itemId, Long restaurantId, ItemRequestDto itemRequestDtos);
 
     List<ItemResponseDto> getRestaurantItems(Long restaurantId);
 

@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemRequestDtos != null) {
             for (ItemRequestDto itemRequestDto : itemRequestDtos) {
                 Item item = new Item();
-                BeanUtils.copyProperties(itemRequestDto, item);
+                copyItemProperties(itemRequestDto, item);
                 items.add(item);
             }
         }
@@ -70,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemResponseDto updateItems(Long itemId,
+    public ItemResponseDto updateItem(Long itemId,
         Long restaurantId, 
         ItemRequestDto itemRequestDtos) 
     {
@@ -105,15 +105,24 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Item item = new Item();
-        BeanUtils.copyProperties(itemRequestDtos, item);
+        copyItemProperties(itemRequestDtos, item);
         items.add(item);
-        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
-        Item savedItem = findItemInRestaurant(updatedRestaurant, item.getItemId());
-        return toItemResponse(savedItem);
+        restaurantRepository.saveAndFlush(restaurant);
+        return toItemResponse(item);
     }
 
 
     //Helper Methods starts
+    private void copyItemProperties(ItemRequestDto source, Item target) {
+        BeanUtils.copyProperties(source, target, "itemPrice", "itemRating");
+        if (source.getItemPrice() != null) {
+            target.setItemPrice(source.getItemPrice());
+        }
+        if (source.getItemRating() != null) {
+            target.setItemRating(source.getItemRating());
+        }
+    }
+
     private Item findItemInRestaurant(Restaurant restaurant, Long itemId) {
         List<Item> items = restaurant.getItem();
         if (items == null) {

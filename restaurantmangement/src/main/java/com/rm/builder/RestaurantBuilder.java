@@ -19,6 +19,7 @@ public class RestaurantBuilder {
         return Restaurant.builder()
         .restaurantName(requestDto.getRestaurantName())
         .restaurantPhoneNumber(requestDto.getPhoneNumber())
+        .restaurantRating(requestDto.getRating() == null ? 0.0 : requestDto.getRating())
         .restaurantAddress(buildAddressFromAddressDto(requestDto.getAddressRequestDto()))
         .item(buildItemFromItemRequestDto(requestDto.getItemRequestDto()))
         .build();
@@ -28,10 +29,20 @@ public class RestaurantBuilder {
        List<Item> listedItems= new ArrayList<>();
        for (ItemRequestDto itemRequestDtos : itemRequestDto) {
         Item item =new Item();
-        BeanUtils.copyProperties(itemRequestDtos, item); 
+        copyItemProperties(itemRequestDtos, item);
         listedItems.add(item);
        }
        return listedItems;
+    }
+
+    private static void copyItemProperties(ItemRequestDto source, Item target) {
+        BeanUtils.copyProperties(source, target, "itemPrice", "itemRating");
+        if (source.getItemPrice() != null) {
+            target.setItemPrice(source.getItemPrice());
+        }
+        if (source.getItemRating() != null) {
+            target.setItemRating(source.getItemRating());
+        }
     }
 
     private static Address buildAddressFromAddressDto(AddressRequestDto addressRequestDto){

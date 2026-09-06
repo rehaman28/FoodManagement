@@ -32,14 +32,16 @@ public class ItemController {
     // Fetch an item belonging to a specific restaurant.
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemResponseDto> getItemByRestaurantIdAndItemId(
-            @PathVariable Long restaurantId, @PathVariable Long itemId) {
+            @PathVariable(name = "restaurantId") Long restaurantId,
+            @PathVariable(name = "itemId") Long itemId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemService.getItemByRestaurantIdAndItemId(restaurantId, itemId));
     }
 
     //Get all Items of restaurant
     @GetMapping
-    public ResponseEntity<List<ItemResponseDto>>getAllRestaurantItems(@PathVariable Long restaurantId) {
+        public ResponseEntity<List<ItemResponseDto>>getItemsByRestaurant(
+            @PathVariable(name = "restaurantId") Long restaurantId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemService.getRestaurantItems(restaurantId));
     }
@@ -48,14 +50,17 @@ public class ItemController {
     // Add items to a restaurant; existing items are preserved for bulk updates
     @PostMapping("/bulk")
     public ResponseEntity<RestaurantInfoResponseDto> addItems(
-            @PathVariable Long restaurantId, @RequestBody List<ItemRequestDto> itemRequestDtos) {
+            @PathVariable(name = "restaurantId") Long restaurantId,
+            @RequestBody List<ItemRequestDto> itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(itemService.addItems(restaurantId, itemRequestDtos));
     }
-    //single item updates
+
+    // Add a single item to a restaurant.
     @PostMapping
     public ResponseEntity<ItemResponseDto> addItemToRestaurant(
-            @PathVariable Long restaurantId, @RequestBody ItemRequestDto itemRequestDtos) {
+            @PathVariable(name = "restaurantId") Long restaurantId,
+            @RequestBody ItemRequestDto itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(itemService.addItem(restaurantId, itemRequestDtos));
     }
@@ -63,17 +68,19 @@ public class ItemController {
     //Delete Item by Item Id 
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> deleteItemById(
-            @PathVariable Long restaurantId, @PathVariable Long itemId) {
+            @PathVariable(name = "restaurantId") Long restaurantId,
+            @PathVariable(name = "itemId") Long itemId) {
         itemService.deleteItemById(restaurantId, itemId);
         return ResponseEntity.noContent().build();
     }
 
     // Update item details, including the optional rating.
     @PatchMapping("/{itemId}")
-    public ResponseEntity<ItemResponseDto> updateItems(
-            @PathVariable Long itemId,
-            @PathVariable Long restaurantId, @RequestBody ItemRequestDto itemRequestDtos) {
+    public ResponseEntity<ItemResponseDto> updateItem(
+            @PathVariable(name = "itemId") Long itemId,
+            @PathVariable(name = "restaurantId") Long restaurantId,
+            @RequestBody ItemRequestDto itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(itemService.updateItems(itemId,restaurantId, itemRequestDtos));
+                .body(itemService.updateItem(itemId,restaurantId, itemRequestDtos));
     }
 }
