@@ -8,41 +8,58 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import jakarta.servlet.http.HttpServletRequest;
+
+@RestControllerAdvice 
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RestaurantNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleRestaurantNotFoundException(RestaurantNotFoundException ex) {
-        Map<String, Object> body = Map.of(
-            "timestamp", LocalDateTime.now().toString(),
-            "status", HttpStatus.NOT_FOUND.value(),
-            "error", "Not Found",
-            "message", ex.getMessage()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    public ResponseEntity<ErrorResponseDto> handleRestaurantNotFoundException(
+            RestaurantNotFoundException ex,
+            HttpServletRequest httpServletRequest) {
+
+        ErrorResponseDto response = ErrorResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Restaurant Not Found")
+                .message(ex.getMessage())
+                .path(httpServletRequest.getRequestURI())
+                .build();
+        
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleItemNotFoundException(ItemNotFoundException ex) {
-        Map<String, Object> body = Map.of(
-                "timestamp", LocalDateTime.now().toString(),
-                "status", HttpStatus.NOT_FOUND.value(),
-                "error", "Not Found",
-                "message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    public ResponseEntity<ErrorResponseDto> handleItemNotFoundException(ItemNotFoundException ex,
+        HttpServletRequest httpServletRequest) {
+            
+        ErrorResponseDto response = ErrorResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Item Not Found")
+                .message(ex.getMessage())
+                .path(httpServletRequest.getRequestURI())
+                .build();
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-        Map<String, Object> body = Map.of(
-                "timestamp", LocalDateTime.now().toString(),
-                "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "error", "Internal Server Error",
-                "message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex,
+        HttpServletRequest request) {
+
+        ErrorResponseDto response = ErrorResponseDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Internal Server Error")
+                .message("An unexpected error occurred")
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -70,6 +87,19 @@ public class GlobalExceptionHandler {
             .status(HttpStatus.BAD_REQUEST)
             .body(body);
 }
+
+    
+    //@ExceptionHandler(RestaurantNotFoundException.class)
+    // public ResponseEntity<Map<String, Object>> handleRestaurantNotFoundException(
+    //         RestaurantNotFoundException ex){
+    // Generic Response
+        // Map<String, Object> body = Map.of(
+        // "timestamp", LocalDateTime.now().toString(),
+        // "status", HttpStatus.NOT_FOUND.value(),
+        // "error", "Not Found",
+        // "message", ex.getMessage()
+        // );
+    //  }  
     
     // @ExceptionHandler(OrderNotFoundException.class)
     // public ResponseEntity<Map<String, Object>> handleOrderNotFoundException(OrderNotFoundException ex) {
@@ -79,6 +109,26 @@ public class GlobalExceptionHandler {
     //             "error", "Not Found Error",
     //             "message", ex.getMessage());
     //     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    // }
+
+    // @ExceptionHandler(ItemNotFoundException.class)
+    // public ResponseEntity<Map<String, Object>> handleItemNotFoundException(ItemNotFoundException ex) {
+    //     Map<String, Object> body = Map.of(
+    //             "timestamp", LocalDateTime.now().toString(),
+    //             "status", HttpStatus.NOT_FOUND.value(),
+    //             "error", "Not Found",
+    //             "message", ex.getMessage());
+    //     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    // }
+
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+    //     Map<String, Object> body = Map.of(
+    //             "timestamp", LocalDateTime.now().toString(),
+    //             "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+    //             "error", "Internal Server Error",
+    //             "message", ex.getMessage());
+    //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     // }
 
 }
