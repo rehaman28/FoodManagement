@@ -3,6 +3,7 @@ package com.om.dto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.om.model.OrderStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,11 +23,11 @@ import lombok.NoArgsConstructor;
 })
 public class OrderResponseDto {
 
-    private long orderId;
+    private Long orderId;
     // private long userId;
     private String restaurantName;
     private double orderPrice;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     /*
      * Response DTO should contain response DTOs, not entities.
      * This ensures the API contract is independent of database structure and

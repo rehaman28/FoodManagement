@@ -31,4 +31,13 @@ public class OrderResponseBuilder {
         }
         return orderResponseDtosList;
     }
+
+    public static OrderResponseDto buildOrderResponseDtoFromOrder(Order order) {
+        return OrderResponseDto.builder()
+                .orderId(order.getOrderId())
+                .orderStatus(order.getOrderStatus())
+                .orderPrice(order.getOrderPrice())
+                .orderItems(buildOrderItemsResponseFromOrder(order.getOrderItems()))
+                .build();
+    }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import com.om.dto.OrderItemRequestDto;
 import com.om.dto.OrderRequestDto;
 import com.om.model.Order;
+import com.om.model.OrderStatus;
 import com.om.model.OrderItem;
 
 public class OrderRequestBuilder {
@@ -13,7 +14,7 @@ public class OrderRequestBuilder {
     public static Order buildOrderResponseFromOrderRequestDto(OrderRequestDto orderRequest) {
        return Order.builder()
         .userId(orderRequest.getUserId())
-        .orderStatus("Ordered")
+        .orderStatus(OrderStatus.Ordered)
         .restaurantId(orderRequest.getRestaurantId())
         .orderItems(buildOrderItemsFromOrderRequestDto(orderRequest.getOrderItemsRequest()))
         .build();
