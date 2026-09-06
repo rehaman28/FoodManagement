@@ -7,7 +7,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.rm.dto.RequestDto.AddressRequestDto;
 import com.rm.dto.RequestDto.ItemRequestDto;
-import com.rm.dto.RequestDto.RestaurantRequestDto;
+import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
 import com.rm.model.Address;
 import com.rm.model.Item;
@@ -15,7 +15,7 @@ import com.rm.model.Restaurant;
 
 public class RestaurantBuilder {
 
-    public static Restaurant buildRestaurantFromRestaurantDto(RestaurantRequestDto requestDto){
+    public static Restaurant buildRestaurantFromRestaurantDto(RestaurantCreateRequestDto requestDto){
         return Restaurant.builder()
         .restaurantName(requestDto.getRestaurantName())
         .restaurantPhoneNumber(requestDto.getPhoneNumber())

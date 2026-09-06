@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rm.dto.RequestDto.RestaurantRequestDto;
+import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
+import com.rm.dto.RequestDto.RestaurantUpdateRequestDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
 import com.rm.service.RestaurantService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -31,7 +34,7 @@ public class RestaurantController {
 
     // Add restaurant
     @PostMapping
-    public ResponseEntity<RestaurantResponseDto> addRestaurant(@RequestBody RestaurantRequestDto requestDto) {
+    public ResponseEntity<RestaurantResponseDto> addRestaurant(@Valid @RequestBody RestaurantCreateRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(restaurantService.addRestaurant(requestDto));
     }
@@ -60,7 +63,7 @@ public class RestaurantController {
     // through request
     @PatchMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDto> updateRestaurant(@PathVariable(name = "restaurantId") Long id,
-            @RequestBody RestaurantRequestDto requestDto) {
+            @Valid @RequestBody RestaurantUpdateRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(restaurantService.updateRestaurant(id, requestDto));
     }
@@ -75,7 +78,7 @@ public class RestaurantController {
     // update restaurant rating
     @PutMapping("/{restaurantId}/rating")
     public ResponseEntity<RestaurantResponseDto> updateRestaurantRating(@PathVariable(name = "restaurantId") Long id,
-            @RequestBody RestaurantRequestDto requestDto) {
+            @Valid @RequestBody RestaurantUpdateRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(restaurantService.updateRestaurantRating(id, requestDto.getRating()));
     }

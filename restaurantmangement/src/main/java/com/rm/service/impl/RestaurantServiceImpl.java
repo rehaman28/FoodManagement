@@ -9,7 +9,8 @@ import com.rm.builder.RestaurantBuilder;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
 import com.rm.dto.RequestDto.AddressRequestDto;
-import com.rm.dto.RequestDto.RestaurantRequestDto;
+import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
+import com.rm.dto.RequestDto.RestaurantUpdateRequestDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
 import com.rm.model.Address;
@@ -28,7 +29,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public RestaurantResponseDto addRestaurant(RestaurantRequestDto requestDto) {
+    public RestaurantResponseDto addRestaurant(RestaurantCreateRequestDto requestDto) {
         Restaurant restaurant = RestaurantBuilder.buildRestaurantFromRestaurantDto(requestDto);
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
         return new RestaurantResponseDto(savedRestaurant.getRestaurantId(),savedRestaurant.getRestaurantName());
@@ -58,7 +59,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public RestaurantResponseDto updateRestaurant(Long id,RestaurantRequestDto requestDto ) 
+    public RestaurantResponseDto updateRestaurant(Long id,RestaurantUpdateRequestDto requestDto )
     {
         Restaurant restaurant = findRestaurantById(id);
 
@@ -84,7 +85,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(updatedRestaurant);
     }
 
-    private void updateRestaurantFields(Restaurant restaurant, RestaurantRequestDto requestDto) {
+    private void updateRestaurantFields(Restaurant restaurant, RestaurantUpdateRequestDto requestDto) {
         if (requestDto.getRestaurantName() != null) {
             restaurant.setRestaurantName(requestDto.getRestaurantName());
         }

@@ -18,6 +18,8 @@ import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.service.ItemService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/restaurants/{restaurantId}/items")
@@ -60,7 +62,7 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<ItemResponseDto> addItemToRestaurant(
             @PathVariable(name = "restaurantId") Long restaurantId,
-            @RequestBody ItemRequestDto itemRequestDtos) {
+            @Valid @RequestBody ItemRequestDto itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(itemService.addItem(restaurantId, itemRequestDtos));
     }
@@ -79,7 +81,7 @@ public class ItemController {
     public ResponseEntity<ItemResponseDto> updateItem(
             @PathVariable(name = "itemId") Long itemId,
             @PathVariable(name = "restaurantId") Long restaurantId,
-            @RequestBody ItemRequestDto itemRequestDtos) {
+            @Valid @RequestBody ItemRequestDto itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemService.updateItem(itemId,restaurantId, itemRequestDtos));
     }
