@@ -1,6 +1,7 @@
 package com.rm.Exception;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,4 +20,5 @@ public class ErrorResponseDto {
     private String message;
     private String path;
     
+    private Map<String, String> validationErrors;
 }
