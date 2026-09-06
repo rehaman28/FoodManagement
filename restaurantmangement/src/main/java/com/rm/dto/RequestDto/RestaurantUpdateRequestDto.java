@@ -1,10 +1,8 @@
 package com.rm.dto.RequestDto;
 
-import java.util.List;
-
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,8 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RestaurantUpdateRequestDto {
 
-    @NotBlank
-    @Size(min = 3,max = 50)
+    @Size(min = 3, max = 50)
     private String restaurantName;
 
     @Pattern(
@@ -25,11 +22,11 @@ public class RestaurantUpdateRequestDto {
         message = "Phone Number must contain 10 digits"
     )
     private String phoneNumber;
-    
+
     @DecimalMin(value = "0.0")
     @DecimalMax(value = "5.0")
     private Double rating;
-    private AddressRequestDto addressRequestDto;
-    private List<ItemRequestDto> itemRequestDto;
 
+    @Valid
+    private AddressRequestDto addressRequestDto;
 }
