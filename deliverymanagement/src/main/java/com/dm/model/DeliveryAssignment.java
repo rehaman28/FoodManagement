@@ -1,7 +1,9 @@
 package com.dm.model;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,6 +25,7 @@ public class DeliveryAssignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long deliveryAssignmentId;
 
+    @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus;
     
     private long orderId;
@@ -30,7 +33,7 @@ public class DeliveryAssignment {
     // private long deliveryAgentId;
     // private LocalTime expectedDeliverytime;
     
-    private LocalTime assignmentDate;
+    private LocalDateTime assignmentDate;
 
     @ManyToOne
     @JoinColumn(name = "delivery_person_id", nullable = false)

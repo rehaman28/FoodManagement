@@ -1,8 +1,9 @@
 package com.dm.dto;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
-import com.dm.model.DeliveryPerson;
+import com.dm.model.DeliveryStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,15 +17,17 @@ public class DeliveryAssignmentResponseDto {
 
     private long deliveryAssignmentId;
 
-    private String deliveryStatus;
+    private DeliveryStatus deliveryStatus;
     
     private long orderId;
     
     // private long deliveryAgentId;
     // private LocalTime expectedDeliverytime;
     
-    private LocalTime assignmentDate;
+    private LocalDateTime assignmentDate;
 
-    private DeliveryPerson deliveryPerson;
+    private Long deliveryAgentId;
+
+    private String deliveryAgentName;
 
 }

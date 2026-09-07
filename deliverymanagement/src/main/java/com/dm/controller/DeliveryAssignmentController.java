@@ -54,7 +54,7 @@ public class DeliveryAssignmentController {
                 .getAssignmentsByDeliveryPerson(deliveryAgentId);
     }
 
-    @PatchMapping("{deliveryAssignmentId}/status")
+    @PatchMapping("/{deliveryAssignmentId}/status")
     public ResponseEntity<DeliveryAssignmentResponseDto> updateOrderStatus(
             @PathVariable (name = "deliveryAssignmentId") Long deliveryAssignmentId,
             @RequestBody DeliveryStatusRequestDto orderStatus) {

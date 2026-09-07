@@ -1,7 +1,8 @@
 package com.dm.service;
 
 import com.dm.dao.DeliveryPersonRepository;
-import java.time.LocalTime;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -83,20 +84,19 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
     private DeliveryAssignmentResponseDto buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(DeliveryAssignment savedDeliveryAssignment) {
         return  new  DeliveryAssignmentResponseDto(
             savedDeliveryAssignment.getDeliveryAssignmentId(),
-            savedDeliveryAssignment.getDeliveryStatus().name(),
+            savedDeliveryAssignment.getDeliveryStatus(),
             savedDeliveryAssignment.getOrderId(),
             savedDeliveryAssignment.getAssignmentDate(),
-            savedDeliveryAssignment.getDeliveryPerson()
+            savedDeliveryAssignment.getDeliveryPerson().getDeliveryAgentId(),
+            savedDeliveryAssignment.getDeliveryPerson().getDeliveryAgentName()
         );
     }
 
     private DeliveryAssignment buidlDeliveryAssignmentFromRequest(DeliveryAssignmentRequestDto request){
         DeliveryAssignment deliveryAssignment = new  DeliveryAssignment();
-        deliveryAssignment.setAssignmentDate(LocalTime.now());
-        deliveryAssignment.setDeliveryAssignmentId(request.getDeliveryAssignmentId());
-        deliveryAssignment.setDeliveryStatus(DeliveryStatus.Accepted);
+        deliveryAssignment.setAssignmentDate(LocalDateTime.now());
+        deliveryAssignment.setDeliveryStatus(DeliveryStatus.ACCEPTED);
         deliveryAssignment.setOrderId(request.getOrderId());
-        deliveryAssignment.setDeliveryPerson(request.getDeliveryPerson());
         return  deliveryAssignment;
 
     }
