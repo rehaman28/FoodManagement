@@ -108,6 +108,8 @@ public class OrderServiceImpl implements OrderService{
         return orderResponseDto;
     }
 
+
+    //RestTemplate for Inter-service Communications
     private String fetchRestaurantNameFromId(long restaurantId){
     return restTemplate.getForObject("http://localhost:8001/restaurants/" + restaurantId + "/name", String.class);
     }
@@ -118,6 +120,7 @@ public class OrderServiceImpl implements OrderService{
        return restTemplate.getForObject(url,ItemResponseDto.class,restaurantId,itemId);
     }
 
+    //Helper Method to calculate the order price
     private double calculateOrderPrice(OrderRequestDto orderRequestDto){
         double totalPrice =0;
         for (OrderItemRequestDto orderItem : orderRequestDto.getOrderItemsRequest()) {

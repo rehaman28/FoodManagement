@@ -14,6 +14,8 @@ import com.om.dto.OrderResponseDto;
 import com.om.model.OrderStatus;
 import com.om.service.OrderService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +36,7 @@ public class OrderController {
 
        
     @PostMapping("/placeorder")    
-    public ResponseEntity<OrderResponseDto>placeOrder(@RequestBody OrderRequestDto orderRequest)
+    public ResponseEntity<OrderResponseDto>placeOrder(@Valid @RequestBody OrderRequestDto orderRequest)
     {
         OrderResponseDto placedOrder = orderService.placeorder(orderRequest);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(placedOrder);
