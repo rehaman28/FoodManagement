@@ -4,9 +4,12 @@ package com.om.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.om.Exception.ItemNotFoundException;
 import com.om.Exception.OrderNotFoundException;
+import com.om.Exception.RestaurantNotFoundException;
 import com.om.builder.OrderRequestBuilder;
 import com.om.builder.OrderResponseBuilder;
 import com.om.controller.OrderStatusRequestDto;
@@ -32,13 +35,23 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderResponseDto placeorder(OrderRequestDto orderRequest) {
+        String restaurantName;
+        try {
+            restaurantName = fetchRestaurantNameFromId(orderRequest.getRestaurantId());
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new RestaurantNotFoundException("Restaurant was not found with Id: "
+                    + orderRequest.getRestaurantId());
+        }
+
         double totalPrice = calculateOrderPrice(orderRequest);
         Order order = OrderRequestBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
         order.setOrderPrice(totalPrice);
         Order savedOrder =orderRepository.save(order);
         OrderResponseDto orderResponseDto = OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder,totalPrice);
-        String restauratName = fetchRestaurantNameFromId(savedOrder.getRestaurantId());
-        orderResponseDto.setRestaurantName(restauratName);
+        if (!restaurantName.isBlank()) {
+            orderResponseDto.setRestaurantName(restaurantName);
+        }
+
         return orderResponseDto;
 
     } 
@@ -124,11 +137,16 @@ public class OrderServiceImpl implements OrderService{
     private double calculateOrderPrice(OrderRequestDto orderRequestDto){
         double totalPrice =0;
         for (OrderItemRequestDto orderItem : orderRequestDto.getOrderItemsRequest()) {
-            ItemResponseDto itemResponseDto = fetchItemsFromRestaurantIdAndItemId(orderRequestDto.getRestaurantId(), orderItem.getItemId());
-            double itemPrice = itemResponseDto.getItemPrice();
-            long quantity = orderItem.getQuantity();
-            double itemTotal = itemPrice * quantity;
-            totalPrice = totalPrice+itemTotal;            
+            try {
+                ItemResponseDto itemResponseDto = fetchItemsFromRestaurantIdAndItemId(orderRequestDto.getRestaurantId(), orderItem.getItemId());
+                double itemPrice = itemResponseDto.getItemPrice();
+                long quantity = orderItem.getQuantity();
+                double itemTotal = itemPrice * quantity;
+                totalPrice = totalPrice+itemTotal;   
+                
+            } catch (HttpClientErrorException.NotFound ex) {
+                throw new  ItemNotFoundException("Item id "+orderItem.getItemId()+" not found in Restaurant "+orderRequestDto.getRestaurantId());
+            }                     
         }
         return totalPrice;
     }       

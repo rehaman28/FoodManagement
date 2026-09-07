@@ -44,6 +44,19 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
+        @ExceptionHandler(ItemNotFoundException.class)
+        public ResponseEntity<ErrorResponseDto> handleItemNotFoundException(ItemNotFoundException ex,
+                        HttpServletRequest httpServletRequest) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.NOT_FOUND,
+                                "Item Not Found",
+                                ex.getMessage(),
+                                httpServletRequest.getRequestURI());
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
         @ExceptionHandler(Exception.class)
         public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex,
                         HttpServletRequest request) {
