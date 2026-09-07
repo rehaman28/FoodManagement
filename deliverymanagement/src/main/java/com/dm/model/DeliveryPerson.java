@@ -1,4 +1,4 @@
-package com.dm.deliverymanagement.model;
+package com.dm.model;
 
 import java.util.List;
 

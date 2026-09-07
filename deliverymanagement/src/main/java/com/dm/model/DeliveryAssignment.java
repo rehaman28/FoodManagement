@@ -1,4 +1,4 @@
-package com.dm.deliverymanagement.model;
+package com.dm.model;
 
 import java.time.LocalTime;
 import jakarta.persistence.Entity;
@@ -22,13 +22,17 @@ public class DeliveryAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long deliveryAssignmentId;
-    private String deliveryStatus;
+
+    private DeliveryStatus deliveryStatus;
+    
     private long orderId;
+    
     // private long deliveryAgentId;
     // private LocalTime expectedDeliverytime;
+    
     private LocalTime assignmentDate;
- 
+
     @ManyToOne
-    @JoinColumn(name="delivery_person_id",nullable = false)
+    @JoinColumn(name = "delivery_person_id", nullable = false)
     private DeliveryPerson deliveryPerson;
 }
