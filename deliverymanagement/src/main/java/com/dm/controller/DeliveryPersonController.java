@@ -54,5 +54,4 @@ public class DeliveryPersonController {
         return  deliveryPersonService.updateDeliveryPersonDetails(deliveryAgentId,requestDto);
     }
 
-    
 }

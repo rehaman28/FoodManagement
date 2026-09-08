@@ -1,9 +1,9 @@
 package com.dm.model;
 
 public enum DeliveryStatus {
-
-    ACCEPTED,
+    
     ASSIGNED,
+    ACCEPTED,
     COLLECTED,
     IN_TRANSIT,
     DELIVERED,

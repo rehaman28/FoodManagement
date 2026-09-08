@@ -1,6 +1,5 @@
 package com.dm.service;
 
-import com.dm.dao.DeliveryPersonRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,21 +9,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.dm.Exception.DeliverAssignmentNotFoundException;
+import com.dm.Exception.DeliveryPersonNotFoundException;
 import com.dm.dao.DeliveryAssignmentRepository;
+import com.dm.dao.DeliveryPersonRepository;
 import com.dm.dto.DeliveryAssignmentRequestDto;
 import com.dm.dto.DeliveryAssignmentResponseDto;
 import com.dm.dto.DeliveryStatusRequestDto;
 import com.dm.model.DeliveryAssignment;
+import com.dm.model.DeliveryPerson;
 import com.dm.model.DeliveryStatus;
 
 @Service 
 public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService {
 
     private  final DeliveryAssignmentRepository deliveryAssignmentRepository;
+    private final DeliveryPersonRepository deliveryPersonRepository;
     
 
-    public DeliveryAssignmentServiceImpl(DeliveryAssignmentRepository deliveryAssignmentRepository, DeliveryPersonRepository deliveryPersonRepository) {
+    public DeliveryAssignmentServiceImpl(DeliveryAssignmentRepository deliveryAssignmentRepository,
+            DeliveryPersonRepository deliveryPersonRepository) {
         this.deliveryAssignmentRepository = deliveryAssignmentRepository;
+        this.deliveryPersonRepository = deliveryPersonRepository;
     }
 
 
@@ -93,10 +98,15 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
     }
 
     private DeliveryAssignment buidlDeliveryAssignmentFromRequest(DeliveryAssignmentRequestDto request){
+        DeliveryPerson deliveryPerson = deliveryPersonRepository.findById(request.getDeliveryAgentId())
+                .orElseThrow(() -> new DeliveryPersonNotFoundException(
+                        "Delivery Agent not Found with Id: " + request.getDeliveryAgentId()));
+
         DeliveryAssignment deliveryAssignment = new  DeliveryAssignment();
         deliveryAssignment.setAssignmentDate(LocalDateTime.now());
-        deliveryAssignment.setDeliveryStatus(DeliveryStatus.ACCEPTED);
+        deliveryAssignment.setDeliveryStatus(DeliveryStatus.ASSIGNED);
         deliveryAssignment.setOrderId(request.getOrderId());
+        deliveryAssignment.setDeliveryPerson(deliveryPerson);
         return  deliveryAssignment;
 
     }

@@ -8,6 +8,8 @@ import com.dm.dto.DeliveryAssignmentResponseDto;
 import com.dm.dto.DeliveryStatusRequestDto;
 import com.dm.service.DeliveryAssignmentService;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class DeliveryAssignmentController {
     }
 
     @PostMapping()
-    public ResponseEntity<DeliveryAssignmentResponseDto> postDeliveryAssignments(@RequestBody DeliveryAssignmentRequestDto request) {
+    public ResponseEntity<DeliveryAssignmentResponseDto> postDeliveryAssignments(@Valid @RequestBody DeliveryAssignmentRequestDto request) {
         
         return deliveryAssignmentService.postDeliveryAssignments(request);
     }
@@ -48,7 +50,7 @@ public class DeliveryAssignmentController {
     @GetMapping("/delivery-person/{deliveryAgentId}/assignments")
     public ResponseEntity<List<DeliveryAssignmentResponseDto>>
     getAssignmentsByDeliveryPerson(
-            @PathVariable Long deliveryAgentId) {
+            @PathVariable(name = "deliveryAgentId") Long deliveryAgentId) {
 
         return deliveryAssignmentService
                 .getAssignmentsByDeliveryPerson(deliveryAgentId);
@@ -57,7 +59,7 @@ public class DeliveryAssignmentController {
     @PatchMapping("/{deliveryAssignmentId}/status")
     public ResponseEntity<DeliveryAssignmentResponseDto> updateOrderStatus(
             @PathVariable (name = "deliveryAssignmentId") Long deliveryAssignmentId,
-            @RequestBody DeliveryStatusRequestDto orderStatus) {
+            @Valid @RequestBody DeliveryStatusRequestDto orderStatus) {
         return deliveryAssignmentService.updateDeliveryStatus(deliveryAssignmentId, orderStatus);
     }
 

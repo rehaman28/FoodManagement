@@ -25,11 +25,11 @@ public class DeliveryPerson {
     private long deliveryAgentId;
 
     private String deliveryAgentName;
-    private String delieryAgentAadhar;
+    private String deliveryAgentAadhar;
     private String deliveryAgentPhone; 
     private String deliveryAgentEmail;
-    private boolean isAgentAvailable;
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "delivery_Person")
+    private boolean agentAvailable;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "deliveryPerson")
     private List<DeliveryAssignment> deliveryAssignments;
     
 }

@@ -1,6 +1,8 @@
 package com.dm.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,29 +11,33 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@JsonPropertyOrder({
+    "deliveryAgentId",
+    "deliveryAgentName",
+    "deliveryAgentAadhar",
+    "deliveryAgentPhone",
+    "deliveryAgentEmail",
+    "isAgentAvailable"
+})
 public class DeliveryPersonResponeDto {
 
     private long deliveryAgentId;
     private String deliveryAgentName;
-    private String delieryAgentAadhar;
+    private String deliveryAgentAadhar;
     private String deliveryAgentPhone;
     private String deliveryAgentEmail;
-    private boolean isAgentAvailable;
 
-    public DeliveryPersonResponeDto(long deliveryAgentId, String deliveryAgentName, String deliveryAgentPhone,
-            boolean isAgentAvailable) {
+    @JsonProperty("isAgentAvailable")
+    private boolean agentAvailable;
+
+    public DeliveryPersonResponeDto(long deliveryAgentId, String deliveryAgentName,
+            String deliveryAgentAadhar, String deliveryAgentPhone,
+            String deliveryAgentEmail, boolean agentAvailable) {
         this.deliveryAgentId = deliveryAgentId;
         this.deliveryAgentName = deliveryAgentName;
+        this.deliveryAgentAadhar = deliveryAgentAadhar;
         this.deliveryAgentPhone = deliveryAgentPhone;
-        this.isAgentAvailable = isAgentAvailable;
+        this.deliveryAgentEmail = deliveryAgentEmail;
+        this.agentAvailable = agentAvailable;
     }
-
-    public DeliveryPersonResponeDto(long deliveryAgentId, String deliveryAgentName, boolean isAgentAvailable) {
-        this.deliveryAgentId = deliveryAgentId;
-        this.deliveryAgentName = deliveryAgentName;
-        this.isAgentAvailable = isAgentAvailable;
-    }
-    
-
 }
