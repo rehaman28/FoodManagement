@@ -18,8 +18,10 @@ public class DeliveryPersonRequestDto {
     @Size(min = 3,max = 50)
     private String deliveryAgentName;
 
-    @NotBlank
-    @Size(min = 3,max = 16)
+    @Pattern(
+    regexp = "^[2-9][0-9]{11}$",
+    message = "Aadhar must contain 12 digits"
+)
     private String deliveryAgentAadhar;
 
     @Pattern(

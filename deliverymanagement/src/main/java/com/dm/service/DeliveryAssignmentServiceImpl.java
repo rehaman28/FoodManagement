@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.dm.Exception.DeliverAssignmentNotFoundException;
 import com.dm.Exception.DeliveryPersonNotFoundException;
+import com.dm.Exception.InvalidDeliveryStatusTransitionException;
 import com.dm.dao.DeliveryAssignmentRepository;
 import com.dm.dao.DeliveryPersonRepository;
 import com.dm.dto.DeliveryAssignmentRequestDto;
@@ -73,7 +74,21 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
             DeliveryStatusRequestDto status) {
 
             DeliveryAssignment deliveryAssignment = findDeliveryAssignmentById(deliveryAssignmentId);
-        deliveryAssignment.setDeliveryStatus(status.getDeliveryStatus());
+            DeliveryStatus currentStatus = deliveryAssignment.getDeliveryStatus();
+
+            DeliveryStatus requestedStatus =status.getDeliveryStatus();
+
+            if (!deliveryAssignment.getDeliveryPerson().isAgentAvailable()) {
+                throw new DeliverAssignmentNotFoundException("Delivery Agent was not available");
+            } else {
+                if (!DeliveryStatus.isValidTransition(currentStatus, requestedStatus)) {
+
+                    throw new InvalidDeliveryStatusTransitionException(
+                            "Invalid delivery status transition from "
+                                    + currentStatus + " to " + requestedStatus);
+                }
+                deliveryAssignment.setDeliveryStatus(requestedStatus);
+            }
         return  ResponseEntity.status(HttpStatus.OK)
             .body(buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(deliveryAssignmentRepository.save(deliveryAssignment)));
     

@@ -80,6 +80,33 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
+    @ExceptionHandler(InvalidDeliveryStatusTransitionException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidDeliveryStatusTransitionException(
+                InvalidDeliveryStatusTransitionException ex,
+                HttpServletRequest httpServletRequest) {
+
+        ErrorResponseDto response = buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Invalid delivery status transition",
+                ex.getMessage(),
+                httpServletRequest.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(DeliveryAgentNotAvailableException.class)
+    public ResponseEntity<ErrorResponseDto> handleDeliveryAgentNotAvailableException(
+                DeliveryAgentNotAvailableException ex,
+                HttpServletRequest httpServletRequest) {
+
+        ErrorResponseDto response = buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                "Delivery Agent not available",
+                ex.getMessage(),
+                httpServletRequest.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 
     private ErrorResponseDto buildErrorResponse(
             HttpStatus status,
