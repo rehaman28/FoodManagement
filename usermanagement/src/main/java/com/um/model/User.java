@@ -1,4 +1,4 @@
-package com.um.usermanagement.model;
+package com.um.model;
 
 
 import java.util.List;
@@ -30,7 +30,5 @@ public class User {
     private String password;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<UserAddress> userAddressesa;
-
-    private List<Order> orders;
+    private List<UserAddress> userAddresses;
 }

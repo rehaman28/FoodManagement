@@ -1,4 +1,4 @@
-package com.um.usermanagement.model;
+package com.um.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
