@@ -34,7 +34,9 @@ public class User {
     private String email;
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,
+        orphanRemoval =  true
+    )
     @JoinColumn(name = "user_id")
     private List<UserAddress> userAddresses;
 }

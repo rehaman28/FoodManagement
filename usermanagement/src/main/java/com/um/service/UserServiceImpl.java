@@ -12,6 +12,7 @@ import com.um.dto.UpdateUserRequestDto;
 import com.um.dto.UserAddressRequestDto;
 import com.um.dto.UserRequestDto;
 import com.um.dto.UserResponseDto;
+import com.um.exception.DuplicateUserException;
 import com.um.exception.UserNotFoundException;
 import com.um.model.User;
 import com.um.model.UserAddress;
@@ -29,6 +30,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public ResponseEntity<UserResponseDto> addUsers(UserRequestDto userRequestDto) {
+        validateUniqueUserFields(userRequestDto.getEmail(), userRequestDto.getUserPhone());
+
         User user = new  User();
         user.setUserName(userRequestDto.getUserName());
         user.setEmail(userRequestDto.getEmail());
@@ -63,6 +66,12 @@ public class UserServiceImpl implements UserService{
             UpdateUserRequestDto userRequestDto) {
 
         User user = findUserById(userId);
+        validateUniqueUserFields(
+            userRequestDto.getEmail(),
+            userRequestDto.getUserPhone(),
+            user
+        );
+
         if (userRequestDto.getEmail() != null) {
             user.setEmail(userRequestDto.getEmail());
         }
@@ -104,6 +113,28 @@ public class UserServiceImpl implements UserService{
     private User findUserById(Long userId){
         return userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException("User not found by Id"));
+    }
+
+    private void validateUniqueUserFields(String email, String userPhone) {
+        if (email != null && userRepository.existsByEmail(email)) {
+            throw new DuplicateUserException("Email is already registered");
+        }
+        if (userPhone != null && userRepository.existsByUserPhone(userPhone)) {
+            throw new DuplicateUserException("Phone number is already registered");
+        }
+    }
+
+    private void validateUniqueUserFields(String email, String userPhone, User currentUser) {
+        if (email != null
+                && userRepository.existsByEmail(email)
+                && !email.equals(currentUser.getEmail())) {
+            throw new DuplicateUserException("Email is already registered");
+        }
+        if (userPhone != null
+                && userRepository.existsByUserPhone(userPhone)
+                && !userPhone.equals(currentUser.getUserPhone())) {
+            throw new DuplicateUserException("Phone number is already registered");
+        }
     }
 
     private List<UserAddress> toUserAddresses(List<UserAddressRequestDto> addressRequests) {

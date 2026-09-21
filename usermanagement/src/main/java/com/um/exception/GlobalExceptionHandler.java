@@ -33,6 +33,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+        @ExceptionHandler(DuplicateUserException.class)
+        public ResponseEntity<ErrorResponseDto> handleDuplicateUserException(
+                        DuplicateUserException ex,
+                        HttpServletRequest request) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.CONFLICT,
+                                "Duplicate User",
+                                ex.getMessage(),
+                                request.getRequestURI(),
+                                null);
+
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> handleValidationException(
             MethodArgumentNotValidException ex,
@@ -83,7 +98,7 @@ public class GlobalExceptionHandler {
             ErrorResponseDto response = buildErrorResponse(
                             HttpStatus.CONFLICT,
                             "Duplicate Data",
-                            "Email or phone number already exists",
+                            "Database constraint violation",
                             request.getRequestURI(),
                             null);
 
