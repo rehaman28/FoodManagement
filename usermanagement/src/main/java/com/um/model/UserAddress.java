@@ -33,9 +33,10 @@ public class UserAddress {
     @NotBlank 
     private String country;
 
+    @NotBlank(message = "Pincode is required")
     @Pattern(
         regexp = "^\\d{6}$",
-        message = "Pincode must contain 5 digits"
+        message = "Pincode must contain 6 digits"
     )
     private String pincode;
 

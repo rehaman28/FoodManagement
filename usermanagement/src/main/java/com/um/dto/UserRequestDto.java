@@ -23,11 +23,14 @@ public class UserRequestDto {
 
     @NotBlank @Size(min = 3,max = 50)
     private String userName;
+    
+    @NotBlank(message = "Phone number is required")
     @Pattern(
         regexp = "^[6-9]\\d{9}$",
         message = "Phone Number must contain 10 digits"
     )
     private String userPhone;
+    
     @Email @NotBlank 
     private String email;
 

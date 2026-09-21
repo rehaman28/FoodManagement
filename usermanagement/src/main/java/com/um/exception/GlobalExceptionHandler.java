@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,6 +58,39 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidJson(
+                    HttpMessageNotReadableException ex,
+                    HttpServletRequest request) {
+
+            ErrorResponseDto response = buildErrorResponse(
+                            HttpStatus.BAD_REQUEST,
+                            "Invalid Request",
+                            "Malformed or invalid JSON request",
+                            request.getRequestURI(),
+                            null);
+
+            return ResponseEntity
+                            .status(HttpStatus.BAD_REQUEST)
+                            .body(response);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleDataIntegrityViolation(
+                    DataIntegrityViolationException ex,
+                    HttpServletRequest request) {
+
+            ErrorResponseDto response = buildErrorResponse(
+                            HttpStatus.CONFLICT,
+                            "Duplicate Data",
+                            "Email or phone number already exists",
+                            request.getRequestURI(),
+                            null);
+
+            return ResponseEntity
+                            .status(HttpStatus.CONFLICT)
+                            .body(response);
+    }
     
     private ErrorResponseDto buildErrorResponse(
             HttpStatus status,

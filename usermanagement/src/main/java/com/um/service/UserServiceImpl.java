@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.um.dao.UserRepository;
@@ -19,9 +20,11 @@ import com.um.model.UserAddress;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final PasswordEncoder  passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -30,7 +33,7 @@ public class UserServiceImpl implements UserService{
         user.setUserName(userRequestDto.getUserName());
         user.setEmail(userRequestDto.getEmail());
         user.setUserPhone(userRequestDto.getUserPhone());
-        user.setPassword(userRequestDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         user.setUserAddresses(toUserAddresses(userRequestDto.getUserAddresses()));
         User savedUser = userRepository.save(user);
 
@@ -64,7 +67,7 @@ public class UserServiceImpl implements UserService{
             user.setEmail(userRequestDto.getEmail());
         }
         if (userRequestDto.getPassword() != null) {
-            user.setPassword(userRequestDto.getPassword());
+            user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         }
         if (userRequestDto.getUserName() != null) {
             user.setUserName(userRequestDto.getUserName());
