@@ -7,10 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.um.dao.UserRepository;
+import com.um.dto.UpdateUserRequestDto;
+import com.um.dto.UserAddressRequestDto;
 import com.um.dto.UserRequestDto;
 import com.um.dto.UserResponseDto;
 import com.um.exception.UserNotFoundException;
 import com.um.model.User;
+import com.um.model.UserAddress;
 
 @Service 
 public class UserServiceImpl implements UserService{
@@ -28,7 +31,7 @@ public class UserServiceImpl implements UserService{
         user.setEmail(userRequestDto.getEmail());
         user.setUserPhone(userRequestDto.getUserPhone());
         user.setPassword(userRequestDto.getPassword());
-        user.setUserAddresses(userRequestDto.getUserAddresses());
+        user.setUserAddresses(toUserAddresses(userRequestDto.getUserAddresses()));
         User savedUser = userRepository.save(user);
 
         UserResponseDto userResponse = buildUserResponseEntity(savedUser);
@@ -54,7 +57,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public ResponseEntity<UserResponseDto> updateUser(Long userId,
-            UserRequestDto userRequestDto) {
+            UpdateUserRequestDto userRequestDto) {
 
         User user = findUserById(userId);
         if (userRequestDto.getEmail() != null) {
@@ -70,7 +73,7 @@ public class UserServiceImpl implements UserService{
             user.setUserPhone(userRequestDto.getUserPhone());
         }
         if (userRequestDto.getUserAddresses() != null) {
-            user.setUserAddresses(userRequestDto.getUserAddresses());
+            user.setUserAddresses(toUserAddresses(userRequestDto.getUserAddresses()));
         }
 
         User savedUser = userRepository.save(user);
@@ -98,6 +101,21 @@ public class UserServiceImpl implements UserService{
     private User findUserById(Long userId){
         return userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException("User not found by Id"));
+    }
+
+    private List<UserAddress> toUserAddresses(List<UserAddressRequestDto> addressRequests) {
+        return addressRequests.stream()
+            .map(addressRequest -> {
+                UserAddress address = new UserAddress();
+                address.setDoorNumber(addressRequest.getDoorNumber());
+                address.setStreet(addressRequest.getStreet());
+                address.setCity(addressRequest.getCity());
+                address.setDistrict(addressRequest.getDistrict());
+                address.setCountry(addressRequest.getCountry());
+                address.setPincode(addressRequest.getPincode());
+                return address;
+            })
+            .toList();
     }
    
     

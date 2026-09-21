@@ -3,6 +3,7 @@ package com.um.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.um.dto.UpdateUserRequestDto;
 import com.um.dto.UserRequestDto;
 import com.um.dto.UserResponseDto;
 import com.um.service.UserService;
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PatchMapping ("/{Userid}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (name = "Userid" ) Long userId, @Valid @RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (name = "Userid" ) Long userId, @Valid @RequestBody UpdateUserRequestDto userRequestDto) {
         return userService.updateUser(userId,userRequestDto);
     }
 

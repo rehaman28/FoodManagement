@@ -1,28 +1,16 @@
-package com.um.model;
+package com.um.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-@Table(name="user_address")
-@Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserAddress {
+@AllArgsConstructor 
+@NoArgsConstructor 
+public class UserAddressRequestDto {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long addressId;
-
     private String doorNumber;
     @NotBlank 
     private String street;
@@ -38,5 +26,5 @@ public class UserAddress {
         message = "Pincode must contain 5 digits"
     )
     private String pincode;
-
+    
 }

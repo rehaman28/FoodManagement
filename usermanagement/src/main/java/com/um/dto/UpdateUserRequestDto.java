@@ -13,14 +13,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+/**
+ * UpdateUserRequestDto
+ */
 @AllArgsConstructor 
+@Data 
 @NoArgsConstructor 
-public class UserRequestDto {
-
-    // @Positive 
-    // private long userId;
-
+public class UpdateUserRequestDto {
+    
     @NotBlank @Size(min = 3,max = 50)
     private String userName;
     @Pattern(
@@ -38,4 +38,5 @@ public class UserRequestDto {
     @NotEmpty
     @Valid   
     private List<UserAddressRequestDto> userAddresses;
+
 }

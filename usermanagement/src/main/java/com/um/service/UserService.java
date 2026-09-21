@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.um.dto.UpdateUserRequestDto;
 import com.um.dto.UserRequestDto;
 import com.um.dto.UserResponseDto;
 
@@ -16,7 +17,7 @@ public interface UserService {
 
     ResponseEntity<UserResponseDto> getUsersById(Long userId);
 
-    ResponseEntity<UserResponseDto> updateUser(Long userId, UserRequestDto userRequestDto);
+    ResponseEntity<UserResponseDto> updateUser(Long userId, UpdateUserRequestDto userRequestDto);
 
     ResponseEntity<Void> deleteUser(Long userId);
 
