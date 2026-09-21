@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService{
         User savedUser = userRepository.save(user);
 
         UserResponseDto userResponse = buildUserResponseEntity(savedUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
 
     }
 

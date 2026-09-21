@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.dm.Exception.DeliverAssignmentNotFoundException;
+import com.dm.Exception.DeliveryAgentNotAvailableException;
 import com.dm.Exception.DeliveryPersonNotFoundException;
 import com.dm.Exception.InvalidDeliveryStatusTransitionException;
 import com.dm.dao.DeliveryAssignmentRepository;
@@ -79,7 +80,7 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
             DeliveryStatus requestedStatus =status.getDeliveryStatus();
 
             if (!deliveryAssignment.getDeliveryPerson().isAgentAvailable()) {
-                throw new DeliverAssignmentNotFoundException("Delivery Agent was not available");
+                throw new DeliveryAgentNotAvailableException("Delivery Agent was not available");
             } else {
                 if (!DeliveryStatus.isValidTransition(currentStatus, requestedStatus)) {
 

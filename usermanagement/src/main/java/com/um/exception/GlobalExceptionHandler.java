@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponseDto response = buildErrorResponse(
                 HttpStatus.NOT_FOUND,
-                "Restaurant Not Found",
+                "User Not Found",
                 ex.getMessage(),
                 httpServletRequest.getRequestURI(),
                 null);

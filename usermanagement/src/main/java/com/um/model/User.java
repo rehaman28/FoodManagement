@@ -3,7 +3,9 @@ package com.um.model;
 
 import java.util.List;
 
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +27,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
     private String userName;
+    @Column (unique = true,nullable = false)
     private String userPhone;
+    @Column (unique = true,nullable = false)
     private String email;
     private String password;
 

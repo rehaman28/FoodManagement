@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,11 +22,21 @@ public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long addressId;
+
     private String doorNumber;
+    @NotBlank 
     private String street;
+    @NotBlank 
     private String city;
+    @NotBlank 
     private String district;
+    @NotBlank 
     private String country;
+
+    @Pattern(
+        regexp = "^[0-9]\\d{6}$",
+        message = "Phone Number must contain 5 digits"
+    )
     private String pincode;
 
 }

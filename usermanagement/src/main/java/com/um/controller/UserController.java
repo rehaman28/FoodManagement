@@ -7,6 +7,8 @@ import com.um.dto.UserRequestDto;
 import com.um.dto.UserResponseDto;
 import com.um.service.UserService;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserResponseDto> AddUsers(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> AddUsers(@Valid @RequestBody UserRequestDto userRequestDto) {
         return userService.addUsers(userRequestDto);
     }
 
@@ -45,7 +47,7 @@ public class UserController {
     }
 
     @PatchMapping ("/{Userid}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (name = "Userid" ) Long userId, @RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (name = "Userid" ) Long userId, @Valid @RequestBody UserRequestDto userRequestDto) {
         return userService.updateUser(userId,userRequestDto);
     }
 
