@@ -3,6 +3,7 @@ package com.rm.service;
 import java.util.List;
 
 import com.rm.dto.RequestDto.ItemRequestDto;
+import com.rm.dto.RequestDto.ItemUpdateRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 
@@ -14,9 +15,9 @@ public interface ItemService {
 
     void deleteItemById(Long restaurantId, Long itemId);
 
-    ItemResponseDto updateItem(Long itemId, Long restaurantId, ItemRequestDto itemRequestDtos);
+    ItemResponseDto updateItem(Long itemId, Long restaurantId, ItemUpdateRequestDto itemRequestDto);
 
     List<ItemResponseDto> getRestaurantItems(Long restaurantId);
 
-    ItemResponseDto addItem(Long restaurantId, ItemRequestDto itemRequestDtos);
+    ItemResponseDto addItem(Long restaurantId, ItemRequestDto itemRequestDto);
 }

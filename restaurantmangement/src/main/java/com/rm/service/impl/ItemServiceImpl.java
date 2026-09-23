@@ -12,6 +12,7 @@ import com.rm.Exception.RestaurantNotFoundException;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
 import com.rm.dto.RequestDto.ItemRequestDto;
+import com.rm.dto.RequestDto.ItemUpdateRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.model.Item;
@@ -70,14 +71,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemResponseDto updateItem(Long itemId,
-        Long restaurantId, 
-        ItemRequestDto itemRequestDtos) 
-    {
+    public ItemResponseDto updateItem(
+            Long itemId,
+            Long restaurantId,
+            ItemUpdateRequestDto request) {
+
         Restaurant restaurant = findRestaurantById(restaurantId);
         Item item = findItemInRestaurant(restaurant, itemId);
-        applyUpdates(item, itemRequestDtos);
-        restaurantRepository.save(restaurant);
+
+        applyUpdates(item, request);
         return toItemResponse(item);
     }
 
@@ -88,12 +90,8 @@ public class ItemServiceImpl implements ItemService {
         return toItemResponses(restaurant.getItems());
     }
 
-    
-
-    
     @Override
-    public ItemResponseDto addItem(Long restaurantId, 
-                                    ItemRequestDto itemRequestDtos) {
+    public ItemResponseDto addItem(Long restaurantId, ItemRequestDto itemRequestDto) {
         Restaurant restaurant = findRestaurantById(restaurantId);
         List<Item> items = restaurant.getItems();
         if (items == null) {
@@ -101,19 +99,14 @@ public class ItemServiceImpl implements ItemService {
             restaurant.setItems(items);
         }
 
-        if (itemRequestDtos == null) {
-            throw new IllegalArgumentException("Item request must not be null");
-        }
-
         Item item = new Item();
-        copyItemProperties(itemRequestDtos, item);
+        copyItemProperties(itemRequestDto, item);
         items.add(item);
-        restaurantRepository.saveAndFlush(restaurant);
+
+        restaurantRepository.save(restaurant);
         return toItemResponse(item);
     }
 
-
-    //Helper Methods starts
     private void copyItemProperties(ItemRequestDto source, Item target) {
         BeanUtils.copyProperties(source, target, "itemPrice", "itemRating");
         if (source.getItemPrice() != null) {
@@ -141,7 +134,7 @@ public class ItemServiceImpl implements ItemService {
                 "Item not found with id " + itemId + " in restaurant " + restaurantId);
     }
 
-    private void applyUpdates(Item item, ItemRequestDto request) {
+    private void applyUpdates(Item item, ItemUpdateRequestDto request) {
         if (request.getItemName() != null) {
             item.setItemName(request.getItemName());
         }
@@ -177,12 +170,9 @@ public class ItemServiceImpl implements ItemService {
         return responses;
     }
 
-
     private Restaurant findRestaurantById(Long restaurantId) {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(
                         "Restaurant not found with id " + restaurantId));
-    }  
-
-   
+    }
 }

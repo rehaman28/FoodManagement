@@ -9,7 +9,7 @@ import com.rm.Exception.RestaurantNotFoundException;
 import com.rm.builder.RestaurantBuilder;
 import com.rm.builder.RestaurantInfoBuilder;
 import com.rm.dao.RestaurantRepository;
-import com.rm.dto.RequestDto.AddressRequestDto;
+import com.rm.dto.RequestDto.AddressUpdateRequestDto;
 import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
 import com.rm.dto.RequestDto.RestaurantUpdateRequestDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
@@ -18,15 +18,13 @@ import com.rm.model.Address;
 import com.rm.model.Restaurant;
 import com.rm.service.RestaurantService;
 
-
 @Service
 @Transactional
 public class RestaurantServiceImpl implements RestaurantService {
-    
+
     private final RestaurantRepository restaurantRepository;
-    
+
     public RestaurantServiceImpl(RestaurantRepository restaurantRepository) {
-        super();
         this.restaurantRepository = restaurantRepository;
     }
 
@@ -34,11 +32,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantResponseDto addRestaurant(RestaurantCreateRequestDto requestDto) {
         Restaurant restaurant = RestaurantBuilder.buildRestaurantFromRestaurantDto(requestDto);
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
-        return new RestaurantResponseDto(savedRestaurant.getRestaurantId(),savedRestaurant.getRestaurantName());
+        return new RestaurantResponseDto(
+                savedRestaurant.getRestaurantId(),
+                savedRestaurant.getRestaurantName(),
+                savedRestaurant.getRestaurantRating());
     }
 
     @Override
-    @Transactional 
     public RestaurantInfoResponseDto getRestaurant(Long id) {
         Restaurant restaurant = findRestaurantById(id);
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
@@ -47,32 +47,20 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     @Transactional(readOnly = true)
     public List<RestaurantResponseDto> getAllRestaurants() {
-        // List<Restaurant> restaurantsList =restaurantRepository.findAll();
-        // List<RestaurantResponseDto> responseDtosList = new ArrayList<>(); 
-        // for (Restaurant restaurant : restaurantsList) {
-        //     RestaurantResponseDto responseDto = RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(restaurant);
-        //     responseDtosList.add(responseDto);
-        // }
-        // return responseDtosList;
-
         return restaurantRepository.findAll()
-            .stream()
-            .map(RestaurantBuilder::buildRestaurantResponseDtoFromRestaurant)
-            .toList();
-
+                .stream()
+                .map(RestaurantBuilder::buildRestaurantResponseDtoFromRestaurant)
+                .toList();
     }
 
     @Override
-    public RestaurantResponseDto updateRestaurant(Long id,RestaurantUpdateRequestDto requestDto )
-    {
+    public RestaurantResponseDto updateRestaurant(Long id, RestaurantUpdateRequestDto requestDto) {
         Restaurant restaurant = findRestaurantById(id);
 
         updateRestaurantFields(restaurant, requestDto);
         updateAddressFields(restaurant, requestDto.getAddressRequestDto());
-        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
 
-        return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(updatedRestaurant);
-
+        return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(restaurant);
     }
 
     @Override
@@ -85,11 +73,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     public RestaurantResponseDto updateRestaurantRating(Long id, Double rating) {
         Restaurant restaurant = findRestaurantById(id);
         restaurant.setRestaurantRating(rating);
-        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
-        return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(updatedRestaurant);
+        return RestaurantBuilder.buildRestaurantResponseDtoFromRestaurant(restaurant);
     }
 
-    private void updateRestaurantFields(Restaurant restaurant, RestaurantUpdateRequestDto requestDto) {
+    private void updateRestaurantFields(
+            Restaurant restaurant,
+            RestaurantUpdateRequestDto requestDto) {
+
         if (requestDto.getRestaurantName() != null) {
             restaurant.setRestaurantName(requestDto.getRestaurantName());
         }
@@ -101,7 +91,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
     }
 
-    private void updateAddressFields(Restaurant restaurant, AddressRequestDto requestAddress) {
+    private void updateAddressFields(
+            Restaurant restaurant,
+            AddressUpdateRequestDto requestAddress) {
+
         if (requestAddress == null) {
             return;
         }
@@ -128,8 +121,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     private Restaurant findRestaurantById(Long id) {
         return restaurantRepository.findById(id)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found with id " + id));
+                .orElseThrow(() -> new RestaurantNotFoundException(
+                        "Restaurant not found with id " + id));
     }
-
-    
 }

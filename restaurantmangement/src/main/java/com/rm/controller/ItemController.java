@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rm.dto.RequestDto.ItemRequestDto;
+import com.rm.dto.RequestDto.ItemUpdateRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.service.ItemService;
@@ -49,7 +50,9 @@ public class ItemController {
     @PostMapping("/bulk")
     public ResponseEntity<RestaurantInfoResponseDto> addItems(
             @PathVariable(name = "restaurantId") Long restaurantId,
-            @RequestBody @NotEmpty(message = "At least one item is required") @Valid List<ItemRequestDto> itemRequestDtos) {
+            @RequestBody
+            @NotEmpty(message = "At least one item is required")
+            @Valid List<ItemRequestDto> itemRequestDtos) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(itemService.addItems(restaurantId, itemRequestDtos));
     }
@@ -74,7 +77,7 @@ public class ItemController {
     public ResponseEntity<ItemResponseDto> updateItem(
             @PathVariable(name = "itemId") Long itemId,
             @PathVariable(name = "restaurantId") Long restaurantId,
-            @Valid @RequestBody ItemRequestDto itemRequestDto) {
+            @Valid @RequestBody ItemUpdateRequestDto itemRequestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemService.updateItem(itemId, restaurantId, itemRequestDto));
     }
