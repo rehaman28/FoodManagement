@@ -2,9 +2,9 @@ package com.rm.dto.RequestDto;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,19 +14,18 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemRequestDto {
+public class ItemUpdateRequestDto {
 
-    @NotBlank
+    @Size(min = 1, max = 100)
     private String itemName;
 
-    @NotNull
     @Positive
     private Double itemPrice;
 
-    @NotBlank
+    @Size(min = 1, max = 50)
     private String itemCategory;
 
-    @NotBlank
+    @Size(min = 1, max = 50)
     private String itemType;
 
     @DecimalMin("0.0")

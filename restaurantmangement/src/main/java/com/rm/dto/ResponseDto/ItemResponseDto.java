@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
+    "itemId",
     "itemName",
     "itemPrice",
     "itemCategory",
@@ -17,7 +18,8 @@ import lombok.NoArgsConstructor;
     "itemRating"
 })
 public class ItemResponseDto {
-    
+
+    private long itemId;
     private String itemName;
     private Double itemPrice;
     private String itemCategory;

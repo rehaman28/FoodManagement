@@ -13,7 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,8 +24,8 @@ import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
-@Getter 
-@Setter 
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "restaurants")
 @Builder
@@ -36,13 +36,13 @@ public class Restaurant {
     private long restaurantId;
 
     @NotBlank
-    @Size(min = 3,max = 50)
+    @Size(min = 3, max = 50)
     @Column(name = "restaurant_name", nullable = false, length = 50)
     private String restaurantName;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id")
-    @NotEmpty
+    @NotNull
     private Address restaurantAddress;
 
     @Column(name = "restaurant_rating", precision = 2, scale = 1)
@@ -55,17 +55,9 @@ public class Restaurant {
     @Column(name = "restaurant_phone_number", length = 10)
     private String restaurantPhoneNumber;
 
-    /*
-     * The restaurant owns the one-to-many relationship, and the foreign key is
-     * stored directly in the item table. Specifying the join column here
-     * prevents Hibernate from creating a separate restaurants_item join table.
-     * CascadeType.ALL also persists the submitted items when the restaurant is
-     * persisted.
-     */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "restaurant_id")
     private List<Item> items;
-
 
     public Restaurant(String restaurantName, Address restaurantAddress, double restaurantRating,
             String restaurantPhoneNumber, List<Item> items) {
@@ -75,14 +67,4 @@ public class Restaurant {
         this.restaurantPhoneNumber = restaurantPhoneNumber;
         this.items = items;
     }
-
-
-
-    // @Override
-    // public String toString() {
-    //     return "restaurant [restaurantId=" + restaurantId + ", restaurantName=" + restaurantName
-    //             + ", restaurant_address=" + restaurant_address + ", restaurant_phoneNumber=" + restaurant_phoneNumber
-    //             + ", item=" + item + "]";
-    // }
-
 }

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class RestaurantCreateRequestDto {
 
     @NotBlank
-    @Size(min = 3,max = 50)
+    @Size(min = 3, max = 50)
     private String restaurantName;
 
     @Pattern(
@@ -27,15 +28,16 @@ public class RestaurantCreateRequestDto {
         message = "Phone Number must contain 10 digits"
     )
     private String phoneNumber;
-    
+
     @DecimalMin(value = "0.0")
     @DecimalMax(value = "5.0")
     private Double rating;
-    
-    @Valid @NotEmpty 
+
+    @Valid
+    @NotNull(message = "Address is required")
     private AddressRequestDto addressRequestDto;
 
-    @Valid @NotEmpty 
+    @Valid
+    @NotEmpty(message = "At least one item is required")
     private List<ItemRequestDto> itemRequestDto;
-
 }
