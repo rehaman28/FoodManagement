@@ -48,6 +48,21 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
+        @ExceptionHandler(InvalidUserRequestException.class)
+        public ResponseEntity<ErrorResponseDto> handleInvalidUserRequestException(
+                        InvalidUserRequestException ex,
+                        HttpServletRequest request) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.BAD_REQUEST,
+                                "Invalid Request",
+                                ex.getMessage(),
+                                request.getRequestURI(),
+                                null);
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> handleValidationException(
             MethodArgumentNotValidException ex,

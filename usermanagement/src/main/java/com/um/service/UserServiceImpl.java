@@ -2,8 +2,6 @@ package com.um.service;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +11,7 @@ import com.um.dto.UserAddressRequestDto;
 import com.um.dto.UserRequestDto;
 import com.um.dto.UserResponseDto;
 import com.um.exception.DuplicateUserException;
+import com.um.exception.InvalidUserRequestException;
 import com.um.exception.UserNotFoundException;
 import com.um.model.User;
 import com.um.model.UserAddress;
@@ -29,7 +28,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> addUsers(UserRequestDto userRequestDto) {
+    public UserResponseDto addUsers(UserRequestDto userRequestDto) {
         validateUniqueUserFields(userRequestDto.getEmail(), userRequestDto.getUserPhone());
 
         User user = new  User();
@@ -41,29 +40,30 @@ public class UserServiceImpl implements UserService{
         User savedUser = userRepository.save(user);
 
         UserResponseDto userResponse = buildUserResponseEntity(savedUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+        return userResponse;
     }
 
 
     @Override
-    public ResponseEntity<List<UserResponseDto>> getUsers() {
+    public List<UserResponseDto> getUsers() {
         List<UserResponseDto> userResponse = userRepository.findAll()
         .stream()
         .map(this::buildUserResponseEntity)
         .toList();
-        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        return userResponse;
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> getUsersById(Long userId) {
+    public UserResponseDto getUsersById(Long userId) {
         User user = findUserById(userId);
         UserResponseDto userResponseDto = buildUserResponseEntity(user);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+        return userResponseDto;
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> updateUser(Long userId,
+    public UserResponseDto updateUser(Long userId,
             UpdateUserRequestDto userRequestDto) {
+        validateUpdateRequest(userRequestDto);
 
         User user = findUserById(userId);
         validateUniqueUserFields(
@@ -91,15 +91,31 @@ public class UserServiceImpl implements UserService{
         User savedUser = userRepository.save(user);
 
         UserResponseDto userResponse = buildUserResponseEntity(savedUser);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        return userResponse;
 
     }
 
+    private void validateUpdateRequest(UpdateUserRequestDto userRequestDto) {
+        if (userRequestDto == null
+                || (isBlank(userRequestDto.getUserName())
+                && isBlank(userRequestDto.getUserPhone())
+                && isBlank(userRequestDto.getEmail())
+                && isBlank(userRequestDto.getPassword())
+                && (userRequestDto.getUserAddresses() == null
+                || userRequestDto.getUserAddresses().isEmpty()))) {
+            throw new InvalidUserRequestException("At least one user field is required for update");
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
     @Override
-    public ResponseEntity<Void> deleteUser(Long userId) {
+    public Void deleteUser(Long userId) {
         User user = findUserById(userId);
         userRepository.delete(user);
-        return  ResponseEntity.noContent().build();
+        return null;
     }
 
     private UserResponseDto buildUserResponseEntity(User savedUser) {

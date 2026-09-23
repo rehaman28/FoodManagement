@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,29 +33,31 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping()
-    public ResponseEntity<UserResponseDto> AddUsers(@Valid @RequestBody UserRequestDto userRequestDto) {
-        return userService.addUsers(userRequestDto);
+    @PostMapping
+    public ResponseEntity<UserResponseDto> addUsers(@Valid @RequestBody UserRequestDto userRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUsers(userRequestDto));
     }
 
-    @GetMapping 
+    @GetMapping
     public ResponseEntity<List<UserResponseDto>> getUsers() {
-        return userService.getUsers();
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
-    @GetMapping ("/{Userid}")
-    public ResponseEntity<UserResponseDto> getUserbyId(@PathVariable (name = "Userid" ) Long userId) {
-        return userService.getUsersById(userId);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable(name = "userId") Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUsersById(userId));
     }
 
-    @PatchMapping ("/{Userid}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (name = "Userid" ) Long userId, @Valid @RequestBody UpdateUserRequestDto userRequestDto) {
-        return userService.updateUser(userId,userRequestDto);
+    @PatchMapping("/{userId}")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable(name = "userId") Long userId,
+            @Valid @RequestBody UpdateUserRequestDto userRequestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userId, userRequestDto));
     }
 
-    @DeleteMapping ("/{Userid}")
-    public ResponseEntity<Void> deleteUser(@PathVariable (name = "Userid" ) Long userId){
-        return  userService.deleteUser(userId);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable(name = "userId") Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
     }
     
     

@@ -23,6 +23,7 @@ public class UserAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long addressId;
 
+    @NotBlank
     private String doorNumber;
     @NotBlank 
     private String street;
