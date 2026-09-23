@@ -3,13 +3,16 @@ package com.rm.dto.RequestDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter 
+@Setter 
 @AllArgsConstructor
 @NoArgsConstructor
 public class RestaurantUpdateRequestDto {
@@ -27,6 +30,6 @@ public class RestaurantUpdateRequestDto {
     @DecimalMax(value = "5.0")
     private Double rating;
 
-    @Valid
+    @Valid @NotEmpty 
     private AddressRequestDto addressRequestDto;
 }

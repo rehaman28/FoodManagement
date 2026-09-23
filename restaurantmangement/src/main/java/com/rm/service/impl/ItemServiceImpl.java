@@ -19,6 +19,7 @@ import com.rm.model.Restaurant;
 import com.rm.service.ItemService;
 
 @Service
+@Transactional
 public class ItemServiceImpl implements ItemService {
 
     private final RestaurantRepository restaurantRepository;
@@ -28,6 +29,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemResponseDto getItemByRestaurantIdAndItemId(Long restaurantId, Long itemId) {
         Restaurant restaurant = findRestaurantById(restaurantId);
         return toItemResponse(findItemInRestaurant(restaurant, itemId));
@@ -36,10 +38,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public RestaurantInfoResponseDto addItems(Long restaurantId, List<ItemRequestDto> itemRequestDtos) {
         Restaurant restaurant = findRestaurantById(restaurantId);
-        List<Item> items = restaurant.getItem();
+        List<Item> items = restaurant.getItems();
         if (items == null) {
             items = new ArrayList<>();
-            restaurant.setItem(items);
+            restaurant.setItems(items);
         }
 
         if (itemRequestDtos != null) {
@@ -55,10 +57,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public void deleteItemById(Long restaurantId, Long itemId) {
         Restaurant restaurant = findRestaurantById(restaurantId);
-        List<Item> items = restaurant.getItem();
+        List<Item> items = restaurant.getItems();
         Item item = items == null ? null : items.stream()
                 .filter(existingItem -> existingItem.getItemId() == itemId)
                 .findFirst()
@@ -69,7 +70,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public ItemResponseDto updateItem(Long itemId,
         Long restaurantId, 
         ItemRequestDto itemRequestDtos) 
@@ -82,9 +82,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemResponseDto> getRestaurantItems(Long restaurantId) {
         Restaurant restaurant = findRestaurantById(restaurantId);
-        return toItemResponses(restaurant.getItem());
+        return toItemResponses(restaurant.getItems());
     }
 
     
@@ -94,10 +95,10 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseDto addItem(Long restaurantId, 
                                     ItemRequestDto itemRequestDtos) {
         Restaurant restaurant = findRestaurantById(restaurantId);
-        List<Item> items = restaurant.getItem();
+        List<Item> items = restaurant.getItems();
         if (items == null) {
             items = new ArrayList<>();
-            restaurant.setItem(items);
+            restaurant.setItems(items);
         }
 
         if (itemRequestDtos == null) {
@@ -124,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Item findItemInRestaurant(Restaurant restaurant, Long itemId) {
-        List<Item> items = restaurant.getItem();
+        List<Item> items = restaurant.getItems();
         if (items == null) {
             throw itemNotFound(restaurant.getRestaurantId(), itemId);
         }

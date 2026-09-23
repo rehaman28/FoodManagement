@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
+import com.rm.dto.RequestDto.RestaurantRatingRequestDto;
 import com.rm.dto.RequestDto.RestaurantUpdateRequestDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
@@ -78,7 +79,7 @@ public class RestaurantController {
     // update restaurant rating
     @PutMapping("/{restaurantId}/rating")
     public ResponseEntity<RestaurantResponseDto> updateRestaurantRating(@PathVariable(name = "restaurantId") Long id,
-            @Valid @RequestBody RestaurantUpdateRequestDto requestDto) {
+            @Valid @RequestBody RestaurantRatingRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(restaurantService.updateRestaurantRating(id, requestDto.getRating()));
     }

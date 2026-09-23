@@ -21,11 +21,15 @@ public class RestaurantInfoBuilder {
                 .restaurantRating(restaurantresponse.getRestaurantRating())
                 .restaurantPhoneNumber(restaurantresponse.getRestaurantPhoneNumber())
                 .addressResponseDto(buildAddressResponseFromAddress(restaurantresponse.getRestaurantAddress()))
-                .itemResponseDto(buildItemResponseFromItem(restaurantresponse.getItem()))
+                .itemResponseDto(buildItemResponseFromItem(restaurantresponse.getItems()))
                 .build();
     }
 
     private static AddressResponseDto buildAddressResponseFromAddress(Address addressinfo) {
+        if (addressinfo == null) {
+            return null;
+        }
+
         AddressResponseDto addressResponseDto = new AddressResponseDto();
         BeanUtils.copyProperties(addressinfo, addressResponseDto);
         return addressResponseDto;
@@ -33,6 +37,10 @@ public class RestaurantInfoBuilder {
 
     private static List<ItemResponseDto> buildItemResponseFromItem(List<Item> items) {
        List<ItemResponseDto> itemsResponseDtosList= new ArrayList<>();
+       if (items == null) {
+           return itemsResponseDtosList;
+       }
+
        for (Item item : items) {
         ItemResponseDto itemResponseDto = new ItemResponseDto();
         BeanUtils.copyProperties(item, itemResponseDto); 

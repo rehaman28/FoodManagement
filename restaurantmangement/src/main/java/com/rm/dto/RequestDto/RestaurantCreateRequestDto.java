@@ -2,9 +2,11 @@ package com.rm.dto.RequestDto;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,7 +31,11 @@ public class RestaurantCreateRequestDto {
     @DecimalMin(value = "0.0")
     @DecimalMax(value = "5.0")
     private Double rating;
+    
+    @Valid @NotEmpty 
     private AddressRequestDto addressRequestDto;
+
+    @Valid @NotEmpty 
     private List<ItemRequestDto> itemRequestDto;
 
 }

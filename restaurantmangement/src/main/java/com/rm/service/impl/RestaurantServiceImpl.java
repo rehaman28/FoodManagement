@@ -3,6 +3,7 @@ package com.rm.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rm.Exception.RestaurantNotFoundException;
 import com.rm.builder.RestaurantBuilder;
@@ -19,6 +20,7 @@ import com.rm.service.RestaurantService;
 
 
 @Service
+@Transactional
 public class RestaurantServiceImpl implements RestaurantService {
     
     private final RestaurantRepository restaurantRepository;
@@ -36,12 +38,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Transactional 
     public RestaurantInfoResponseDto getRestaurant(Long id) {
         Restaurant restaurant = findRestaurantById(id);
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(restaurant);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RestaurantResponseDto> getAllRestaurants() {
         // List<Restaurant> restaurantsList =restaurantRepository.findAll();
         // List<RestaurantResponseDto> responseDtosList = new ArrayList<>(); 
@@ -103,6 +107,11 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
 
         Address existingAddress = restaurant.getRestaurantAddress();
+        if (existingAddress == null) {
+            existingAddress = new Address();
+            restaurant.setRestaurantAddress(existingAddress);
+        }
+
         if (requestAddress.getCity() != null) {
             existingAddress.setCity(requestAddress.getCity());
         }

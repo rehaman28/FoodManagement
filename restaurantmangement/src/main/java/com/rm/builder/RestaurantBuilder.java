@@ -21,7 +21,7 @@ public class RestaurantBuilder {
         .restaurantPhoneNumber(requestDto.getPhoneNumber())
         .restaurantRating(requestDto.getRating() == null ? 0.0 : requestDto.getRating())
         .restaurantAddress(buildAddressFromAddressDto(requestDto.getAddressRequestDto()))
-        .item(buildItemFromItemRequestDto(requestDto.getItemRequestDto()))
+        .items(buildItemFromItemRequestDto(requestDto.getItemRequestDto()))
         .build();
     }   
 
