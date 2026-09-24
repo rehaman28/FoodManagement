@@ -37,7 +37,7 @@ public class DeliveryPersonServiceImpl implements DeliveryPersonService{
         deliveryPerson.setDeliveryAgentAadhar(requestDto.getDeliveryAgentAadhar());
         deliveryPerson.setDeliveryAgentPhone(requestDto.getDeliveryAgentPhone());
         deliveryPerson.setDeliveryAgentEmail(requestDto.getDeliveryAgentEmail());
-        deliveryPerson.setAgentAvailable(requestDto.isAgentAvailable());
+        deliveryPerson.setAgentAvailable(true);
 
         logger.info("Mapped DeliveryPerson entity with agentAvailable={}", deliveryPerson.isAgentAvailable());
 

@@ -1,7 +1,5 @@
 package com.dm.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -36,7 +34,5 @@ public class DeliveryPersonRequestDto {
     )
     private String deliveryAgentEmail;
 
-    @JsonProperty("isAgentAvailable")
-    private boolean agentAvailable;
     
 }
