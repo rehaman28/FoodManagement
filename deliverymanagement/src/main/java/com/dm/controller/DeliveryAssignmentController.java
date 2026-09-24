@@ -42,7 +42,7 @@ public class DeliveryAssignmentController {
 
     @GetMapping("/{deliveryAssignmentId}")
     public ResponseEntity<DeliveryAssignmentResponseDto> getDeliveryAssignments(@PathVariable (name = "deliveryAssignmentId") Long deliveryAssignmentId) {
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(deliveryAssignmentService.getDeliveryAssignments(deliveryAssignmentId));
     }
 

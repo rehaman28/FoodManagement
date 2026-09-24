@@ -3,6 +3,7 @@ package com.dm.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ import com.dm.model.DeliveryAssignment;
 import com.dm.model.DeliveryPerson;
 import com.dm.model.DeliveryStatus;
 
+import jakarta.transaction.Transactional;
+
 @Service 
 public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService {
 
@@ -35,6 +38,7 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
 
 
     @Override
+    @Transactional 
     public DeliveryAssignmentResponseDto postDeliveryAssignments(DeliveryAssignmentRequestDto request) {
         DeliveryAssignment deliveryAssignment = buildDeliveryAssignmentFromRequest  (request);
         DeliveryAssignment savedDeliveryAssignment = deliveryAssignmentRepository.save(deliveryAssignment);
@@ -66,6 +70,7 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
     }
 
     @Override
+    @Transactional 
     public DeliveryAssignmentResponseDto updateDeliveryStatus(Long deliveryAssignmentId,
             DeliveryStatusRequestDto status) {
 
@@ -82,6 +87,7 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
                         "Invalid delivery status transition from "
                                 + currentStatus + " to " + requestedStatus);
             }
+
             deliveryAssignment.setDeliveryStatus(requestedStatus);
 
             if (requestedStatus == DeliveryStatus.DELIVERED
@@ -127,13 +133,20 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
                             + request.getDeliveryAgentId());
         }
 
-        if (deliveryAssignmentRepository
-                .findByOrderId(request.getOrderId())
-                .isPresent()) {
+        Optional<DeliveryAssignment> existingAssignment = deliveryAssignmentRepository
+                .findTopByOrderIdOrderByAssignmentDateDesc(
+                        request.getOrderId());
 
-            throw new OrderAlreadyAssignedException(
-                    "Order is already assigned: "
-                            + request.getOrderId());
+        if (existingAssignment.isPresent()) {
+
+            DeliveryStatus existingStatus =
+                    existingAssignment.get().getDeliveryStatus();
+
+            if (existingStatus != DeliveryStatus.REFUSED) {
+                throw new OrderAlreadyAssignedException(
+                        "Order is already assigned: "
+                                + request.getOrderId());
+            }
         }
         deliveryPerson.setAgentAvailable(false);
         deliveryPersonRepository.save(deliveryPerson);

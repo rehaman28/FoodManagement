@@ -10,6 +10,6 @@ import com.dm.model.DeliveryAssignment;
 public interface DeliveryAssignmentRepository extends  JpaRepository<DeliveryAssignment,Long>{
     List<DeliveryAssignment> findByDeliveryPersonDeliveryAgentId(Long deliveryAgentId);
     
-    Optional<DeliveryAssignment> findByOrderId(Long orderId);
+    Optional<DeliveryAssignment> findTopByOrderIdOrderByAssignmentDateDesc(Long orderId);
     
 }
