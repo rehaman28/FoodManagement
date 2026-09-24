@@ -80,18 +80,33 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
+
     @ExceptionHandler(InvalidDeliveryStatusTransitionException.class)
     public ResponseEntity<ErrorResponseDto> handleInvalidDeliveryStatusTransitionException(
                 InvalidDeliveryStatusTransitionException ex,
                 HttpServletRequest httpServletRequest) {
 
         ErrorResponseDto response = buildErrorResponse(
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.CONFLICT,
                 "Invalid delivery status transition",
                 ex.getMessage(),
                 httpServletRequest.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(OrderAlreadyAssignedException.class)
+    public ResponseEntity<ErrorResponseDto> OrderAlreadyAssignedException(
+                OrderAlreadyAssignedException ex,
+                HttpServletRequest httpServletRequest) {
+
+        ErrorResponseDto response = buildErrorResponse(
+                HttpStatus.CONFLICT,
+                "Order already assigned",
+                ex.getMessage(),
+                httpServletRequest.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(DeliveryAgentNotAvailableException.class)
@@ -100,12 +115,12 @@ public class GlobalExceptionHandler {
                 HttpServletRequest httpServletRequest) {
 
         ErrorResponseDto response = buildErrorResponse(
-                HttpStatus.NOT_FOUND,
+                HttpStatus.CONFLICT,
                 "Delivery Agent not available",
                 ex.getMessage(),
                 httpServletRequest.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     private ErrorResponseDto buildErrorResponse(

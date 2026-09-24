@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,19 +33,23 @@ public class DeliveryAssignmentController {
     }
 
     @PostMapping()
-    public ResponseEntity<DeliveryAssignmentResponseDto> postDeliveryAssignments(@Valid @RequestBody DeliveryAssignmentRequestDto request) {
+    public ResponseEntity<DeliveryAssignmentResponseDto> postDeliveryAssignments(
+        @Valid @RequestBody DeliveryAssignmentRequestDto request) {
         
-        return deliveryAssignmentService.postDeliveryAssignments(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(deliveryAssignmentService.postDeliveryAssignments(request));
     }
 
     @GetMapping("/{deliveryAssignmentId}")
     public ResponseEntity<DeliveryAssignmentResponseDto> getDeliveryAssignments(@PathVariable (name = "deliveryAssignmentId") Long deliveryAssignmentId) {
-        return deliveryAssignmentService.getDeliveryAssignments(deliveryAssignmentId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(deliveryAssignmentService.getDeliveryAssignments(deliveryAssignmentId));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<DeliveryAssignmentResponseDto>> getAllDeliveryAssignments(){
-        return deliveryAssignmentService.getAllDeliveryAssignments();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(deliveryAssignmentService.getAllDeliveryAssignments());
     }
 
     @GetMapping("/delivery-person/{deliveryAgentId}/assignments")
@@ -52,15 +57,16 @@ public class DeliveryAssignmentController {
     getAssignmentsByDeliveryPerson(
             @PathVariable(name = "deliveryAgentId") Long deliveryAgentId) {
 
-        return deliveryAssignmentService
-                .getAssignmentsByDeliveryPerson(deliveryAgentId);
+        return ResponseEntity.status(HttpStatus.OK).body(deliveryAssignmentService
+                .getAssignmentsByDeliveryPerson(deliveryAgentId));
     }
 
     @PatchMapping("/{deliveryAssignmentId}/status")
     public ResponseEntity<DeliveryAssignmentResponseDto> updateOrderStatus(
             @PathVariable (name = "deliveryAssignmentId") Long deliveryAssignmentId,
             @Valid @RequestBody DeliveryStatusRequestDto orderStatus) {
-        return deliveryAssignmentService.updateDeliveryStatus(deliveryAssignmentId, orderStatus);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(deliveryAssignmentService.updateDeliveryStatus(deliveryAssignmentId, orderStatus));
     }
 
     

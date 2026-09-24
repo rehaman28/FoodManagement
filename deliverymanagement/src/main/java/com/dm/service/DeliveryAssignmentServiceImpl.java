@@ -4,14 +4,13 @@ package com.dm.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.dm.Exception.DeliverAssignmentNotFoundException;
 import com.dm.Exception.DeliveryAgentNotAvailableException;
 import com.dm.Exception.DeliveryPersonNotFoundException;
 import com.dm.Exception.InvalidDeliveryStatusTransitionException;
+import com.dm.Exception.OrderAlreadyAssignedException;
 import com.dm.dao.DeliveryAssignmentRepository;
 import com.dm.dao.DeliveryPersonRepository;
 import com.dm.dto.DeliveryAssignmentRequestDto;
@@ -36,62 +35,66 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
 
 
     @Override
-    public ResponseEntity<DeliveryAssignmentResponseDto> postDeliveryAssignments(DeliveryAssignmentRequestDto request) {
-        DeliveryAssignment deliveryAssignment = buidlDeliveryAssignmentFromRequest(request);
+    public DeliveryAssignmentResponseDto postDeliveryAssignments(DeliveryAssignmentRequestDto request) {
+        DeliveryAssignment deliveryAssignment = buildDeliveryAssignmentFromRequest  (request);
         DeliveryAssignment savedDeliveryAssignment = deliveryAssignmentRepository.save(deliveryAssignment);
-        return  ResponseEntity.status(HttpStatus.CREATED)
-                            .body(buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(savedDeliveryAssignment));
+        return  buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(savedDeliveryAssignment);
     }
 
     @Override
-    public ResponseEntity<DeliveryAssignmentResponseDto> getDeliveryAssignments(Long deliveryAssignmentId) {
+    public DeliveryAssignmentResponseDto getDeliveryAssignments(Long deliveryAssignmentId) {
             DeliveryAssignment deliveryAssignment = findDeliveryAssignmentById(deliveryAssignmentId);
-      return  ResponseEntity.status(HttpStatus.OK)
-                            .body(buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(deliveryAssignment));
+      return  buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(deliveryAssignment);
     }
 
     @Override
-    public ResponseEntity<List<DeliveryAssignmentResponseDto>> getAllDeliveryAssignments() {
-        List<DeliveryAssignmentResponseDto> responseDtos = deliveryAssignmentRepository.findAll()
+    public List<DeliveryAssignmentResponseDto> getAllDeliveryAssignments() {
+        return deliveryAssignmentRepository.findAll()
+            .stream()
+            .map(this::buildDeliveryAssignmentResponeDtoFromDeliveryAssignment)
+            .toList();        
+    }
+
+    @Override
+    public List<DeliveryAssignmentResponseDto> getAssignmentsByDeliveryPerson(Long deliveryAgentId) {
+        
+        return deliveryAssignmentRepository.findByDeliveryPersonDeliveryAgentId(deliveryAgentId)
             .stream()
             .map(this::buildDeliveryAssignmentResponeDtoFromDeliveryAssignment)
             .toList();
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
     }
 
     @Override
-    public ResponseEntity<List<DeliveryAssignmentResponseDto>> getAssignmentsByDeliveryPerson(Long deliveryAgentId) {
-        List<DeliveryAssignmentResponseDto> responseDtos = deliveryAssignmentRepository.findByDeliveryPersonDeliveryAgentId(deliveryAgentId)
-            .stream()
-            .map(this::buildDeliveryAssignmentResponeDtoFromDeliveryAssignment)
-            .toList();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
-    }
-
-    @Override
-    public ResponseEntity<DeliveryAssignmentResponseDto> updateDeliveryStatus(Long deliveryAssignmentId,
+    public DeliveryAssignmentResponseDto updateDeliveryStatus(Long deliveryAssignmentId,
             DeliveryStatusRequestDto status) {
 
             DeliveryAssignment deliveryAssignment = findDeliveryAssignmentById(deliveryAssignmentId);
+
             DeliveryStatus currentStatus = deliveryAssignment.getDeliveryStatus();
 
             DeliveryStatus requestedStatus =status.getDeliveryStatus();
 
-            if (!deliveryAssignment.getDeliveryPerson().isAgentAvailable()) {
-                throw new DeliveryAgentNotAvailableException("Delivery Agent was not available");
-            } else {
-                if (!DeliveryStatus.isValidTransition(currentStatus, requestedStatus)) {
+    
+            if (!DeliveryStatus.isValidTransition(currentStatus, requestedStatus)) {
 
-                    throw new InvalidDeliveryStatusTransitionException(
-                            "Invalid delivery status transition from "
-                                    + currentStatus + " to " + requestedStatus);
-                }
-                deliveryAssignment.setDeliveryStatus(requestedStatus);
+                throw new InvalidDeliveryStatusTransitionException(
+                        "Invalid delivery status transition from "
+                                + currentStatus + " to " + requestedStatus);
             }
-        return  ResponseEntity.status(HttpStatus.OK)
-            .body(buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(deliveryAssignmentRepository.save(deliveryAssignment)));
+            deliveryAssignment.setDeliveryStatus(requestedStatus);
+
+            if (requestedStatus == DeliveryStatus.DELIVERED
+                    || requestedStatus == DeliveryStatus.REFUSED) {
+
+                DeliveryPerson deliveryPerson = deliveryAssignment.getDeliveryPerson();
+
+                deliveryPerson.setAgentAvailable(true);
+                deliveryPersonRepository.save(deliveryPerson);
+
+            }
+            
+        return  buildDeliveryAssignmentResponeDtoFromDeliveryAssignment(deliveryAssignmentRepository.save(deliveryAssignment));
     
     }
 
@@ -113,10 +116,27 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService 
         );
     }
 
-    private DeliveryAssignment buidlDeliveryAssignmentFromRequest(DeliveryAssignmentRequestDto request){
+    private DeliveryAssignment buildDeliveryAssignmentFromRequest(DeliveryAssignmentRequestDto request){
         DeliveryPerson deliveryPerson = deliveryPersonRepository.findById(request.getDeliveryAgentId())
                 .orElseThrow(() -> new DeliveryPersonNotFoundException(
                         "Delivery Agent not Found with Id: " + request.getDeliveryAgentId()));
+
+        if (!deliveryPerson.isAgentAvailable()) {
+            throw new DeliveryAgentNotAvailableException(
+                    "Delivery Agent is currently unavailable with Id: "
+                            + request.getDeliveryAgentId());
+        }
+
+        if (deliveryAssignmentRepository
+                .findByOrderId(request.getOrderId())
+                .isPresent()) {
+
+            throw new OrderAlreadyAssignedException(
+                    "Order is already assigned: "
+                            + request.getOrderId());
+        }
+        deliveryPerson.setAgentAvailable(false);
+        deliveryPersonRepository.save(deliveryPerson);
 
         DeliveryAssignment deliveryAssignment = new  DeliveryAssignment();
         deliveryAssignment.setAssignmentDate(LocalDateTime.now());
