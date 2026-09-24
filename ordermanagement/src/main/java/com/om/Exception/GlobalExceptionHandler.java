@@ -94,6 +94,20 @@ public class GlobalExceptionHandler {
                                 .body(response);
         }
 
+
+        @ExceptionHandler(InvalidOrderStatusTransitionException.class)
+        public ResponseEntity<ErrorResponseDto> handleInvalidOrderStatusTransitionException(InvalidOrderStatusTransitionException ex,
+                        HttpServletRequest httpServletRequest) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.CONFLICT,
+                                "Order status Transitions was not Allowed",
+                                ex.getMessage(),
+                                httpServletRequest.getRequestURI());
+
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
         private ErrorResponseDto buildErrorResponse(
                         HttpStatus status,
                         String error,

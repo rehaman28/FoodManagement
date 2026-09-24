@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.om.dto.OrderRequestDto;
 import com.om.dto.OrderResponseDto;
+import com.om.dto.OrderStatusRequestDto;
 import com.om.model.OrderStatus;
 import com.om.service.OrderService;
 
@@ -39,7 +40,7 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto>placeOrder(@Valid @RequestBody OrderRequestDto orderRequest)
     {
         OrderResponseDto placedOrder = orderService.placeorder(orderRequest);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(placedOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(placedOrder);
     }
 
     //Get Order by ID
@@ -77,7 +78,7 @@ public class OrderController {
     @PatchMapping("/{orderId}/status")
     public ResponseEntity<OrderResponseDto> updateOrderStatus(
             @PathVariable(name = "orderId") Long orderId,
-            @RequestBody OrderStatusRequestDto orderStatus) {
+            @Valid @RequestBody OrderStatusRequestDto orderStatus) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.updateOrderStatus(orderId, orderStatus));
     }
 
