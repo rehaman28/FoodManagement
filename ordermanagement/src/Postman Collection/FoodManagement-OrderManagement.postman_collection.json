@@ -1,0 +1,552 @@
+{
+  "info": {
+    "name": "FoodManagement - Order Management",
+    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "04 - Order Management",
+      "item": [
+        {
+          "name": "Place Order - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": \"{{itemId}}\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.orderId!==undefined) pm.environment.set(\"orderId\", r.orderId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Place Order - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 0,\n  \"restaurantId\": 0,\n  \"OrderingItems\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Place Order - Restaurant Not Found",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": 999999999,\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Place Order - Item Not Found",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 999999999\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Order - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Order - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Orders - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Orders By User - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/user/1"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Orders By User - No Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/user/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Orders By Restaurant - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/restaurant/{{restaurantId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Orders By Restaurant - No Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/restaurant/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Orders By Status - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/status?orderStatus=Ordered"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Orders By Status - Invalid Enum",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/status?orderStatus=INVALID"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Order Status - Accepted",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Order Status - Missing Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Order Status - Invalid Transition",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"OrderStatus\": \"Delivered\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Order Status - Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/999999999/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

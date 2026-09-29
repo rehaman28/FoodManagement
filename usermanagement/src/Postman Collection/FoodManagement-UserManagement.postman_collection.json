@@ -1,0 +1,335 @@
+{
+  "info": {
+    "name": "FoodManagement - User Management",
+    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - User Management",
+      "item": [
+        {
+          "name": "Create User - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Postman User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"postman{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.userId!==undefined) pm.environment.set(\"userId\", r.userId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create User - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"P\",\n  \"userPhone\": \"123\",\n  \"email\": \"bad-email\",\n  \"password\": \"short\",\n  \"userAddresses\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Users - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/{{userId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User - Happy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Updated Postman User\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User - Invalid Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userPhone\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User - Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete User - Not Found",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete User - Happy",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/{{userId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 204\",()=>pm.response.to.have.status(204));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

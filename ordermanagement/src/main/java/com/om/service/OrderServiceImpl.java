@@ -96,11 +96,22 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponseDto> getOrdersByRestaurantId(Long restaurantId) {
-        return orderRepository.findByRestaurantId(restaurantId)
-                .stream()
+        String restaurantName;
+        try {
+            restaurantName = fetchRestaurantNameFromId(restaurantId);
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new RestaurantNotFoundException("Restaurant was not found with Id: " + restaurantId);
+        }
+
+        List<Order> orders = orderRepository.findByRestaurantId(restaurantId);
+        if (orders.isEmpty()) {
+            throw new OrderNotFoundException("No orders found for restaurant with Id: " + restaurantId);
+        }
+
+        return orders.stream()
                 .map(order -> {
                     OrderResponseDto response = OrderResponseBuilder.buildOrderResponseDtoFromOrder(order);
-                    response.setRestaurantName(fetchRestaurantNameFromId(order.getRestaurantId()));
+                    response.setRestaurantName(restaurantName);
                     return response;
                 })
                 .toList();

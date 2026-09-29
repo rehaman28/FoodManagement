@@ -45,7 +45,7 @@ public class Restaurant {
     @NotNull
     private Address restaurantAddress;
 
-    @Column(name = "restaurant_rating", precision = 2, scale = 1)
+    @Column(name = "restaurant_rating")
     private Double restaurantRating;
 
     @Pattern(

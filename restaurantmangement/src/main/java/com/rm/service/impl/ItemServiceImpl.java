@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
             }
         }
 
-        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
+        Restaurant updatedRestaurant = restaurantRepository.saveAndFlush(restaurant);
         return RestaurantInfoBuilder.buildRestaurantFromRestaurantResponse(updatedRestaurant);
     }
 
@@ -99,12 +99,13 @@ public class ItemServiceImpl implements ItemService {
             restaurant.setItems(items);
         }
 
+        int newItemIndex = items.size();
         Item item = new Item();
         copyItemProperties(itemRequestDto, item);
         items.add(item);
 
-        restaurantRepository.save(restaurant);
-        return toItemResponse(item);
+        Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
+        return toItemResponse(savedRestaurant.getItems().get(newItemIndex));
     }
 
     private void copyItemProperties(ItemRequestDto source, Item target) {
