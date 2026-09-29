@@ -1,0 +1,801 @@
+{
+  "info": {
+    "name": "FoodManagement - Delivery Management",
+    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Delivery Person Controller",
+      "item": [
+        {
+          "name": "Create Agent - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/addperson",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAgentName\": \"Postman Agent {{$timestamp}}\",\n  \"deliveryAgentAadhar\": \"234567890123\",\n  \"deliveryAgentPhone\": \"9876543211\",\n  \"deliveryAgentEmail\": \"agent{{$timestamp}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.deliveryAgentId!==undefined) pm.environment.set(\"deliveryAgentId\", r.deliveryAgentId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Agent - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/addperson",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAgentName\": \"A\",\n  \"deliveryAgentAadhar\": \"123\",\n  \"deliveryAgentPhone\": \"123\",\n  \"deliveryAgentEmail\": \"bad\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Agents - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Agent - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Agent - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Agent - Happy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/update/{{deliveryAgentId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAgentName\": \"Updated Agent\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Agent - Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/update/999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAgentName\": \"Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Delivery Assignment Controller",
+      "item": [
+        {
+          "name": "Create Assignment - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.deliveryAssignmentId!==undefined) pm.environment.set(\"deliveryAssignmentId\", r.deliveryAssignmentId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Assignment - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": 0,\n  \"deliveryAgentId\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Assignment - Agent Unavailable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": 999998,\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Assignment - Order Already Assigned",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Assignment - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Assignment - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Assignments - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/all"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Assignments By Agent - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/delivery-person/{{deliveryAgentId}}/assignments"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Accepted",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"ACCEPTED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Collected",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"COLLECTED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - In Transit",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"IN_TRANSIT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Delivered",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Agent After Delivery - Available",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Agent is available after delivery\",()=>pm.expect(pm.response.json().isAgentAvailable).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Missing Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Invalid Transition",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"ACCEPTED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
