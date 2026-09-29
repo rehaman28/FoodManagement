@@ -1,0 +1,1072 @@
+{
+  "info": {
+    "name": "FoodManagement - Restaurant Management",
+    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "02 - Restaurant Management",
+      "item": [
+        {
+          "name": "Add Restaurant - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"Postman Restaurant {{$timestamp}}\",\n  \"phoneNumber\": \"9123456789\",\n  \"rating\": 4.2,\n  \"addressRequestDto\": {\n    \"landmark\": \"Near Metro\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"itemRequestDto\": [\n    {\n      \"itemName\": \"Paneer Bowl\",\n      \"itemPrice\": 180,\n      \"itemCategory\": \"Main\",\n      \"itemType\": \"Veg\",\n      \"itemRating\": 4\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.Id!==undefined) pm.environment.set(\"restaurantId\", r.Id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add Restaurant - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\",\n  \"rating\": 6,\n  \"addressRequestDto\": null,\n  \"itemRequestDto\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Restaurants - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant Name - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/name"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant Name - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/name"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant - Happy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"Updated Postman Restaurant\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant - Invalid Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant - Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant Rating - Happy",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant Rating - Invalid Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 6\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant Rating - Not Found",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/rating",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Restaurant - Not Found",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Restaurant - Happy",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 204\",()=>pm.response.to.have.status(204));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Restaurant Items",
+      "item": [
+        {
+          "name": "Get Restaurant Items - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant Items - Restaurant Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add Item - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"Postman Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\",\n  \"itemRating\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.itemId!==undefined) pm.environment.set(\"itemId\", r.itemId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add Item - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"\",\n  \"itemPrice\": -10,\n  \"itemCategory\": \"\",\n  \"itemType\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add Item - Restaurant Not Found",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bulk Add Items - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"itemName\": \"Bulk A\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  },\n  {\n    \"itemName\": \"Bulk B\",\n    \"itemPrice\": 75,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"NonVeg\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bulk Add Items - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
+            "body": {
+              "mode": "raw",
+              "raw": "[]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bulk Add Items - Restaurant Not Found",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/bulk",
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"itemName\": \"Bulk\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Item - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Item - Item Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Item - Restaurant Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Item - Happy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemPrice\": 125\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Item - Invalid Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemPrice\": -1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Item - Item Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemPrice\": 125\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Item - Restaurant Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemPrice\": 125\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Item - Not Found",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Item - Happy",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 204\",()=>pm.response.to.have.status(204));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
