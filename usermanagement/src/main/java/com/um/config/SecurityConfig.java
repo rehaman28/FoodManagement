@@ -31,13 +31,13 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        
+
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> 
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                    .requestMatchers("/signup","/login")
+                    .requestMatchers("/auth/login", "/users")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

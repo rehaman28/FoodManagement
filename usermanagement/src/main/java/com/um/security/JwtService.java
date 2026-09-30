@@ -4,7 +4,7 @@ package com.um.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +19,8 @@ import org.springframework.stereotype.Service;
 @ConfigurationProperties(prefix = "security.jwt")
 public class JwtService {
 
-    @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    @Value("${security.jwt.expiration-time}")
     private long expirationTime;
 
     public void setSecretKey(String secretKey) {

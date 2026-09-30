@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,6 +125,39 @@ public class GlobalExceptionHandler {
                             .status(HttpStatus.CONFLICT)
                             .body(response);
     }
+
+        @ExceptionHandler(ExpiredJwtException.class)
+        public ResponseEntity<ErrorResponseDto> handleExpiredJwt(HttpServletRequest request) {
+                return buildJwtErrorResponse("JWT has expired", request);
+        }
+
+        @ExceptionHandler(MalformedJwtException.class)
+        public ResponseEntity<ErrorResponseDto> handleMalformedJwt(HttpServletRequest request) {
+                return buildJwtErrorResponse("JWT is malformed", request);
+        }
+
+        @ExceptionHandler(SignatureException.class)
+        public ResponseEntity<ErrorResponseDto> handleInvalidJwtSignature(HttpServletRequest request) {
+                return buildJwtErrorResponse("JWT signature is invalid", request);
+        }
+
+        @ExceptionHandler(UnsupportedJwtException.class)
+        public ResponseEntity<ErrorResponseDto> handleUnsupportedJwt(HttpServletRequest request) {
+                return buildJwtErrorResponse("JWT format or signing algorithm is unsupported", request);
+        }
+
+        private ResponseEntity<ErrorResponseDto> buildJwtErrorResponse(
+                        String message,
+                        HttpServletRequest request) {
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.UNAUTHORIZED,
+                                "Unauthorized",
+                                message,
+                                request.getRequestURI(),
+                                null);
+
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     
     private ErrorResponseDto buildErrorResponse(
             HttpStatus status,
