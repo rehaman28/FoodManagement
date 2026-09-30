@@ -8,9 +8,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.authentication.AuthenticationProvider;
 import com.um.security.JwtAuthenticationFilter;
-import org.springframework.security.web.access.ExceptionTranslationFilter;
+
 
 @Configuration
 public class SecurityConfig {
@@ -47,7 +48,8 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
                 .authenticationProvider(authenticationProvider)
-                .addFilterAfter(jwtAuthenticationFilter, ExceptionTranslationFilter.class)
+                .addFilterAfter(jwtAuthenticationFilter, 
+                    UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.disable());
         return http.build();
     }
