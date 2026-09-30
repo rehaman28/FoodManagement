@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "security.jwt.secret-key",
+      "type": "java.lang.String",
+      "description": "Hex-encoded JWT signing key shared with the token issuer."
+    }
+  ]
+}
