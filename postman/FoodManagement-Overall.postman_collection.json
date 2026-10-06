@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "3db09377-5e3b-4154-a43f-393628fcbd7d",
     "name": "FoodManagement - Overall API Baseline",
-    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "description": "FoodManagement overall API regression collection. Use FoodManagement-ADMIN for full functional CRUD regression; switch to FoodManagement-USER for read-access and RBAC validation. Both environments use {{TOKEN}} and expose {{role}}.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "46865333",
     "_collection_link": "https://go.postman.co/collection/46865333-3db09377-5e3b-4154-a43f-393628fcbd7d?source=collection_link"
@@ -1858,6 +1858,396 @@
       ]
     },
     {
+      "name": "03 - Restaurant RBAC",
+      "description": "Role-aware RBAC regression. Use the active environment to switch credentials: FoodManagement-USER sends a USER JWT and FoodManagement-ADMIN sends an ADMIN JWT through the shared {{TOKEN}} variable. Write requests expect 403 for USER and their normal 2xx success code for ADMIN.",
+      "item": [
+        {
+          "name": "RBAC - GET restaurants - no token - 401",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP status is 401',()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - GET restaurants - USER or ADMIN - 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  {
+                    "listen": "test",
+                    "script": {
+                      "type": "text/javascript",
+                      "exec": [
+                        "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                        "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(200));",
+                        "const restaurants=pm.response.json(); if(!pm.environment.get('restaurantId') && Array.isArray(restaurants) && restaurants.length>0 && restaurants[0].Id!==undefined) pm.environment.set('restaurantId',restaurants[0].Id);"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - POST restaurant - ADMIN only",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"Postman Restaurant {{$timestamp}}\",\n  \"phoneNumber\": \"9123456789\",\n  \"rating\": 4.2,\n  \"addressRequestDto\": {\n    \"landmark\": \"Near Metro\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"itemRequestDto\": [\n    {\n      \"itemName\": \"Paneer Bowl\",\n      \"itemPrice\": 180,\n      \"itemCategory\": \"Main\",\n      \"itemType\": \"Veg\",\n      \"itemRating\": 4\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                  "const expected=role==='ADMIN'?201:403;",
+                  "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(expected));",
+                  "if(pm.response.code===201){const r=pm.response.json(); if(r.Id!==undefined) pm.environment.set('restaurantId',r.Id);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - PATCH restaurant - ADMIN only",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"Updated Postman Restaurant\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                  "const expected=role==='ADMIN'?200:403;",
+                  "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - PUT restaurant rating - ADMIN only",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                  "const expected=role==='ADMIN'?200:403;",
+                  "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - GET restaurant items - USER or ADMIN - 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  {
+                    "listen": "test",
+                    "script": {
+                      "type": "text/javascript",
+                      "exec": [
+                        "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                        "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(200));",
+                        "const items=pm.response.json(); if(!pm.environment.get('itemId') && Array.isArray(items) && items.length>0 && items[0].itemId!==undefined) pm.environment.set('itemId',items[0].itemId);"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - POST item - ADMIN only",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"Postman Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\",\n  \"itemRating\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                  "const expected=role==='ADMIN'?201:403;",
+                  "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(expected));",
+                  "if(pm.response.code===201){const r=pm.response.json(); if(r.itemId!==undefined) pm.environment.set('itemId',r.itemId);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - PATCH item - ADMIN only",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemPrice\": 125\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                  "const expected=role==='ADMIN'?200:403;",
+                  "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - DELETE item - ADMIN only",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                  "const expected=role==='ADMIN'?204:403;",
+                  "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - DELETE restaurant - ADMIN only",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=(pm.environment.get('role')||'').toUpperCase(); pm.test('Active role is USER or ADMIN',()=>pm.expect(['USER','ADMIN']).to.include(role));",
+                  "const expected=role==='ADMIN'?204:403;",
+                  "pm.test(`HTTP status for ${role}`,()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RBAC - Tampered JWT - 401",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const token=pm.environment.get('TOKEN')||'';",
+                  "if(!token) throw new Error('TOKEN is empty. Select FoodManagement-USER or FoodManagement-ADMIN and set TOKEN first.');",
+                  "const last=token.slice(-1);",
+                  "const replacement=last==='a'?'b':'a';",
+                  "pm.request.headers.upsert({key:'Authorization',value:'Bearer '+token.slice(0,-1)+replacement});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP status is 401',()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "04 - Order Management",
       "item": [
         {
@@ -3439,5 +3829,15 @@
         }
       ]
     }
-  ]
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{TOKEN}}",
+        "type": "string"
+      }
+    ]
+  }
 }
