@@ -13,6 +13,7 @@ import com.um.dto.UserResponseDto;
 import com.um.exception.DuplicateUserException;
 import com.um.exception.InvalidUserRequestException;
 import com.um.exception.UserNotFoundException;
+import com.um.model.Role;
 import com.um.model.User;
 import com.um.model.UserAddress;
 
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService{
         user.setUserPhone(userRequestDto.getUserPhone());
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         user.setUserAddresses(toUserAddresses(userRequestDto.getUserAddresses()));
+        user.setRole(Role.USER);
         User savedUser = userRepository.save(user);
 
         UserResponseDto userResponse = buildUserResponseEntity(savedUser);

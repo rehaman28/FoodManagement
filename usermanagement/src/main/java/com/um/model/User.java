@@ -7,6 +7,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,4 +41,7 @@ public class User {
     )
     @JoinColumn(name = "user_id")
     private List<UserAddress> userAddresses;
+
+    @Enumerated(EnumType.STRING)
+    private Role role=Role.USER;
 }

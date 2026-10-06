@@ -1,6 +1,7 @@
 package com.um.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -47,11 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = authHeader.substring(7);
             String userEmail = jwtService.extractUsername(jwt);
+            String role = jwtService.extractRole(jwt);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (userEmail != null && authentication == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-                if (!jwtService.isTokenValid(jwt, userDetails)) {
+                String authority = toAuthority(role);
+                if (!jwtService.isTokenValid(jwt, userDetails)
+                    || !matchesRole(userDetails, authority)) {
                     throw new BadCredentialsException("Invalid bearer token");
                 }
 
@@ -59,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities());
+                        List.of(new SimpleGrantedAuthority(authority)));
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
@@ -72,5 +77,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String toAuthority(String role) {
+        if (role == null || role.isBlank()) {
+            return null;
+        }
+
+        return role.startsWith("ROLE_") ? role : "ROLE_" + role;
+    }
+
+    private boolean matchesRole(UserDetails userDetails, String authority) {
+        if (authority == null) {
+            return false;
+        }
+
+        return userDetails.getAuthorities()
+                .stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority));
     }
 }

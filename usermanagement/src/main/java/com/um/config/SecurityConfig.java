@@ -2,6 +2,7 @@ package com.um.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,12 +44,24 @@ public class SecurityConfig {
                 .exceptionHandling(exception ->
                     exception.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(request -> request
+
+                    //Any Initial Login or registeration
                     .requestMatchers("/auth/login", "/users")
+                    .permitAll()
+                    //Anyone can register
+                    .requestMatchers(HttpMethod.POST, "/users")
+                    .permitAll()
+                    //Only Admin can get the details 
+                    .requestMatchers(HttpMethod.GET, "/users")
+                    .permitAll()
+                    //Only Admin can delete the user
+                    .requestMatchers(HttpMethod.DELETE, "/users/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
+
                 .authenticationProvider(authenticationProvider)
-                .addFilterAfter(jwtAuthenticationFilter, 
+                .addFilterBefore(jwtAuthenticationFilter, 
                     UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.disable());
         return http.build();
