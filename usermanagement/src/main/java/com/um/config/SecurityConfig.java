@@ -46,17 +46,22 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
 
                     //Any Initial Login or registeration
-                    .requestMatchers("/auth/login", "/users")
+                    .requestMatchers("/auth/login")
                     .permitAll()
+
                     //Anyone can register
                     .requestMatchers(HttpMethod.POST, "/users")
                     .permitAll()
+
                     //Only Admin can get the details 
                     .requestMatchers(HttpMethod.GET, "/users")
-                    .permitAll()
+                    .hasRole("ADMIN")
+                
                     //Only Admin can delete the user
                     .requestMatchers(HttpMethod.DELETE, "/users/**")
-                    .permitAll()
+                    .hasRole("ADMIN")
+
+                    //Any Other Request need to authenticated
                     .anyRequest()
                     .authenticated())
 
