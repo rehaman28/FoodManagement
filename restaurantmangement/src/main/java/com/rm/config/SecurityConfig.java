@@ -2,6 +2,7 @@ package com.rm.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,8 +51,29 @@ public class SecurityConfig {
                 exception.authenticationEntryPoint(
                     authenticationEntryPoint))
 
-            .authorizeHttpRequests(request ->
-                request
+            .authorizeHttpRequests(request -> request
+
+                    //Read Only Resources
+                    .requestMatchers(HttpMethod.GET, "/restaurants/**")
+                    .hasAnyRole("USER", "ADMIN")
+
+                    //Create Only Resources
+                    .requestMatchers(HttpMethod.POST, "/restaurants/**")
+                    .hasAnyRole( "ADMIN")
+
+                    //Update Resources
+                    .requestMatchers(HttpMethod.PUT, "/restaurants/**")
+                    .hasAnyRole( "ADMIN")
+                    
+                    
+                    .requestMatchers(HttpMethod.PATCH,"/restaurants/**")
+                    .hasRole("ADMIN")
+
+                    // Delete
+                    .requestMatchers(HttpMethod.DELETE,"/restaurants/**")
+                    .hasRole("ADMIN")
+
+                    //Any Other Request needs authentications
                     .anyRequest()
                     .authenticated())
 
