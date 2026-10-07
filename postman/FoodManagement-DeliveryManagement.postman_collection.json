@@ -31,6 +31,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -70,6 +80,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -96,7 +116,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person"
+            "url": "{{deliveryServiceUrl}}/delivery-person",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -121,7 +151,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}"
+            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -146,7 +186,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/999999999"
+            "url": "{{deliveryServiceUrl}}/delivery-person/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -185,6 +235,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -223,6 +283,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -282,6 +352,16 @@
             ],
             "url": {
               "raw": "{{deliveryServiceUrl}}/delivery-person"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -290,6 +370,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"TOKEN is present\",()=>pm.expect(pm.environment.get(\"TOKEN\")).to.be.a(\"string\").and.not.empty);",
                   "const role = pm.environment.get(\"role\");",
                   "pm.test(\"RBAC status is correct for active role\",()=>{",
                   "  const expected = role === \"USER\" ? 403 : 200;",
@@ -329,6 +410,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -368,6 +459,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -407,6 +508,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -446,6 +557,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -472,7 +593,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}"
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -497,7 +628,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999"
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -523,7 +664,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/all"
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/all",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -548,7 +699,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/delivery-person/{{deliveryAgentId}}/assignments"
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/delivery-person/{{deliveryAgentId}}/assignments",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -586,6 +747,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -624,6 +795,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -662,6 +843,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -700,6 +891,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -725,7 +926,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}"
+            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -763,6 +974,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -802,6 +1023,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -841,6 +1072,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -869,6 +1110,16 @@
             ],
             "url": {
               "raw": "{{deliveryServiceUrl}}/delivery-assignments/all"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -877,6 +1128,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"TOKEN is present\",()=>pm.expect(pm.environment.get(\"TOKEN\")).to.be.a(\"string\").and.not.empty);",
                   "const role = pm.environment.get(\"role\");",
                   "pm.test(\"RBAC status is correct for active role\",()=>{",
                   "  const expected = role === \"USER\" ? 403 : 200;",
