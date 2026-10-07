@@ -31,6 +31,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -70,6 +80,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -96,7 +116,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants"
+            "url": "{{restaurantServiceUrl}}/restaurants",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -121,7 +151,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -146,7 +186,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999"
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -172,7 +222,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/name"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/name",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -197,7 +257,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/name"
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/name",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -236,6 +306,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -274,6 +354,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -313,6 +403,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -352,6 +452,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -390,6 +500,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -429,6 +549,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -455,7 +585,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999"
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -480,7 +620,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -551,6 +701,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -559,6 +719,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"TOKEN is present\",()=>pm.expect(pm.environment.get(\"TOKEN\")).to.be.a(\"string\").and.not.empty);",
                   "const role = pm.environment.get(\"role\");",
                   "pm.test(\"RBAC status is correct for active role\",()=>{",
                   "  const expected = role === \"USER\" ? 403 : 400;",
@@ -582,6 +743,16 @@
             ],
             "url": {
               "raw": "{{restaurantServiceUrl}}/restaurants/999999999"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -590,6 +761,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"TOKEN is present\",()=>pm.expect(pm.environment.get(\"TOKEN\")).to.be.a(\"string\").and.not.empty);",
                   "const role = pm.environment.get(\"role\");",
                   "pm.test(\"RBAC status is correct for active role\",()=>{",
                   "  const expected = role === \"USER\" ? 403 : 404;",
@@ -616,7 +788,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -641,7 +823,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items"
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -680,6 +872,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -719,6 +921,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -758,6 +970,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -797,6 +1019,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -835,6 +1067,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -874,6 +1116,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -900,7 +1152,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -925,7 +1187,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -951,7 +1223,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}"
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -990,6 +1272,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -1028,6 +1320,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -1067,6 +1369,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -1106,6 +1418,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -1132,7 +1454,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -1157,7 +1489,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}"
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
