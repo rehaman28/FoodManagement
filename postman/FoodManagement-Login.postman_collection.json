@@ -1,0 +1,175 @@
+{
+  "info": {
+    "_postman_id": "b4a7f95f-2d4e-4fd4-ae4c-9dd8f31d8f4a",
+    "name": "FoodManagement - Login",
+    "description": "Authentication collection for the existing API regression suites. Select FoodManagement-USER or FoodManagement-ADMIN, run Login - Current Environment, then use the same environment for the secured service suites.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - Current Environment",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"{{loginPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{userServiceUrl}}/auth/login",
+          "host": [
+            "{{userServiceUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test(\"Login response contains token\",()=>pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+              "pm.environment.set(\"TOKEN\", body.token);",
+              "const parts = body.token.split(\".\");",
+              "pm.test(\"JWT contains header, payload and signature\",()=>pm.expect(parts.length).to.eql(3));",
+              "let payload = {};",
+              "try {",
+              "  let base64 = parts[1].replace(/-/g,\"+\").replace(/_/g,\"/\");",
+              "  while (base64.length % 4) base64 += \"=\";",
+              "  payload = JSON.parse(atob(base64));",
+              "} catch(e) {}",
+              "pm.test(\"JWT role matches active environment\",()=>pm.expect(payload.role).to.eql(pm.environment.get(\"role\")));",
+              "pm.test(\"JWT subject matches login email\",()=>pm.expect(payload.sub).to.eql(pm.environment.get(\"loginEmail\")));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Login - Invalid Credentials",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"DefinitelyWrong@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{userServiceUrl}}/auth/login",
+          "host": [
+            "{{userServiceUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP status is 401\",()=>pm.response.to.have.status(401));",
+              "pm.test(\"Invalid credentials are rejected\",()=>pm.expect(pm.response.code).to.eql(401));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Login - Invalid Request",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"not-an-email\",\n  \"password\": \"\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{userServiceUrl}}/auth/login",
+          "host": [
+            "{{userServiceUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+              "pm.test(\"Invalid login request is rejected\",()=>pm.expect(pm.response.code).to.eql(400));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}
