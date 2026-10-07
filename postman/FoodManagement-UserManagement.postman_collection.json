@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FoodManagement - User Management",
-    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "description": "FoodManagement Phase 5 — Postman-only API regression baseline. JWT/RBAC regression uses FoodManagement-USER or FoodManagement-ADMIN with {{TOKEN}}.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -31,6 +31,9 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -70,6 +73,9 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "noauth"
             }
           },
           "event": [
@@ -328,8 +334,111 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get All Users - No Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{userServiceUrl}}/users"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 401\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Unauthenticated request is rejected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Get All Users - USER 403 / ADMIN 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{userServiceUrl}}/users"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 200;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Delete User - USER 403 / ADMIN 404",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{userServiceUrl}}/users/999999999"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 404;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
         }
       ]
     }
-  ]
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "type": "string",
+        "value": "{{TOKEN}}"
+      }
+    ]
+  }
 }
