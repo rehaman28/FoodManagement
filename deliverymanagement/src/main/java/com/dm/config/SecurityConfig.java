@@ -50,10 +50,15 @@ public class SecurityConfig {
                 exception.authenticationEntryPoint(
                     authenticationEntryPoint))
 
-            .authorizeHttpRequests(request ->
-                request
-                    .anyRequest()
-                    .authenticated())
+            .authorizeHttpRequests(request -> request
+                .requestMatchers("/delivery-person/**")
+                        .hasRole("ADMIN")
+
+                .requestMatchers("/delivery-assignments/**")
+                    .hasRole("ADMIN")
+
+            .anyRequest()
+                .authenticated())
 
             .addFilterBefore(
                 jwtAuthenticationFilter,

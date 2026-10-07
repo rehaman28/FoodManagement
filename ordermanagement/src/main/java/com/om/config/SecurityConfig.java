@@ -2,6 +2,7 @@ package com.om.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,10 +51,28 @@ public class SecurityConfig {
                 exception.authenticationEntryPoint(
                     authenticationEntryPoint))
 
-            .authorizeHttpRequests(request ->
-                request
-                    .anyRequest()
-                    .authenticated())
+            .authorizeHttpRequests(request -> request
+
+            .requestMatchers(HttpMethod.POST, "/orders/placeorder")
+                .hasAnyRole("USER", "ADMIN")
+
+            .requestMatchers(HttpMethod.GET, "/orders")
+                .hasRole("ADMIN")
+
+            .requestMatchers(HttpMethod.GET, "/orders/restaurant/**")
+                .hasRole("ADMIN")
+
+            .requestMatchers(HttpMethod.GET, "/orders/status")
+                .hasRole("ADMIN")
+
+            .requestMatchers(HttpMethod.PATCH, "/orders/**")
+                .hasRole("ADMIN")
+
+            .requestMatchers(HttpMethod.GET, "/orders/**")
+                .hasAnyRole("USER", "ADMIN")
+
+            .anyRequest()
+            .authenticated())
 
             .addFilterBefore(
                 jwtAuthenticationFilter,
