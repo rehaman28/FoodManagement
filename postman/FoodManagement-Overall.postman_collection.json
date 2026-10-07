@@ -1,34 +1,32 @@
 {
   "info": {
-    "_postman_id": "3db09377-5e3b-4154-a43f-393628fcbd7d",
-    "name": "FoodManagement - Overall API Baseline",
-    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "_postman_id": "3db09377-5e3b-415a-43f-393628fcbd7d",
+    "name": "FoodManagement - Overall API + Security Regression",
+    "description": "FoodManagement Phase 5 API baseline synchronized with Phase 7 JWT/RBAC regression. Select FoodManagement-USER or FoodManagement-ADMIN, run the Login collection first to populate {{TOKEN}}, then run this Overall collection.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "46865333",
-    "_collection_link": "https://go.postman.co/collection/46865333-3db09377-5e3b-4154-a43f-393628fcbd7d?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/46865333-3db09377-5e3b-415a-43f-393628fcbd7d?source=collection_link"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "type": "string",
+        "value": "{{TOKEN}}"
+      }
+    ]
   },
   "item": [
     {
-      "name": "01 - User Management",
+      "name": "00 - Authentication",
       "item": [
         {
-          "name": "Create User - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
-                  "const r=pm.response.json(); if(r.userId!==undefined) pm.environment.set(\"userId\", r.userId);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
+          "name": "Login - Current Environment",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -42,7 +40,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userName\": \"Jacob\",\n  \"userPhone\": \"6785342980\",\n  \"email\": \"jacob.j@gmail.com\",\n  \"password\": \"jacob@123#\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"Raghavendra Colony\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"RanagaReddy\",\n      \"country\": \"India\",\n      \"pincode\": \"500032\"\n    }\n  ]\n}",
+              "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"{{loginPassword}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -50,19 +48,130 @@
               }
             },
             "url": {
-              "raw": "{{userServiceUrl}}/users",
+              "raw": "{{userServiceUrl}}/auth/login",
               "host": [
                 "{{userServiceUrl}}"
               ],
               "path": [
-                "users"
+                "auth",
+                "login"
               ]
             }
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Login response contains token\",()=>pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.environment.set(\"TOKEN\", body.token);",
+                  "const parts = body.token.split(\".\");",
+                  "pm.test(\"JWT contains header, payload and signature\",()=>pm.expect(parts.length).to.eql(3));",
+                  "let payload = {};",
+                  "try {",
+                  "  let base64 = parts[1].replace(/-/g,\"+\").replace(/_/g,\"/\");",
+                  "  while (base64.length % 4) base64 += \"=\";",
+                  "  payload = JSON.parse(atob(base64));",
+                  "} catch(e) {}",
+                  "pm.test(\"JWT role matches active environment\",()=>pm.expect(payload.role).to.eql(pm.environment.get(\"role\")));",
+                  "pm.test(\"JWT subject matches login email\",()=>pm.expect(payload.sub).to.eql(pm.environment.get(\"loginEmail\")));"
+                ]
+              }
+            }
+          ],
           "response": []
         },
         {
-          "name": "Create User - Invalid Request",
+          "name": "Login - Invalid Credentials",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"DefinitelyWrong@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{userServiceUrl}}/auth/login",
+              "host": [
+                "{{userServiceUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 401\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Invalid credentials are rejected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "Login - Invalid Request",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"not-an-email\",\n  \"password\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{userServiceUrl}}/auth/login",
+              "host": [
+                "{{userServiceUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
           "event": [
             {
               "listen": "test",
@@ -70,12 +179,20 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                  "pm.test(\"Invalid login request is rejected\",()=>pm.expect(pm.response.code).to.eql(400));"
                 ]
               }
             }
           ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 - User Management",
+      "item": [
+        {
+          "name": "Create User - Happy",
           "request": {
             "method": "POST",
             "header": [
@@ -88,6 +205,49 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{userServiceUrl}}/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Postman User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"postman{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.userId!==undefined) pm.environment.set(\"userId\", r.userId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create User - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"P\",\n  \"userPhone\": \"123\",\n  \"email\": \"bad-email\",\n  \"password\": \"short\",\n  \"userAddresses\": []\n}",
@@ -97,175 +257,10 @@
                 }
               }
             },
-            "url": {
-              "raw": "{{userServiceUrl}}/users",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users"
-              ]
+            "auth": {
+              "type": "noauth"
             }
           },
-          "response": []
-        },
-        {
-          "name": "Get All Users - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{userServiceUrl}}/users",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get User - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{userServiceUrl}}/users/{{userId}}",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users",
-                "{{userId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get User - Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{userServiceUrl}}/users/999999999",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update User - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userName\": \"Mohan M\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{userServiceUrl}}/users/{{userId}}",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users",
-                "{{userId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update User - Invalid Request",
           "event": [
             {
               "listen": "test",
@@ -278,7 +273,86 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Get All Users - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/{{userId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User - Happy",
           "request": {
             "method": "PATCH",
             "header": [
@@ -291,6 +365,45 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Updated Postman User\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User - Invalid Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/{{userId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userPhone\": \"123\"\n}",
@@ -299,35 +412,24 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{userServiceUrl}}/users/{{userId}}",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users",
-                "{{userId}}"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Update User - Not Found",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Update User - Not Found",
           "request": {
             "method": "PATCH",
             "header": [
@@ -340,6 +442,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{userServiceUrl}}/users/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Updated\"\n}",
@@ -348,22 +451,8 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{userServiceUrl}}/users/999999999",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users",
-                "999999999"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Delete User - Not Found",
           "event": [
             {
               "listen": "test",
@@ -376,7 +465,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Delete User - Not Found",
           "request": {
             "method": "DELETE",
             "header": [
@@ -385,21 +477,34 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{userServiceUrl}}/users/999999999",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users",
-                "999999999"
-              ]
-            }
+            "url": "{{userServiceUrl}}/users/999999999"
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Delete User - Happy",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{userServiceUrl}}/users/{{userId}}"
+          },
           "event": [
             {
               "listen": "test",
@@ -411,7 +516,72 @@
                 ]
               }
             }
+          ]
+        },
+        {
+          "name": "Get All Users - No Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{userServiceUrl}}/users"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 401\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Unauthenticated request is rejected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
           ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Get All Users - USER 403 / ADMIN 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{userServiceUrl}}/users"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 200;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Delete User - USER 403 / ADMIN 404",
           "request": {
             "method": "DELETE",
             "header": [
@@ -421,16 +591,24 @@
               }
             ],
             "url": {
-              "raw": "{{userServiceUrl}}/users/{{userId}}",
-              "host": [
-                "{{userServiceUrl}}"
-              ],
-              "path": [
-                "users",
-                "{{userId}}"
-              ]
+              "raw": "{{userServiceUrl}}/users/999999999"
             }
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 404;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "response": []
         }
       ]
@@ -440,21 +618,6 @@
       "item": [
         {
           "name": "Add Restaurant - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
-                  "const r=pm.response.json(); if(r.Id!==undefined) pm.environment.set(\"restaurantId\", r.Id);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -467,42 +630,33 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"restaurantName\": \"Arugu\",\n  \"phoneNumber\": \"9123456789\",\n  \"rating\": 4.2,\n  \"addressRequestDto\": {\n    \"landmark\": \"InOrbit Mall\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"itemRequestDto\": [\n    {\n      \"itemName\": \"Paneer Bowl\",\n      \"itemPrice\": 180,\n      \"itemCategory\": \"Main Course\",\n      \"itemType\": \"Veg\",\n      \"itemRating\": 4\n    },\n    {\n      \"itemName\": \"Chicken Bowl\",\n      \"itemPrice\": 270,\n      \"itemCategory\": \"Main Course \",\n      \"itemType\": \"Non-Veg\",\n      \"itemRating\": 4.5\n    }\n  ]\n}",
+              "raw": "{\n  \"restaurantName\": \"Postman Restaurant {{$timestamp}}\",\n  \"phoneNumber\": \"9123456789\",\n  \"rating\": 4.2,\n  \"addressRequestDto\": {\n    \"landmark\": \"Near Metro\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"itemRequestDto\": [\n    {\n      \"itemName\": \"Paneer Bowl\",\n      \"itemPrice\": 180,\n      \"itemCategory\": \"Main\",\n      \"itemType\": \"Veg\",\n      \"itemRating\": 4\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Add Restaurant - Invalid Request",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.Id!==undefined) pm.environment.set(\"restaurantId\", r.Id);"
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Add Restaurant - Invalid Request",
           "request": {
             "method": "POST",
             "header": [
@@ -515,6 +669,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\",\n  \"rating\": 6,\n  \"addressRequestDto\": null,\n  \"itemRequestDto\": []\n}",
@@ -523,249 +678,8 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Get All Restaurants - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Restaurant - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Restaurant - Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Restaurant Name - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/name",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "name"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Restaurant Name - Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999/name",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999",
-                "name"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Restaurant - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"restaurantName\": \"Arugu\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Restaurant - Invalid Request",
           "event": [
             {
               "listen": "test",
@@ -778,7 +692,137 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Get All Restaurants - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant Name - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/name"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Restaurant Name - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/name"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant - Happy",
           "request": {
             "method": "PATCH",
             "header": [
@@ -791,6 +835,45 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"Updated Postman Restaurant\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant - Invalid Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\"\n}",
@@ -799,120 +882,8 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Update Restaurant - Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"restaurantName\": \"Updated\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Restaurant Rating - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"rating\": 4.5\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "rating"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Restaurant Rating - Invalid Request",
           "event": [
             {
               "listen": "test",
@@ -925,9 +896,12 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Update Restaurant - Not Found",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "header": [
               {
                 "key": "Accept",
@@ -938,31 +912,17 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rating\": 6\n}",
+              "raw": "{\n  \"restaurantName\": \"Updated\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "rating"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Update Restaurant Rating - Not Found",
           "event": [
             {
               "listen": "test",
@@ -975,7 +935,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Update Restaurant Rating - Happy",
           "request": {
             "method": "PUT",
             "header": [
@@ -988,6 +951,84 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant Rating - Invalid Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 6\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Restaurant Rating - Not Found",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/rating",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 4\n}",
@@ -996,23 +1037,34 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999/rating",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999",
-                "rating"
-              ]
             }
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Delete Restaurant - Not Found",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999"
+          },
           "event": [
             {
               "listen": "test",
@@ -1024,7 +1076,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Delete Restaurant - Happy",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1033,21 +1088,8 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999"
-              ]
-            }
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}"
           },
-          "response": []
-        },
-        {
-          "name": "Delete Restaurant - Happy",
           "event": [
             {
               "listen": "test",
@@ -1059,7 +1101,85 @@
                 ]
               }
             }
+          ]
+        },
+        {
+          "name": "Get All Restaurants - No Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{restaurantServiceUrl}}/restaurants"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 401\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Unauthenticated request is rejected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
           ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Add Restaurant - USER 403 / ADMIN 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{restaurantServiceUrl}}/restaurants"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\",\n  \"rating\": 6,\n  \"addressRequestDto\": null,\n  \"itemRequestDto\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 400;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Delete Restaurant - USER 403 / ADMIN 404",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1069,16 +1189,24 @@
               }
             ],
             "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}"
-              ]
+              "raw": "{{restaurantServiceUrl}}/restaurants/999999999"
             }
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 404;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "response": []
         }
       ]
@@ -1088,6 +1216,16 @@
       "item": [
         {
           "name": "Get Restaurant Items - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items"
+          },
           "event": [
             {
               "listen": "test",
@@ -1099,7 +1237,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Get Restaurant Items - Restaurant Not Found",
           "request": {
             "method": "GET",
             "header": [
@@ -1108,22 +1249,8 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items"
-              ]
-            }
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items"
           },
-          "response": []
-        },
-        {
-          "name": "Get Restaurant Items - Restaurant Not Found",
           "event": [
             {
               "listen": "test",
@@ -1136,46 +1263,10 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999/items",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999",
-                "items"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Add Item - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
-                  "const r=pm.response.json(); if(r.itemId!==undefined) pm.environment.set(\"itemId\", r.itemId);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -1188,44 +1279,33 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"itemName\": \"Methi chamen\",\n    \"itemPrice\": 175,\n    \"itemCategory\": \"Main Course\",\n    \"itemType\": \"Veg\"\n  }",
+              "raw": "{\n  \"itemName\": \"Postman Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\",\n  \"itemRating\": 4\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Add Item - Invalid Request",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.itemId!==undefined) pm.environment.set(\"itemId\", r.itemId);"
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Add Item - Invalid Request",
           "request": {
             "method": "POST",
             "header": [
@@ -1238,6 +1318,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"\",\n  \"itemPrice\": -10,\n  \"itemCategory\": \"\",\n  \"itemType\": \"\"\n}",
@@ -1246,36 +1327,24 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Add Item - Restaurant Not Found",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Add Item - Restaurant Not Found",
           "request": {
             "method": "POST",
             "header": [
@@ -1288,6 +1357,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\"\n}",
@@ -1296,37 +1366,24 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999/items",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999",
-                "items"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Bulk Add Items - Happy",
           "event": [
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Bulk Add Items - Happy",
           "request": {
             "method": "POST",
             "header": [
@@ -1339,45 +1396,32 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
             "body": {
               "mode": "raw",
-              "raw": "[\n  {\n    \"itemName\": \"Butter Chicken\",\n    \"itemPrice\": 250,\n    \"itemCategory\": \"Main Course \",\n    \"itemType\": \"Non-Veg\"\n  },\n  {\n    \"itemName\": \"Methi chamen\",\n    \"itemPrice\": 175,\n    \"itemCategory\": \"Main Course\",\n    \"itemType\": \"Veg\"\n  }\n]",
+              "raw": "[\n  {\n    \"itemName\": \"Bulk A\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  },\n  {\n    \"itemName\": \"Bulk B\",\n    \"itemPrice\": 75,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"NonVeg\"\n  }\n]",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "bulk"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Bulk Add Items - Invalid Request",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));"
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Bulk Add Items - Invalid Request",
           "request": {
             "method": "POST",
             "header": [
@@ -1390,6 +1434,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
             "body": {
               "mode": "raw",
               "raw": "[]",
@@ -1398,238 +1443,8 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "bulk"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Bulk Add Items - Restaurant Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "[\n  {\n    \"itemName\": \"Bulk\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  }\n]",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999/items/bulk",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999",
-                "items",
-                "bulk"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Item - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "{{itemId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Item - Item Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Item - Restaurant Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999",
-                "items",
-                "{{itemId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Item - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"itemPrice\": 125\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "{{itemId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Item - Invalid Request",
           "event": [
             {
               "listen": "test",
@@ -1642,7 +1457,126 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Bulk Add Items - Restaurant Not Found",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/bulk",
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"itemName\": \"Bulk\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Item - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Item - Item Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Item - Restaurant Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Item - Happy",
           "request": {
             "method": "PATCH",
             "header": [
@@ -1655,6 +1589,45 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemPrice\": 125\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Item - Invalid Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": -1\n}",
@@ -1663,37 +1636,24 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "{{itemId}}"
-              ]
             }
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Update Item - Item Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "PATCH",
             "header": [
@@ -1706,6 +1666,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -1714,37 +1675,24 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "999999999"
-              ]
             }
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Update Item - Restaurant Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "PATCH",
             "header": [
@@ -1757,6 +1705,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -1765,24 +1714,34 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "999999999",
-                "items",
-                "{{itemId}}"
-              ]
             }
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Delete Item - Not Found",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999"
+          },
           "event": [
             {
               "listen": "test",
@@ -1794,7 +1753,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Delete Item - Happy",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1803,23 +1765,8 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "999999999"
-              ]
-            }
+            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}"
           },
-          "response": []
-        },
-        {
-          "name": "Delete Item - Happy",
           "event": [
             {
               "listen": "test",
@@ -1831,29 +1778,7 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
-              "host": [
-                "{{restaurantServiceUrl}}"
-              ],
-              "path": [
-                "restaurants",
-                "{{restaurantId}}",
-                "items",
-                "{{itemId}}"
-              ]
-            }
-          },
-          "response": []
+          ]
         }
       ]
     },
@@ -1862,6 +1787,29 @@
       "item": [
         {
           "name": "Place Order - Happy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": \"{{itemId}}\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
           "event": [
             {
               "listen": "test",
@@ -1874,56 +1822,10 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": \"{{itemId}}\"\n    }\n  ]\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/placeorder",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "placeorder"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Place Order - Invalid Request",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -1936,6 +1838,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 0,\n  \"restaurantId\": 0,\n  \"OrderingItems\": []\n}",
@@ -1944,35 +1847,24 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/placeorder",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "placeorder"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Place Order - Restaurant Not Found",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Place Order - Restaurant Not Found",
           "request": {
             "method": "POST",
             "header": [
@@ -1985,6 +1877,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": 999999999,\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 1\n    }\n  ]\n}",
@@ -1993,22 +1886,8 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/placeorder",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "placeorder"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Place Order - Item Not Found",
           "event": [
             {
               "listen": "test",
@@ -2021,7 +1900,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Place Order - Item Not Found",
           "request": {
             "method": "POST",
             "header": [
@@ -2034,6 +1916,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{orderServiceUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 999999999\n    }\n  ]\n}",
@@ -2042,57 +1925,8 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/placeorder",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "placeorder"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Get Order - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/{{orderId}}",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Order - Not Found",
           "event": [
             {
               "listen": "test",
@@ -2105,7 +1939,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Get Order - Happy",
           "request": {
             "method": "GET",
             "header": [
@@ -2114,21 +1951,59 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/999999999",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "999999999"
-              ]
-            }
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}"
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Order - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get All Orders - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders"
+          },
           "event": [
             {
               "listen": "test",
@@ -2140,29 +2015,20 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Get Orders By User - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/user/1"
+          },
           "event": [
             {
               "listen": "test",
@@ -2174,31 +2040,20 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/user/1",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "user",
-                "1"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Get Orders By User - No Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/user/999999999"
+          },
           "event": [
             {
               "listen": "test",
@@ -2210,31 +2065,20 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/user/999999999",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "user",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Get Orders By Restaurant - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/restaurant/{{restaurantId}}"
+          },
           "event": [
             {
               "listen": "test",
@@ -2246,31 +2090,20 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/restaurant/{{restaurantId}}",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "restaurant",
-                "{{restaurantId}}"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Get Orders By Restaurant - No Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/restaurant/999999999"
+          },
           "event": [
             {
               "listen": "test",
@@ -2282,31 +2115,20 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/restaurant/999999999",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "restaurant",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Get Orders By Status - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/status?orderStatus=Ordered"
+          },
           "event": [
             {
               "listen": "test",
@@ -2318,7 +2140,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Get Orders By Status - Invalid Enum",
           "request": {
             "method": "GET",
             "header": [
@@ -2327,27 +2152,8 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/status?orderStatus=Ordered",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "status"
-              ],
-              "query": [
-                {
-                  "key": "orderStatus",
-                  "value": "Ordered"
-                }
-              ]
-            }
+            "url": "{{orderServiceUrl}}/orders/status?orderStatus=INVALID"
           },
-          "response": []
-        },
-        {
-          "name": "Get Orders By Status - Invalid Enum",
           "event": [
             {
               "listen": "test",
@@ -2360,48 +2166,10 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/status?orderStatus=INVALID",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "status"
-              ],
-              "query": [
-                {
-                  "key": "orderStatus",
-                  "value": "INVALID"
-                }
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Update Order Status - Accepted",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "PATCH",
             "header": [
@@ -2414,6 +2182,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
@@ -2422,36 +2191,23 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/{{orderId}}/status",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderId}}",
-                "status"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Update Order Status - Missing Status",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Update Order Status - Missing Status",
           "request": {
             "method": "PATCH",
             "header": [
@@ -2464,6 +2220,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{}",
@@ -2472,23 +2229,47 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/{{orderId}}/status",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderId}}",
-                "status"
-              ]
             }
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Update Order Status - Invalid Transition",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"OrderStatus\": \"Delivered\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
           "event": [
             {
               "listen": "test",
@@ -2501,7 +2282,10 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Update Order Status - Not Found",
           "request": {
             "method": "PATCH",
             "header": [
@@ -2514,31 +2298,17 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{orderServiceUrl}}/orders/999999999/status",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"OrderStatus\": \"Delivered\"\n}",
+              "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{orderServiceUrl}}/orders/{{orderId}}/status",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderId}}",
-                "status"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Update Order Status - Not Found",
           "event": [
             {
               "listen": "test",
@@ -2551,64 +2321,108 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Get All Orders - No Token",
           "request": {
-            "method": "PATCH",
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
             "header": [
               {
                 "key": "Accept",
                 "value": "application/json"
-              },
+              }
+            ],
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 401\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Unauthenticated request is rejected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Get All Orders - USER 403 / ADMIN 200",
+          "request": {
+            "method": "GET",
+            "header": [
               {
-                "key": "Content-Type",
+                "key": "Accept",
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "{{orderServiceUrl}}/orders/999999999/status",
-              "host": [
-                "{{orderServiceUrl}}"
-              ],
-              "path": [
-                "orders",
-                "999999999",
-                "status"
-              ]
+              "raw": "{{orderServiceUrl}}/orders"
             }
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 200;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Get Orders By Status - USER 403 / ADMIN 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{orderServiceUrl}}/orders/status?orderStatus=PLACED"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 200;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "response": []
         }
       ]
     },
     {
-      "name": "05 - Delivery Person",
+      "name": "Delivery Person Controller",
       "item": [
         {
           "name": "Create Agent - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
-                  "const r=pm.response.json(); if(r.deliveryAgentId!==undefined) pm.environment.set(\"deliveryAgentId\", r.deliveryAgentId);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -2621,30 +2435,56 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/addperson",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"deliveryAgentName\": \"Rahul\",\n  \"deliveryAgentAadhar\": \"245678901342\",\n  \"deliveryAgentPhone\": \"9766543211\",\n  \"deliveryAgentEmail\": \"rahul.s@gmail.com\"\n}",
+              "raw": "{\n  \"deliveryAgentName\": \"Postman Agent {{$timestamp}}\",\n  \"deliveryAgentAadhar\": \"234567890123\",\n  \"deliveryAgentPhone\": \"9876543211\",\n  \"deliveryAgentEmail\": \"agent{{$timestamp}}@example.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person/addperson",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-person",
-                "addperson"
-              ]
             }
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(201));",
+                  "const r=pm.response.json(); if(r.deliveryAgentId!==undefined) pm.environment.set(\"deliveryAgentId\", r.deliveryAgentId);"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Create Agent - Invalid Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/addperson",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAgentName\": \"A\",\n  \"deliveryAgentAadhar\": \"123\",\n  \"deliveryAgentPhone\": \"123\",\n  \"deliveryAgentEmail\": \"bad\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
           "event": [
             {
               "listen": "test",
@@ -2657,7 +2497,230 @@
                 ]
               }
             }
+          ]
+        },
+        {
+          "name": "Get All Agents - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Agent - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Agent - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/999999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Agent - Happy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/update/{{deliveryAgentId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAgentName\": \"Updated Agent\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Agent - Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/update/999999999",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryAgentName\": \"Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Delivery Agents - No Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{deliveryServiceUrl}}/delivery-person"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 401\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Unauthenticated request is rejected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
           ],
+          "response": []
+        },
+        {
+          "name": "[RBAC] Get All Delivery Agents - USER 403 / ADMIN 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{deliveryServiceUrl}}/delivery-person"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 200;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Delivery Assignment Controller",
+      "item": [
+        {
+          "name": "Create Assignment - Happy",
           "request": {
             "method": "POST",
             "header": [
@@ -2670,241 +2733,17 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"deliveryAgentName\": \"A\",\n  \"deliveryAgentAadhar\": \"123\",\n  \"deliveryAgentPhone\": \"123\",\n  \"deliveryAgentEmail\": \"bad\"\n}",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person/addperson",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-person",
-                "addperson"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Get All Agents - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-person"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Agent - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-person",
-                "{{deliveryAgentId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Agent - Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person/999999999",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-person",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Agent - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"deliveryAgentName\": \"Rahul\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person/update/{{deliveryAgentId}}",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-person",
-                "update",
-                "{{deliveryAgentId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Agent - Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"deliveryAgentName\": \"Updated\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person/update/999999999",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-person",
-                "update",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "06 - Delivery Assignment",
-      "item": [
-        {
-          "name": "Create Assignment - Happy",
           "event": [
             {
               "listen": "test",
@@ -2917,55 +2756,10 @@
                 ]
               }
             }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments"
-              ]
-            }
-          },
-          "response": []
+          ]
         },
         {
           "name": "Create Assignment - Invalid Request",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -2978,6 +2772,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"orderId\": 0,\n  \"deliveryAgentId\": 0\n}",
@@ -2986,309 +2781,8 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Create Assignment - Agent Unavailable",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"orderId\": 999998,\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Create Assignment - Order Already Assigned",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Assignment - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "{{deliveryAssignmentId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Assignment - Not Found",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
-                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/999999999",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "999999999"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get All Assignments - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/all",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "all"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Assignments By Agent - Happy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/delivery-person/{{deliveryAgentId}}/assignments",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "delivery-person",
-                "{{deliveryAgentId}}",
-                "assignments"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Delivery Status - Accepted",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
-                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"deliveryStatus\": \"ACCEPTED\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "{{deliveryAssignmentId}}",
-                "status"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update Delivery Status - Missing Status",
           "event": [
             {
               "listen": "test",
@@ -3301,9 +2795,12 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Create Assignment - Agent Unavailable",
           "request": {
-            "method": "PATCH",
+            "method": "POST",
             "header": [
               {
                 "key": "Accept",
@@ -3314,31 +2811,17 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"orderId\": 999998,\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "{{deliveryAssignmentId}}",
-                "status"
-              ]
             }
           },
-          "response": []
-        },
-        {
-          "name": "Update Delivery Status - Invalid Transition",
           "event": [
             {
               "listen": "test",
@@ -3351,9 +2834,12 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Create Assignment - Order Already Assigned",
           "request": {
-            "method": "PATCH",
+            "method": "POST",
             "header": [
               {
                 "key": "Accept",
@@ -3364,31 +2850,68 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"deliveryStatus\": \"DELIVERED\"\n}",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "{{deliveryAssignmentId}}",
-                "status"
-              ]
             }
           },
-          "response": []
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Update Delivery Status - Not Found",
+          "name": "Get Assignment - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Assignment - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999"
+          },
           "event": [
             {
               "listen": "test",
@@ -3401,7 +2924,60 @@
                 ]
               }
             }
-          ],
+          ]
+        },
+        {
+          "name": "Get All Assignments - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/all"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Assignments By Agent - Happy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/delivery-person/{{deliveryAgentId}}/assignments"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Accepted",
           "request": {
             "method": "PATCH",
             "header": [
@@ -3414,6 +2990,7 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryStatus\": \"ACCEPTED\"\n}",
@@ -3422,19 +2999,306 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/999999999/status",
-              "host": [
-                "{{deliveryServiceUrl}}"
-              ],
-              "path": [
-                "delivery-assignments",
-                "999999999",
-                "status"
-              ]
             }
           },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Collected",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"COLLECTED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - In Transit",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"IN_TRANSIT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Delivered",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Agent After Delivery - Available",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Agent is available after delivery\",()=>pm.expect(pm.response.json().isAgentAvailable).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Missing Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 400\",()=>pm.response.to.have.status(400));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(400));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Invalid Transition",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"DELIVERED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 409\",()=>pm.response.to.have.status(409));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(409));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Delivery Status - Not Found",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliveryStatus\": \"ACCEPTED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[RBAC] Get All Assignments - USER 403 / ADMIN 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{deliveryServiceUrl}}/delivery-assignments/all"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role = pm.environment.get(\"role\");",
+                  "pm.test(\"RBAC status is correct for active role\",()=>{",
+                  "  const expected = role === \"USER\" ? 403 : 200;",
+                  "  pm.expect(pm.response.code).to.eql(expected);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "response": []
         }
       ]
