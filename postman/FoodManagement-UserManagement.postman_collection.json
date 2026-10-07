@@ -102,7 +102,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users"
+            "url": "{{userServiceUrl}}/users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -127,7 +137,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}"
+            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -152,7 +172,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999"
+            "url": "{{userServiceUrl}}/users/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -191,6 +221,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -229,6 +269,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -268,6 +318,16 @@
                   "language": "json"
                 }
               }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -294,7 +354,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999"
+            "url": "{{userServiceUrl}}/users/999999999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -320,7 +390,17 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}"
+            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -378,6 +458,16 @@
             ],
             "url": {
               "raw": "{{userServiceUrl}}/users"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -386,6 +476,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"TOKEN is present\",()=>pm.expect(pm.environment.get(\"TOKEN\")).to.be.a(\"string\").and.not.empty);",
                   "const role = pm.environment.get(\"role\");",
                   "pm.test(\"RBAC status is correct for active role\",()=>{",
                   "  const expected = role === \"USER\" ? 403 : 200;",
@@ -409,6 +500,16 @@
             ],
             "url": {
               "raw": "{{userServiceUrl}}/users/999999999"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
             }
           },
           "event": [
@@ -417,6 +518,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"TOKEN is present\",()=>pm.expect(pm.environment.get(\"TOKEN\")).to.be.a(\"string\").and.not.empty);",
                   "const role = pm.environment.get(\"role\");",
                   "pm.test(\"RBAC status is correct for active role\",()=>{",
                   "  const expected = role === \"USER\" ? 403 : 404;",
