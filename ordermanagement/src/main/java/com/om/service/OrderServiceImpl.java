@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+// import org.springframework.web.client.RestTemplate;
 
 import com.om.Exception.InvalidOrderStatusTransitionException;
 import com.om.Exception.ItemNotFoundException;
@@ -13,6 +13,7 @@ import com.om.Exception.OrderNotFoundException;
 import com.om.Exception.RestaurantNotFoundException;
 import com.om.builder.OrderRequestBuilder;
 import com.om.builder.OrderResponseBuilder;
+import com.om.client.RestaurantClient;
 import com.om.dao.OrderRepository;
 import com.om.dto.ItemResponseDto;
 import com.om.dto.OrderItemRequestDto;
@@ -22,16 +23,25 @@ import com.om.dto.OrderStatusRequestDto;
 import com.om.model.Order;
 import com.om.model.OrderStatus;
 
+import feign.FeignException;
+
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final RestTemplate restTemplate;
+    // private final RestTemplate restTemplate;
+    private final  RestaurantClient restaurantClient;
+    
 
-    public OrderServiceImpl(OrderRepository orderRepository, RestTemplate restTemplate) {
+    // public OrderServiceImpl(OrderRepository orderRepository, RestTemplate restTemplate) {
+    //     this.orderRepository = orderRepository;
+    //     this.restTemplate = restTemplate;
+    // }
+
+    public OrderServiceImpl(OrderRepository orderRepository, RestaurantClient restaurantClient) {
         this.orderRepository = orderRepository;
-        this.restTemplate = restTemplate;
+        this.restaurantClient = restaurantClient;
     }
 
     @Override
@@ -153,13 +163,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // RestTemplate for Inter-service Communications
-    private String fetchRestaurantNameFromId(long restaurantId) {
-        return restTemplate.getForObject("http://localhost:8001/restaurants/" + restaurantId + "/name", String.class);
-    }
+    //Moving The below method to FeignClient Service Discovery approach
+    // private String fetchRestaurantNameFromId(long restaurantId) {
+    //     return restTemplate.getForObject("http://localhost:8001/restaurants/" + restaurantId + "/name", String.class);
+    // }
 
+    // private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId) {
+    //     String url = "http://localhost:8001/restaurants/{restaurantId}/items/{itemId}";
+    //     return restTemplate.getForObject(url, ItemResponseDto.class, restaurantId, itemId);
+    // }
+
+
+    //FeignClient ServiceDiscovery
+    private String fetchRestaurantNameFromId(long restaurantId) {
+        try {
+            return restaurantClient.getRestaurantName(restaurantId);
+        } catch (FeignException.NotFound ex) {
+
+            throw new RestaurantNotFoundException(
+                    "Restaurant was not found with Id: "
+                            + restaurantId);
+        }
+    }
     private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId) {
-        String url = "http://localhost:8001/restaurants/{restaurantId}/items/{itemId}";
-        return restTemplate.getForObject(url, ItemResponseDto.class, restaurantId, itemId);
+        try {
+            return restaurantClient.getItem(restaurantId, itemId);
+        } catch (FeignException.NotFound ex) {
+
+            throw new ItemNotFoundException(
+                    "Item id " + itemId
+                            + " not found in Restaurant "
+                            + restaurantId);
+        }
     }
 
     // Helper Method to calculate the order price
