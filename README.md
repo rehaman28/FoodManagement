@@ -1,6 +1,10 @@
 # FoodManagement
 
-FoodManagement is a Spring Boot microservices project containing:
+FoodManagement is a Java 21 / Spring Boot microservices project for managing users, restaurants, food items, orders, and delivery operations. The project is built incrementally to demonstrate authentication, authorization, service discovery, synchronous service communication, event-driven communication, resilience, testing, containerization, CI/CD, observability, and cloud deployment.
+
+## Project architecture
+
+The current system contains:
 
 - User Management
 - Restaurant Management
@@ -8,79 +12,388 @@ FoodManagement is a Spring Boot microservices project containing:
 - Delivery Management
 - Eureka Service Discovery
 - JWT authentication
-- Role-Based Authorization (USER / ADMIN)
-- Postman API and security regression collections
+- USER / ADMIN role-based authorization
+- Postman API regression collections
 
-## Current roadmap
+Current local ports:
 
-| Phase | Status |
-|---|---|
-| 1. User Management | ✅ Complete |
-| 2. Restaurant Management | ✅ Complete |
-| 3. Order Management | ✅ Core complete |
-| 4. Delivery Management | ✅ Core complete |
-| 5. API Test Baseline / Postman | ✅ Complete |
-| 6. JWT Authentication | ✅ Complete |
-| 7. RBAC | ✅ Complete |
-| 8. Security Postman Regression | ✅ Complete |
-| 9. Eureka Service Discovery | ✅ Complete and validated |
-| 10. OpenFeign + Eureka integration | 🔵 Current target |
-
-## Repository status
-
-The current main branch contains the Phase 9 Eureka implementation.
-
-Current services:
-
-| Service | Spring application name | Port |
+| Component | Application / Service ID | Port |
 |---|---|---:|
-| Eureka | eureka | 8761 |
-| User Management | usermanagement | 8002 |
-| Restaurant Management | restaurantmangement | 8001 |
-| Order Management | ordermanagement | 8003 |
-| Delivery Management | deliverymanagement | 8004 |
+| Eureka Server | \`eureka\` | 8761 |
+| User Management | \`usermanagement\` | 8002 |
+| Restaurant Management | \`restaurantmangement\` | 8001 |
+| Order Management | \`ordermanagement\` | 8003 |
+| Delivery Management | \`deliverymanagement\` | 8004 |
 
-Important: the repository directory is restaurantmanagement, but the existing Eureka/service ID is restaurantmangement. Do not rename the service ID during Phase 10 unless the entire discovery configuration is intentionally changed.
+> The repository directory is \`restaurantmanagement\`, while the existing Spring application/service ID is \`restaurantmangement\`. The service ID is intentionally kept unchanged because it is used for discovery.
 
-## Prerequisites
+## Technology stack
 
 - Java 21
-- Gradle / Gradle Wrapper
-- MySQL running locally
+- Spring Boot 4.1.x
+- Spring Data JPA / Hibernate
+- Spring Security
+- JWT
+- MySQL
+- Gradle
+- Spring Cloud Netflix Eureka
+- OpenFeign / Spring Cloud LoadBalancer
+- Apache Kafka
+- JUnit 5 / Mockito
 - Postman
-- Eureka and the four business services available on the ports listed above
+- Docker
+- Kubernetes
+- CI/CD tooling
+- Observability tooling
 
-Do not put production passwords, JWT secrets, or production credentials in this README.
+## Project roadmap
 
-## Startup order
+### Phase 1 — User Management
+Status: Complete
 
-Start the applications in this order:
+Implementation:
+- User registration
+- User retrieval
+- User update
+- User deletion
+- Validation
+- MySQL persistence
+- Password encoding
+- User role model
 
-1. MySQL
-2. Eureka Server
-3. User Management
-4. Restaurant Management
-5. Order Management
-6. Delivery Management
+### Phase 2 — Restaurant Management
+Status: Complete
 
-Eureka dashboard:
+Implementation:
+- Restaurant CRUD
+- Restaurant items
+- Bulk item creation
+- Restaurant rating
+- Validation
+- Exception handling
 
-    http://localhost:8761
+### Phase 3 — Order Management
+Status: Core complete
 
-Expected registered applications:
+Implementation:
+- Place order
+- Order retrieval
+- Order listing
+- Orders by user
+- Orders by restaurant
+- Orders by status
+- Order status transitions
+- Restaurant/item lookup
+- Order price calculation
 
-    USERMANAGEMENT
-    RESTAURANTMANGEMENT
-    ORDERMANAGEMENT
-    DELIVERYMANAGEMENT
+Future hardening:
+- BigDecimal for monetary values
+- Price snapshot
+- Ownership validation
+- Improved service-to-service abstraction
 
-## Postman assets
+### Phase 4 — Delivery Management
+Status: Core complete
 
-The canonical regression assets for this project are under:
+Implementation:
+- Delivery person management
+- Delivery assignments
+- Assignment retrieval
+- Assignment listing
+- Delivery status transitions
+- Availability handling
+
+### Phase 5 — API Test Baseline
+Status: Complete
+
+Implementation:
+- Individual Postman collections
+- Overall Postman collection
+- Happy-path scenarios
+- Negative scenarios
+- HTTP status assertions
+- Response assertions
+
+### Phase 6 — JWT Authentication
+Status: Complete
+
+Implementation:
+- Login
+- JWT generation
+- JWT signature validation
+- JWT expiration
+- JWT role claim
+- Bearer-token authentication
+- Invalid JWT handling
+
+### Phase 7 — Role-Based Authorization
+Status: Complete
+
+Implementation:
+- USER role
+- ADMIN role
+- Endpoint-level authorization
+- ADMIN-only management operations
+- USER-accessible operations
+
+### Phase 8 — Security Postman Regression
+Status: Complete
+
+Implementation:
+- Login collection
+- USER environment
+- ADMIN environment
+- JWT token variable
+- 401 scenarios
+- 403 scenarios
+- Existing collections synchronized with security scenarios
+
+### Phase 9 — Eureka Service Discovery
+Status: Complete
+
+Implementation:
+- Eureka Server
+- Eureka client registration
+- Service names
+- Service discovery configuration
+- Service registration validation
+
+### Phase 10 — OpenFeign + Eureka
+Status: Next implementation target
+
+Plan:
+1. Add OpenFeign and LoadBalancer dependencies to Order Management
+2. Enable Feign clients
+3. Create Restaurant Feign client
+4. Replace Order -> Restaurant RestTemplate calls
+5. Preserve JWT propagation for inter-service calls
+6. Map downstream Feign errors to existing business exceptions
+7. Remove obsolete RestTemplate configuration
+8. Remove hard-coded internal service URLs from Order Management
+9. Verify service discovery through Eureka
+
+### Phase 11 — Kafka / Event-Driven Architecture
+Plan:
+1. Introduce Kafka infrastructure
+2. Define domain events
+3. Implement producers
+4. Implement consumers
+5. Define topics and consumer groups
+6. Add retry/error handling
+7. Add idempotency
+8. Add integration tests
+
+Candidate events:
+- OrderPlaced
+- OrderAccepted
+- OrderPreparing
+- OrderOutForDelivery
+- OrderDelivered
+- OrderCancelled
+
+### Phase 12 — Resilience and Fault Tolerance
+Plan:
+1. Timeouts
+2. Retry policies
+3. Circuit breakers
+4. Fallbacks
+5. Bulkhead isolation
+6. Rate limiting
+7. Failure-path testing
+
+### Phase 13 — Data and Transaction Hardening
+Plan:
+1. BigDecimal for money
+2. Price snapshots
+3. Transaction boundaries
+4. Database indexes and constraints
+5. Pagination and sorting
+6. Audit fields
+7. Ownership checks
+8. Concurrency handling
+
+### Phase 14 — Testing and Quality Engineering
+Plan:
+1. Unit tests
+2. Controller tests
+3. Repository tests
+4. Integration tests
+5. Security tests
+6. Service-to-service tests
+7. Kafka tests
+8. Testcontainers
+9. WireMock / contract-style testing
+10. Mutation testing
+
+### Phase 15 — Docker
+Plan:
+1. Dockerfiles
+2. Containerize each service
+3. Containerize Eureka
+4. Compose local infrastructure
+5. Configure service networking
+6. Externalize environment configuration
+
+### Phase 16 — Kubernetes
+Plan:
+1. Deployments
+2. Services
+3. ConfigMaps
+4. Secrets
+5. Ingress
+6. Health probes
+7. Autoscaling
+8. Namespaces
+
+### Phase 17 — CI/CD
+Plan:
+1. Build
+2. Unit testing
+3. Integration testing
+4. Security checks
+5. Container build
+6. Image publication
+7. Deployment
+8. Release automation
+
+### Phase 18 — Observability
+Plan:
+1. Spring Boot Actuator
+2. Metrics
+3. Centralized logging
+4. Correlation IDs
+5. Distributed tracing
+6. Dashboards
+7. Alerts
+
+### Phase 19 — AWS / Cloud Deployment
+Plan:
+1. Cloud infrastructure
+2. Managed database
+3. Container platform
+4. Container registry
+5. Kafka deployment
+6. Secrets management
+7. Load balancing
+8. Monitoring
+
+### Phase 20 — Production Hardening
+Plan:
+1. Externalize secrets
+2. Environment-specific configuration
+3. HTTPS
+4. Security headers
+5. API versioning
+6. Caching
+7. Database migration strategy
+8. Performance/load testing
+9. Dependency/security scanning
+10. Backup and recovery
+
+## Basic API testing
+
+The project uses Postman for basic request/response testing.
+
+### Start the system
+
+Start services in this order:
+
+    MySQL
+    Eureka Server :8761
+    User Management :8002
+    Restaurant Management :8001
+    Order Management :8003
+    Delivery Management :8004
+
+### Generate a USER JWT
+
+Send:
+
+    POST http://localhost:8002/auth/login
+
+Body:
+
+    {
+      "email": "<valid-user-email>",
+      "password": "<valid-user-password>"
+    }
+
+Expected response:
+
+    {
+      "token": "<JWT>"
+    }
+
+Use the returned token for secured requests:
+
+    Authorization: Bearer <JWT>
+
+### Generate an ADMIN JWT
+
+Use the same login endpoint with an existing ADMIN account:
+
+    POST http://localhost:8002/auth/login
+
+Body:
+
+    {
+      "email": "<valid-admin-email>",
+      "password": "<valid-admin-password>"
+    }
+
+Expected response:
+
+    {
+      "token": "<JWT>"
+    }
+
+Use that token for ADMIN-protected requests:
+
+    Authorization: Bearer <JWT>
+
+The project does not expose a public ADMIN-registration endpoint, so an ADMIN account must already exist in the local database.
+
+### Basic response-generation examples
+
+User:
+
+    POST /users
+    -> 201 Created
+    -> UserResponseDto
+
+Restaurant:
+
+    POST /restaurants
+    -> 201 Created
+    -> RestaurantResponseDto
+
+Order:
+
+    POST /orders/placeorder
+    -> 201 Created
+    -> OrderResponseDto
+
+Delivery person:
+
+    POST /delivery-person/addperson
+    -> 2xx response
+    -> DeliveryPersonResponseDto
+
+Delivery assignment:
+
+    POST /delivery-assignments
+    -> 201 Created
+    -> DeliveryAssignmentResponseDto
+
+For the exact request payloads, endpoint lists, and service-specific response examples, refer to each microservice README.
+
+## Postman collections
+
+Canonical Postman assets are stored under:
 
     /postman
 
-### Collections
+Collections:
 
     FoodManagement-Login.postman_collection.json
     FoodManagement-UserManagement.postman_collection.json
@@ -89,485 +402,29 @@ The canonical regression assets for this project are under:
     FoodManagement-DeliveryManagement.postman_collection.json
     FoodManagement-Overall.postman_collection.json
 
-### Environments
+Environments:
 
     FoodManagement-USER.postman_environment.json
     FoodManagement-ADMIN.postman_environment.json
     FoodManagement-environment.postman_environment.json
 
-Use USER and ADMIN environments for JWT/RBAC validation.
-
-## Postman setup
-
-### Import
-
-Import all six collections from /postman into Postman.
-
-Import these environments:
-
-    FoodManagement-USER
-    FoodManagement-ADMIN
-
-The base environment can be used for non-role-specific local API testing, but USER and ADMIN are the environments required for JWT/RBAC regression.
-
-### USER environment
-
-Expected variables include:
-
-    role = USER
-    loginEmail
-    loginPassword
-    TOKEN
-
-The login email and password must belong to a valid USER in the local User Management database.
-
-### ADMIN environment
-
-Expected variables include:
-
-    role = ADMIN
-    loginEmail
-    loginPassword
-    TOKEN
-
-The ADMIN environment intentionally does not contain a repository-supplied ADMIN password. Populate it with a valid existing ADMIN account.
-
-## Login validation
-
-Select the environment first.
-
-Run:
-
-    FoodManagement - Login
-        -> Login - Current Environment
-
-Expected response:
-
-    200 OK
-
-The login test verifies:
-
-- HTTP status is 200
-- response contains a token
-- token has three JWT sections
-- JWT subject matches loginEmail
-- JWT role matches the active environment
-- TOKEN is stored in the active Postman environment
-
-After a successful login, verify that Postman's active environment contains a non-empty TOKEN.
-
-Do not interpret a secured endpoint returning 401 as an RBAC failure until login and TOKEN population have been verified.
-
-## Postman execution strategy
-
-There are two validation modes.
-
-### 1. Functional regression
-
-Use:
-
-    FoodManagement-ADMIN
-
-Then run:
-
-    FoodManagement - Overall API + Security Regression
-
-The ADMIN environment is recommended for the complete functional baseline because several management endpoints are intentionally restricted to ADMIN.
-
-### 2. USER security regression
-
-Switch to:
-
-    FoodManagement-USER
-
-Run the service collections and focus on the requests prefixed with [RBAC].
-
-Some existing functional requests are expected to return 403 for USER because the underlying endpoint is ADMIN-only. Those are not failures when the authorization policy is being tested.
-
-## Current RBAC validation matrix
-
-| Service | Request | USER | ADMIN |
-|---|---|---:|---:|
-| User Management | Get All Users | 403 | 200 |
-| User Management | Delete User using non-existent ID | 403 | 404 |
-| Restaurant Management | Add Restaurant using invalid body | 403 | 400 |
-| Restaurant Management | Delete Restaurant using non-existent ID | 403 | 404 |
-| Order Management | Get All Orders | 403 | 200 |
-| Order Management | Get Orders By Status | 403 | 200 |
-| Delivery Management | Get All Delivery Agents | 403 | 200 |
-| Delivery Management | Get All Assignments | 403 | 200 |
-
-Interpret the status codes as follows:
-
-    401 = authentication failed, missing, invalid, or expired JWT
-    403 = valid JWT but role is not allowed
-    2xx = authorization succeeded and request was processed
-    4xx after ADMIN authorization can be business validation, not RBAC failure
-
-## Unauthenticated validation
-
-Existing service collections contain explicit no-token checks.
-
-Examples:
-
-    User Management:
-        Get All Users - No Token
-
-    Restaurant Management:
-        Get All Restaurants - No Token
-
-    Order Management:
-        Get All Orders - No Token
-
-    Delivery Management:
-        Get All Delivery Agents - No Token
-
-Expected result:
-
-    401 Unauthorized
-
-## Individual collection validation
-
-### User Management
-
-Collection:
-
-    FoodManagement-UserManagement.postman_collection.json
-
-Validate:
-
-- registration
-- validation failures
-- authenticated user retrieval/update
-- ADMIN-only get-all users
-- ADMIN-only delete
-- not-found cases
-- no-token case
-- RBAC cases
-
-### Restaurant Management
-
-Collection:
-
-    FoodManagement-RestaurantManagement.postman_collection.json
-
-Validate:
-
-- restaurant creation
-- restaurant retrieval
-- restaurant update/delete
-- restaurant name
-- item retrieval
-- item creation
-- bulk item creation
-- rating
-- validation and not-found scenarios
-- RBAC cases
-
-### Order Management
-
-Collection:
-
-    FoodManagement-OrderManagement.postman_collection.json
-
-Validate:
-
-- place order
-- restaurant lookup
-- item lookup and price calculation
-- get order
-- get all orders
-- get orders by user
-- get orders by restaurant
-- get orders by status
-- status transitions
-- invalid/not-found scenarios
-- RBAC cases
-
-### Delivery Management
-
-Collection:
-
-    FoodManagement-DeliveryManagement.postman_collection.json
-
-Validate:
-
-- delivery-person lifecycle
-- assignment creation
-- assignment retrieval
-- assignment listing
-- delivery status transitions
-- conflict/validation/not-found scenarios
-- RBAC cases
-
-## Recommended full Postman flow
-
-    Start MySQL
-        |
-        v
-    Start Eureka :8761
-        |
-        v
-    Start User Management :8002
-        |
-        v
-    Start Restaurant Management :8001
-        |
-        v
-    Start Order Management :8003
-        |
-        v
-    Start Delivery Management :8004
-        |
-        v
-    Verify Eureka dashboard
-        |
-        v
-    Select FoodManagement-USER
-        |
-        v
-    Run Login - Current Environment
-        |
-        v
-    Verify 200 + TOKEN
-        |
-        v
-    Run USER RBAC checks
-        |
-        v
-    Switch to FoodManagement-ADMIN
-        |
-        v
-    Run Login - Current Environment
-        |
-        v
-    Verify 200 + TOKEN
-        |
-        v
-    Run ADMIN functional baseline
-        |
-        v
-    Run Overall collection
-
-## Phase 10 validation target
-
-Phase 9 proves that services register with Eureka.
-
-Phase 10 must prove that Order Management actually uses Eureka to find Restaurant Management.
-
-### Current Order Management baseline
-
-At the current repository state, Order Management still uses RestTemplate and hard-coded Restaurant URLs.
-
-The current calls are:
-
-    http://localhost:8001/restaurants/{restaurantId}/name
-
-    http://localhost:8001/restaurants/{restaurantId}/items/{itemId}
-
-The current RestTemplate configuration also propagates the incoming Authorization header to Restaurant Management.
-
-Therefore, the Phase 10 Postman flow should be executed only as an acceptance test after the OpenFeign migration is implemented.
-
-## Phase 10 Postman acceptance scenario
-
-### Step 1 — Normal order flow
-
-Start:
-
-    Eureka :8761
-    Restaurant Management :8001
-    Order Management :8003
-
-Select:
-
-    FoodManagement-USER
-
-Run:
-
-    FoodManagement - Login
-        -> Login - Current Environment
-
-Verify:
-
-    200 OK
-    TOKEN is populated
-
-Then run:
-
-    FoodManagement-OrderManagement
-        -> Place Order - Happy
-
-Expected:
-
-    201 Created
-
-The Order service should reach Restaurant Management successfully through the Feign/Eureka path after the migration.
-
-### Step 2 — JWT propagation
-
-Because Restaurant Management is secured, Order Management must pass the incoming Authorization header to the Feign request.
-
-Expected flow:
-
-    Postman
-       |
-       | Bearer JWT
-       v
-    Order Management
-       |
-       | Feign + Bearer JWT
-       v
-    Restaurant Management
-
-Expected result:
-
-    no unexpected 401
-    no unexpected 403
-    business response is returned normally
-
-### Step 3 — Restaurant not found
-
-Use an invalid restaurant ID such as:
-
-    999999999
-
-Expected Order API result:
-
-    404 Restaurant Not Found
-
-The application should translate the downstream Feign 404 into the existing business exception/response rather than exposing a raw Feign exception.
-
-### Step 4 — Item not found
-
-Use an invalid item ID.
-
-Expected result:
-
-    404 Item Not Found
-
-The external Postman behavior should remain compatible with the existing API baseline.
-
-## Proving Eureka discovery is really being used
-
-A normal successful Postman request is not enough to prove service discovery.
-
-After the OpenFeign implementation is completed:
-
-1. Run Restaurant Management with:
-   
-       spring.application.name=restaurantmangement
-
-       server.port=8001
-
-2. Start a second Restaurant Management instance using the same application name on another port, for example 8005.
-
-3. Verify Eureka shows two Restaurant instances.
-
-4. Keep the 8005 instance running and stop the 8001 instance.
-
-5. Run the Order Management place-order request again.
-
-6. The order flow should still work without changing the Postman restaurant URL.
-
-This is the strongest validation that Order Management is resolving restaurantmangement through Eureka/LoadBalancer instead of using localhost:8001 directly.
-
-## Expected Phase 10 regression behavior
-
-| Scenario | Expected |
-|---|---|
-| Valid USER login | 200 |
-| Valid ADMIN login | 200 |
-| Secured endpoint without JWT | 401 |
-| USER on ADMIN-only endpoint | 403 |
-| ADMIN on ADMIN endpoint | 2xx or expected business 4xx |
-| USER places order | 201 |
-| Restaurant not found during order | 404 |
-| Item not found during order | 404 |
-| Existing Restaurant APIs | unchanged |
-| Existing Delivery APIs | unchanged |
-| Existing RBAC tests | unchanged |
-
-## Troubleshooting
-
-### All secured Postman requests return 401
-
-Check:
-
-1. Correct environment is active.
-2. Login request returned 200.
-3. TOKEN is populated.
-4. The request sends Bearer TOKEN.
-5. JWT has not expired.
-6. All services use the same JWT secret.
-
-### USER RBAC request returns 403
-
-This is usually correct when the endpoint is ADMIN-only.
-
-Example:
-
-    USER + GET /users = 403
-
-### USER RBAC request returns 401
-
-This indicates an authentication/token problem, not a role problem.
-
-Check login and TOKEN first.
-
-### Order returns 401 after Feign migration
-
-Check Feign Authorization propagation from Order Management to Restaurant Management.
-
-### Feign cannot resolve restaurantmangement
-
-Check:
-
-- Eureka is running.
-- Restaurant Management is visible in Eureka.
-- Feign service name exactly matches restaurantmangement.
-- Eureka client is enabled in Order Management.
-- Spring Cloud LoadBalancer dependency is present.
-
-## Security note
-
-The current repository contains local-development configuration and sample Postman credentials. Before production use, externalize:
-
-- database passwords
-- JWT secrets
-- ADMIN credentials
-- other environment-specific configuration
-
-Use environment variables, deployment secrets, or a secrets manager.
-
-## Phase 10 completion checklist
-
-- [ ] OpenFeign dependency added
-- [ ] LoadBalancer dependency added
-- [ ] Feign clients enabled
-- [ ] RestaurantClient created
-- [ ] Order → Restaurant calls migrated from RestTemplate
-- [ ] JWT Authorization propagated through Feign
-- [ ] Feign 404 mapped to existing business exceptions
-- [ ] Obsolete RestTemplate configuration removed
-- [ ] Hard-coded localhost:8001 removed from Order Management
-- [ ] USER Postman flow passes
-- [ ] ADMIN Postman flow passes
-- [ ] Full Overall collection passes
-- [ ] Multiple Restaurant instances register
-- [ ] Order continues working with one Restaurant instance stopped
-- [ ] Eureka discovery verified independently of Postman URL changes
-
-## Recommended validation order
-
-    1. Eureka dashboard
-    2. Login collection
-    3. USER RBAC checks
-    4. ADMIN functional baseline
-    5. Order -> Restaurant happy path
-    6. Restaurant 404 scenario
-    7. Item 404 scenario
-    8. JWT propagation
-    9. Multiple Restaurant instances
-    10. Overall collection
-    11. Mark Phase 10 complete
+Basic Postman sequence:
+
+    Select USER or ADMIN environment
+    -> Run Login - Current Environment
+    -> Copy/use generated TOKEN automatically
+    -> Run the required service collection
+    -> Review response status and response body
+
+## Project documentation
+
+Each service directory contains its own README describing:
+
+- Service responsibility
+- API endpoints
+- Request examples
+- Response examples
+- JWT usage
+- Basic Postman flow
+- Role expectations
+- Implementation scope
