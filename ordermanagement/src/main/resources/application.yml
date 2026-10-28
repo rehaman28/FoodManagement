@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: ordermanagement
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: 'jdbc:mysql://localhost:3306/orderdb?createDatabaseIfNotExist=true'
+    username: root
+    password: Immu@28
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8003
+security:
+  jwt:
+    secret-key: 513c344489bd5120c94654dd155a26b506918a8591e7309371ecae2d699e0d2c
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    instance-id: "${spring.application.name}:${server.port}"

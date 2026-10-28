@@ -6,7 +6,7 @@ Restaurant Management owns restaurants, restaurant addresses, food items, rating
 
 Application / service ID:
 
-    restaurantmangement
+    restaurantmanagement
 
 Repository directory:
 

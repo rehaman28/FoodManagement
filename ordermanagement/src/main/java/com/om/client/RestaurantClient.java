@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.om.dto.ItemResponseDto;
 
-@FeignClient (name = "restaurantmangement")
+@FeignClient (name = "restaurantmanagement")
 public interface RestaurantClient {
 
    @GetMapping("/restaurants/{restaurantId}/name")
