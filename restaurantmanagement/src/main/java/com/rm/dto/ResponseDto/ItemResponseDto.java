@@ -1,5 +1,7 @@
 package com.rm.dto.ResponseDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.AllArgsConstructor;
@@ -17,12 +19,19 @@ import lombok.NoArgsConstructor;
     "itemType",
     "itemRating"
 })
+@Schema(description = "Response data describing a menu item.")
 public class ItemResponseDto {
 
+    @Schema(description = "Identifier of the menu item.")
     private long itemId;
+    @Schema(description = "Name of the menu item.")
     private String itemName;
+    @Schema(description = "Price of the menu item.")
     private Double itemPrice;
+    @Schema(description = "Category of the menu item.")
     private String itemCategory;
+    @Schema(description = "Type of the menu item.")
     private String itemType;
+    @Schema(description = "Rating of the menu item from 0.0 to 5.0.")
     private Double itemRating;
 }

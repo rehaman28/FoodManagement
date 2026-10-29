@@ -4,18 +4,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dm.dto.DeliveryPersonRequestDto;
 import com.dm.dto.DeliveryPersonResponeDto;
+import com.dm.Exception.ErrorResponseDto;
 import com.dm.service.DeliveryPersonService;
 
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,8 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController 
-@RequestMapping("/delivery-person")
-@Produces(MediaType.APPLICATION_JSON)
+@RequestMapping(value = "/delivery-person", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Delivery Person Resource", description = "Delivery person resource controller")
 public class DeliveryPersonController {
     
@@ -41,14 +43,24 @@ public class DeliveryPersonController {
     }
     
     //Post delivery person
-    @PostMapping("/addperson")
+    @PostMapping(value = "/addperson", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Add a delivery person")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Delivery person added successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
-            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "201", description = "Delivery person added successfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DeliveryPersonResponeDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<DeliveryPersonResponeDto> AddDeliveryPerson(@Valid @RequestBody DeliveryPersonRequestDto requestDto) {
         return  deliveryPersonService.AddDeliveryPerson(requestDto);
@@ -59,11 +71,21 @@ public class DeliveryPersonController {
     @GetMapping("/{deliveryAgentId}")
     @Operation(summary = "Get a delivery person by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Delivery person retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Delivery person not found"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
-            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Delivery person retrieved successfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DeliveryPersonResponeDto.class))),
+            @ApiResponse(responseCode = "404", description = "Delivery person not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<DeliveryPersonResponeDto> getDeliveryPerson(@PathVariable (name = "deliveryAgentId") Long deliveryAgentId) {
         return deliveryPersonService.getDeliveryPersonDetais(deliveryAgentId);
@@ -73,25 +95,45 @@ public class DeliveryPersonController {
     @GetMapping()
     @Operation(summary = "Get all delivery persons")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Delivery persons retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
-            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Delivery persons retrieved successfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = DeliveryPersonResponeDto.class)))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<List<DeliveryPersonResponeDto>> getAllDeliveryPerson() {
         return ResponseEntity.status(HttpStatus.OK).body(deliveryPersonService.getAllDeliveryPersonDetais());
     }
 
     //UpdateDeliveryPersonDetails
-    @PatchMapping("/update/{deliveryAgentId}")
+    @PatchMapping(value = "/update/{deliveryAgentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update a delivery person")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Delivery person updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "404", description = "Delivery person not found"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
-            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Delivery person updated successfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DeliveryPersonResponeDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Delivery person not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponseDto.class)))
     })
      public ResponseEntity<DeliveryPersonResponeDto> updateDeliveryPerson(@PathVariable (name = "deliveryAgentId") Long deliveryAgentId, @Valid @RequestBody DeliveryPersonRequestDto requestDto) {
         return  deliveryPersonService.updateDeliveryPersonDetails(deliveryAgentId,requestDto);

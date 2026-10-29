@@ -1,5 +1,7 @@
 package com.dm.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import com.dm.model.DeliveryStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,10 +16,12 @@ import lombok.NoArgsConstructor;
 @Data 
 @AllArgsConstructor 
 @NoArgsConstructor 
+@Schema(description = "Request data for changing the delivery status.")
 public class DeliveryStatusRequestDto {
 
     @JsonProperty("deliveryStatus")
     @NotNull(message = "Delivery status is required")
+    @Schema(description = "Current delivery status.")
     private DeliveryStatus deliveryStatus;
 
 
