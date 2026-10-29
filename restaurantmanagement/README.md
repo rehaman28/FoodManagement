@@ -255,10 +255,13 @@ Environment:
 
 ## Inter-service responsibility
 
-Order Management currently depends on these Restaurant APIs:
+Order Management consumes these Restaurant APIs through the Eureka/OpenFeign service-discovery path:
 
     GET /restaurants/{restaurantId}/name
-
     GET /restaurants/{restaurantId}/items/{itemId}
 
-The next architecture phase replaces the current direct RestTemplate URL with OpenFeign + Eureka service discovery.
+The current Eureka service ID is:
+
+    restaurantmanagement
+
+Order Management resolves this service by name rather than using an active hard-coded `:8001` URL.
