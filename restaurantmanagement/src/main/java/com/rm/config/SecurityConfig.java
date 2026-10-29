@@ -73,6 +73,13 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.DELETE,"/restaurants/**")
                     .hasRole("ADMIN")
 
+                    //swagger request
+                    .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**")
+                        .permitAll()
+
                     //Any Other Request needs authentications
                     .anyRequest()
                     .authenticated())

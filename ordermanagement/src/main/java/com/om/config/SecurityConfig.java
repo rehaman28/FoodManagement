@@ -53,6 +53,12 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(request -> request
 
+            .requestMatchers(
+                "/swagger-ui.html",
+                "/swagger-ui/**",
+                "/v3/api-docs/**")
+                .permitAll()
+
             .requestMatchers(HttpMethod.POST, "/orders/placeorder")
                 .hasAnyRole("USER", "ADMIN")
 

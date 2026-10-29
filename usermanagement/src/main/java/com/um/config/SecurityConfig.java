@@ -53,6 +53,12 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/users")
                     .permitAll()
 
+                    .requestMatchers(
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**")
+                    .permitAll()
+
                     //Only Admin can get the details 
                     .requestMatchers(HttpMethod.GET, "/users")
                     .hasRole("ADMIN")

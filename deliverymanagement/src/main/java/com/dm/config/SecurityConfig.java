@@ -51,6 +51,12 @@ public class SecurityConfig {
                     authenticationEntryPoint))
 
             .authorizeHttpRequests(request -> request
+                .requestMatchers(
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**")
+                    .permitAll()
+
                 .requestMatchers("/delivery-person/**")
                         .hasRole("ADMIN")
 

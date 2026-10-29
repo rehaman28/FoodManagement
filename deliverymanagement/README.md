@@ -16,6 +16,14 @@ Base URL:
 
     http://localhost:8004
 
+Swagger UI:
+
+    http://localhost:8004/swagger-ui/index.html
+
+OpenAPI specification:
+
+    http://localhost:8004/v3/api-docs
+
 ## Responsibilities
 
 - Create delivery agents

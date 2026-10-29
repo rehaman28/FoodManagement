@@ -305,6 +305,17 @@ Start services in this order:
     Order Management :8003
     Delivery Management :8004
 
+### Swagger documentation
+
+Each API service exposes a public Swagger UI and OpenAPI specification:
+
+| Service | Swagger UI | OpenAPI specification |
+|---|---|---|
+| User Management | http://localhost:8002/swagger-ui/index.html | http://localhost:8002/v3/api-docs |
+| Restaurant Management | http://localhost:8001/swagger-ui/index.html | http://localhost:8001/v3/api-docs |
+| Order Management | http://localhost:8003/swagger-ui/index.html | http://localhost:8003/v3/api-docs |
+| Delivery Management | http://localhost:8004/swagger-ui/index.html | http://localhost:8004/v3/api-docs |
+
 ### Generate a USER JWT
 
 Send:

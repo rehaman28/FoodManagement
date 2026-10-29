@@ -16,6 +16,14 @@ Base URL:
 
     http://localhost:8002
 
+Swagger UI:
+
+    http://localhost:8002/swagger-ui/index.html
+
+OpenAPI specification:
+
+    http://localhost:8002/v3/api-docs
+
 ## Responsibilities
 
 - Register users
