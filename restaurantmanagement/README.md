@@ -265,3 +265,10 @@ The current Eureka service ID is:
     restaurantmanagement
 
 Order Management resolves this service by name rather than using an active hard-coded `:8001` URL.
+
+
+## Phase 10 status
+
+Status: Complete — implementation, runtime validation, and regression validation successful
+
+Order Management successfully communicates with this service through OpenFeign and Eureka service discovery. JWT propagation and Restaurant/item lookup error handling were validated successfully, including multi-instance discovery/failover with the Order flow continuing after one Restaurant instance was stopped.
