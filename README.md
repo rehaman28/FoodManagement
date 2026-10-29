@@ -184,6 +184,21 @@ Cleanup decision:
 - Cleanup/removal of these unused artifacts is explicitly deferred and does not block Phase 10 completion.
 
 ### Phase 11 — Kafka / Event-Driven Architecture
+Status: Synchronous communication baseline complete — implementation and validation successful
+
+Completed synchronous communication:
+1. Order Management -> Restaurant Management through OpenFeign + Eureka — complete and validated in Phase 10
+2. Order Management -> User Management through OpenFeign + Eureka — implemented in the latest commit and validated successfully
+3. Authorization header/JWT propagation from Order Management to User Management — validated successfully
+4. Existing User Management `GET /users/{userId}` reused for user existence validation
+5. Non-existent user mapped to Order Management `UserNotFoundException` and HTTP 404
+6. Order persistence occurs only after successful user and restaurant validation
+
+Current communication strategy:
+- Synchronous: Order -> User
+- Synchronous: Order -> Restaurant
+- Asynchronous Kafka communication will be introduced next between Order and Delivery services.
+
 Plan:
 1. Introduce Kafka infrastructure
 2. Define domain events
