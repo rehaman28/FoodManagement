@@ -244,26 +244,25 @@ Example response shape:
 
 ## Restaurant dependency
 
-The current implementation performs synchronous Restaurant Management calls for:
-
-    GET /restaurants/{restaurantId}/name
-
-    GET /restaurants/{restaurantId}/items/{itemId}
-
-These calls are currently implemented through RestTemplate.
-
-Phase 10 changes this to:
+Order Management uses OpenFeign to call Restaurant Management by its Eureka service name.
 
     Order Management
         |
-        v
-    OpenFeign
-        |
+        | OpenFeign
         v
     Eureka
         |
         v
-    Restaurant Management
+    restaurantmanagement
+
+Feign operations:
+
+    GET /restaurants/{restaurantId}/name
+    GET /restaurants/{restaurantId}/items/{itemId}
+
+The incoming Authorization header is propagated to Restaurant Management so the downstream JWT/RBAC security model remains active.
+
+The old RestTemplate configuration is no longer invoked. Its cleanup is intentionally deferred.
 
 ## Basic testing flow
 
@@ -294,3 +293,23 @@ Recommended environment:
 For a complete end-to-end sequence, use:
 
     /postman/FoodManagement-Overall.postman_collection.json
+
+## Phase 10 implementation status
+
+Implemented in the current repository:
+
+- OpenFeign
+- Spring Cloud LoadBalancer
+- Eureka-based Restaurant service resolution
+- JWT propagation through Feign
+- Feign 404 mapping to existing application exceptions
+- Removal of active hard-coded Restaurant URLs from the Order flow
+
+Remaining validation:
+
+- USER place-order flow through Feign
+- ADMIN regression flow
+- Restaurant/item 404 scenarios
+- Eureka multi-instance discovery/failover
+
+Unused legacy RestTemplate code/comments are intentionally retained and are not a pending task.
