@@ -11,15 +11,18 @@ import com.om.Exception.InvalidOrderStatusTransitionException;
 import com.om.Exception.ItemNotFoundException;
 import com.om.Exception.OrderNotFoundException;
 import com.om.Exception.RestaurantNotFoundException;
+import com.om.Exception.UserNotFoundException;
 import com.om.builder.OrderRequestBuilder;
 import com.om.builder.OrderResponseBuilder;
 import com.om.client.RestaurantClient;
+import com.om.client.UserClient;
 import com.om.dao.OrderRepository;
 import com.om.dto.ItemResponseDto;
 import com.om.dto.OrderItemRequestDto;
 import com.om.dto.OrderRequestDto;
 import com.om.dto.OrderResponseDto;
 import com.om.dto.OrderStatusRequestDto;
+import com.om.dto.UserResponseDto;
 import com.om.model.Order;
 import com.om.model.OrderStatus;
 
@@ -32,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     // private final RestTemplate restTemplate;
     private final  RestaurantClient restaurantClient;
+    private final  UserClient userClient;
     
 
     // public OrderServiceImpl(OrderRepository orderRepository, RestTemplate restTemplate) {
@@ -39,15 +43,19 @@ public class OrderServiceImpl implements OrderService {
     //     this.restTemplate = restTemplate;
     // }
 
-    public OrderServiceImpl(OrderRepository orderRepository, RestaurantClient restaurantClient) {
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            RestaurantClient restaurantClient,
+                            UserClient userClient) {
         this.orderRepository = orderRepository;
         this.restaurantClient = restaurantClient;
+        this.userClient = userClient;
     }
 
     @Override
     public OrderResponseDto placeorder(OrderRequestDto orderRequest) {
         String restaurantName;
         try {
+            validateUser(orderRequest.getUserId());
             restaurantName = fetchRestaurantNameFromId(orderRequest.getRestaurantId());
         } catch (HttpClientErrorException.NotFound ex) {
             throw new RestaurantNotFoundException("Restaurant was not found with Id: "
@@ -185,17 +193,6 @@ public class OrderServiceImpl implements OrderService {
                             + restaurantId);
         }
     }
-    private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId) {
-        try {
-            return restaurantClient.getItem(restaurantId, itemId);
-        } catch (FeignException.NotFound ex) {
-
-            throw new ItemNotFoundException(
-                    "Item id " + itemId
-                            + " not found in Restaurant "
-                            + restaurantId);
-        }
-    }
 
     // Helper Method to calculate the order price
     private double calculateOrderPrice(OrderRequestDto orderRequestDto) {
@@ -215,6 +212,18 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return totalPrice;
+    }
+
+    private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId) {
+        try {
+            return restaurantClient.getItem(restaurantId, itemId);
+        } catch (FeignException.NotFound ex) {
+
+            throw new ItemNotFoundException(
+                    "Item id " + itemId
+                            + " not found in Restaurant "
+                            + restaurantId);
+        }
     }
 
     //Helper Method to validate if the transition was valid & allowed
@@ -239,6 +248,18 @@ public class OrderServiceImpl implements OrderService {
 
         };
 
+    }
+
+    //Helper Methods to validate user Synchronously
+    private UserResponseDto validateUser(Long userId){
+        try {
+            return userClient.getUserById(userId);            
+        } catch (FeignException.NotFound e) {
+
+             throw new UserNotFoundException(
+                    "User was not found with Id: "
+                            + userId);
+        }
     }
 
 

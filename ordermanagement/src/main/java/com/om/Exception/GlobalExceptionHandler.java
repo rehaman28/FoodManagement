@@ -16,6 +16,20 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+        @ExceptionHandler(UserNotFoundException.class)
+        public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(
+                        UserNotFoundException ex,
+                        HttpServletRequest httpServletRequest) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.NOT_FOUND,
+                                "User Not Found",
+                                ex.getMessage(),
+                                httpServletRequest.getRequestURI());
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
         @ExceptionHandler(RestaurantNotFoundException.class)
         public ResponseEntity<ErrorResponseDto> handleRestaurantNotFoundException(
                         RestaurantNotFoundException ex,

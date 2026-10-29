@@ -25,4 +25,6 @@ public final class ApplicationConstants {
     public static final String RESTAURANT_SERVICE_NAME = "restaurantmanagement";
     public static final String RESTAURANT_NAME_PATH = "/restaurants/{restaurantId}/name";
     public static final String RESTAURANT_ITEM_PATH = "/restaurants/{restaurantId}/items/{itemId}";
+    public static final String USER_SERVICE_NAME = "usermanagement";
+    public static final String USER_PATH = "/users/{userId}";
 }
