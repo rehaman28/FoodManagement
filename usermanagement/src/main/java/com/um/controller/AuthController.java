@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.um.dto.LoginRequestDto;
-import com.um.dto.LoginResponseDto;
+import com.um.dto.request.LoginRequestDto;
+import com.um.dto.response.LoginResponseDto;
 import com.um.constants.ApplicationConstants;
-import com.um.exception.ErrorResponseDto;
+import com.um.dto.response.ErrorResponseDto;
 import com.um.security.JwtService;
 
 import jakarta.validation.Valid;

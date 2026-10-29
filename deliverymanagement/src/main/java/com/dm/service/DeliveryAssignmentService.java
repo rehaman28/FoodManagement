@@ -2,9 +2,9 @@ package com.dm.service;
 
 import java.util.List;
 
-import com.dm.dto.DeliveryAssignmentRequestDto;
-import com.dm.dto.DeliveryAssignmentResponseDto;
-import com.dm.dto.DeliveryStatusRequestDto;
+import com.dm.dto.request.DeliveryAssignmentRequestDto;
+import com.dm.dto.response.DeliveryAssignmentResponseDto;
+import com.dm.dto.request.DeliveryStatusRequestDto;
 
 /**
  * DeliveryAssignmentService

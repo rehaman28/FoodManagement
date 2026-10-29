@@ -3,11 +3,11 @@ package com.um.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.um.dto.UpdateUserRequestDto;
-import com.um.dto.UserRequestDto;
-import com.um.dto.UserResponseDto;
+import com.um.dto.request.UpdateUserRequestDto;
+import com.um.dto.request.UserRequestDto;
+import com.um.dto.response.UserResponseDto;
 import com.um.constants.ApplicationConstants;
-import com.um.exception.ErrorResponseDto;
+import com.um.dto.response.ErrorResponseDto;
 import com.um.service.UserService;
 
 import jakarta.validation.Valid;

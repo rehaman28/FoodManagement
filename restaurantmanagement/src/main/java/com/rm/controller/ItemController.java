@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rm.dto.RequestDto.ItemRequestDto;
-import com.rm.dto.RequestDto.ItemUpdateRequestDto;
-import com.rm.dto.ResponseDto.ItemResponseDto;
+import com.rm.dto.request.ItemRequestDto;
+import com.rm.dto.request.ItemUpdateRequestDto;
+import com.rm.dto.response.ItemResponseDto;
 import com.rm.constants.ApplicationConstants;
-import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
-import com.rm.Exception.ErrorResponseDto;
+import com.rm.dto.response.RestaurantInfoResponseDto;
+import com.rm.dto.response.ErrorResponseDto;
 import com.rm.service.ItemService;
 
 import jakarta.validation.Valid;

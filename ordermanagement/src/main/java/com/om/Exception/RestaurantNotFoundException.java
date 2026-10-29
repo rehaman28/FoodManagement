@@ -1,4 +1,4 @@
-package com.om.Exception;
+package com.om.exception;
 
 /**
  * RestaurnatNotFoundException

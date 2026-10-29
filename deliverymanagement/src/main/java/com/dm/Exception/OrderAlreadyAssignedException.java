@@ -1,4 +1,4 @@
-package com.dm.Exception;
+package com.dm.exception;
 
 public class OrderAlreadyAssignedException extends RuntimeException {
 

@@ -2,10 +2,10 @@ package com.rm.service;
 
 import java.util.List;
 
-import com.rm.dto.RequestDto.ItemRequestDto;
-import com.rm.dto.RequestDto.ItemUpdateRequestDto;
-import com.rm.dto.ResponseDto.ItemResponseDto;
-import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
+import com.rm.dto.request.ItemRequestDto;
+import com.rm.dto.request.ItemUpdateRequestDto;
+import com.rm.dto.response.ItemResponseDto;
+import com.rm.dto.response.RestaurantInfoResponseDto;
 
 public interface ItemService {
 

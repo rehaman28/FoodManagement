@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
-import com.rm.dto.RequestDto.RestaurantRatingRequestDto;
-import com.rm.dto.RequestDto.RestaurantUpdateRequestDto;
-import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
-import com.rm.dto.ResponseDto.RestaurantResponseDto;
+import com.rm.dto.request.RestaurantCreateRequestDto;
+import com.rm.dto.request.RestaurantRatingRequestDto;
+import com.rm.dto.request.RestaurantUpdateRequestDto;
+import com.rm.dto.response.RestaurantInfoResponseDto;
+import com.rm.dto.response.RestaurantResponseDto;
 import com.rm.constants.ApplicationConstants;
-import com.rm.Exception.ErrorResponseDto;
+import com.rm.dto.response.ErrorResponseDto;
 import com.rm.service.RestaurantService;
 
 import jakarta.validation.Valid;

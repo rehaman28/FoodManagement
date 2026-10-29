@@ -3,10 +3,10 @@ package com.dm.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dm.dto.DeliveryAssignmentRequestDto;
-import com.dm.dto.DeliveryAssignmentResponseDto;
-import com.dm.dto.DeliveryStatusRequestDto;
-import com.dm.Exception.ErrorResponseDto;
+import com.dm.dto.request.DeliveryAssignmentRequestDto;
+import com.dm.dto.response.DeliveryAssignmentResponseDto;
+import com.dm.dto.request.DeliveryStatusRequestDto;
+import com.dm.dto.response.ErrorResponseDto;
 import com.dm.service.DeliveryAssignmentService;
 
 import io.swagger.v3.oas.annotations.Operation;

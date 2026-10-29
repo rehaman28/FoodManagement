@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
-import com.rm.dto.RequestDto.AddressRequestDto;
-import com.rm.dto.RequestDto.ItemRequestDto;
-import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
-import com.rm.dto.ResponseDto.RestaurantResponseDto;
+import com.rm.dto.request.AddressRequestDto;
+import com.rm.dto.request.ItemRequestDto;
+import com.rm.dto.request.RestaurantCreateRequestDto;
+import com.rm.dto.response.RestaurantResponseDto;
 import com.rm.model.Address;
 import com.rm.model.Item;
 import com.rm.model.Restaurant;

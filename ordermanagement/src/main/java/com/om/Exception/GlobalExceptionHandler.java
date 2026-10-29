@@ -1,4 +1,5 @@
-package com.om.Exception;
+package com.om.exception;
+import com.om.dto.response.ErrorResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.Map;

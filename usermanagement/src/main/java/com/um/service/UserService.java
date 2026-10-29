@@ -2,9 +2,9 @@ package com.um.service;
 
 import java.util.List;
 
-import com.um.dto.UpdateUserRequestDto;
-import com.um.dto.UserRequestDto;
-import com.um.dto.UserResponseDto;
+import com.um.dto.request.UpdateUserRequestDto;
+import com.um.dto.request.UserRequestDto;
+import com.um.dto.response.UserResponseDto;
 
 
 public interface UserService {

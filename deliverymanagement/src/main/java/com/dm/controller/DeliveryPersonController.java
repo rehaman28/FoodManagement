@@ -2,9 +2,9 @@ package com.dm.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dm.dto.DeliveryPersonRequestDto;
-import com.dm.dto.DeliveryPersonResponeDto;
-import com.dm.Exception.ErrorResponseDto;
+import com.dm.dto.request.DeliveryPersonRequestDto;
+import com.dm.dto.response.DeliveryPersonResponeDto;
+import com.dm.dto.response.ErrorResponseDto;
 import com.dm.service.DeliveryPersonService;
 
 import java.util.List;

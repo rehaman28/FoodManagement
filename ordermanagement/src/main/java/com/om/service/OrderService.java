@@ -2,9 +2,9 @@ package com.om.service;
 
 import java.util.List;
 
-import com.om.dto.OrderRequestDto;
-import com.om.dto.OrderResponseDto;
-import com.om.dto.OrderStatusRequestDto;
+import com.om.dto.request.OrderRequestDto;
+import com.om.dto.response.OrderResponseDto;
+import com.om.dto.request.OrderStatusRequestDto;
 import com.om.model.OrderStatus;
 
 public interface OrderService {

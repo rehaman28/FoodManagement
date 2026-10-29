@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
-import com.rm.dto.ResponseDto.AddressResponseDto;
-import com.rm.dto.ResponseDto.ItemResponseDto;
-import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
+import com.rm.dto.response.AddressResponseDto;
+import com.rm.dto.response.ItemResponseDto;
+import com.rm.dto.response.RestaurantInfoResponseDto;
 import com.rm.model.Address;
 import com.rm.model.Item;
 import com.rm.model.Restaurant;

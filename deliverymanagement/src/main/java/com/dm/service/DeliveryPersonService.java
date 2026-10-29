@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.dm.dto.DeliveryPersonRequestDto;
-import com.dm.dto.DeliveryPersonResponeDto;
+import com.dm.dto.request.DeliveryPersonRequestDto;
+import com.dm.dto.response.DeliveryPersonResponeDto;
 
 /**
  * DeliveryPersonService

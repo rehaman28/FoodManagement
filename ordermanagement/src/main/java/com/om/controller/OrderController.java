@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.om.dto.OrderRequestDto;
-import com.om.dto.OrderResponseDto;
-import com.om.dto.OrderStatusRequestDto;
+import com.om.dto.request.OrderRequestDto;
+import com.om.dto.response.OrderResponseDto;
+import com.om.dto.request.OrderStatusRequestDto;
 import com.om.constants.ApplicationConstants;
-import com.om.Exception.ErrorResponseDto;
+import com.om.dto.response.ErrorResponseDto;
 import com.om.model.OrderStatus;
 import com.om.service.OrderService;
 

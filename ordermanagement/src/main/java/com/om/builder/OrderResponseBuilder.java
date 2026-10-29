@@ -3,8 +3,8 @@ package com.om.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.om.dto.OrderItemResponseDto;
-import com.om.dto.OrderResponseDto;
+import com.om.dto.response.OrderItemResponseDto;
+import com.om.dto.response.OrderResponseDto;
 import com.om.model.Order;
 import com.om.model.OrderItem;
 

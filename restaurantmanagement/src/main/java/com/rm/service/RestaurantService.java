@@ -2,10 +2,10 @@ package com.rm.service;
 
 import java.util.List;
 
-import com.rm.dto.RequestDto.RestaurantCreateRequestDto;
-import com.rm.dto.RequestDto.RestaurantUpdateRequestDto;
-import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
-import com.rm.dto.ResponseDto.RestaurantResponseDto;
+import com.rm.dto.request.RestaurantCreateRequestDto;
+import com.rm.dto.request.RestaurantUpdateRequestDto;
+import com.rm.dto.response.RestaurantInfoResponseDto;
+import com.rm.dto.response.RestaurantResponseDto;
 
 public interface RestaurantService {
     
