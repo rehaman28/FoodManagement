@@ -242,6 +242,31 @@ Example response shape:
       ]
     }
 
+## User dependency
+
+Order Management synchronously validates the user before creating an order by calling User Management through OpenFeign and Eureka service discovery.
+
+    Order Management
+        |
+        | OpenFeign
+        v
+    Eureka
+        |
+        v
+    usermanagement
+
+Feign operation:
+
+    GET /users/{userId}
+
+The incoming Authorization header is propagated to User Management through the existing Feign authorization interceptor.
+
+Validation behavior:
+
+- Existing user — validation passes and order processing continues.
+- Non-existent user — Order Management returns HTTP 404 with `UserNotFoundException`.
+- User validation occurs before restaurant/item validation and before order persistence.
+
 ## Restaurant dependency
 
 Order Management uses OpenFeign to call Restaurant Management by its Eureka service name.
@@ -293,6 +318,18 @@ Recommended environment:
 For a complete end-to-end sequence, use:
 
     /postman/FoodManagement-Overall.postman_collection.json
+
+## Phase 11 synchronous communication status
+
+Status: Complete — Order -> User synchronous communication implemented and validated successfully
+
+Validated:
+- Eureka-based User Management service resolution
+- OpenFeign UserClient
+- JWT/Authorization propagation
+- Existing-user order flow
+- Non-existent-user 404 handling
+- User validation before order persistence
 
 ## Phase 10 status
 
