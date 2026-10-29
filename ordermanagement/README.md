@@ -294,9 +294,11 @@ For a complete end-to-end sequence, use:
 
     /postman/FoodManagement-Overall.postman_collection.json
 
-## Phase 10 implementation status
+## Phase 10 status
 
-Implemented in the current repository:
+Status: Complete — implementation, runtime validation, and regression validation successful
+
+Completed implementation and validation:
 
 - OpenFeign
 - Spring Cloud LoadBalancer
@@ -304,12 +306,10 @@ Implemented in the current repository:
 - JWT propagation through Feign
 - Feign 404 mapping to existing application exceptions
 - Removal of active hard-coded Restaurant URLs from the Order flow
+- USER place-order flow through Feign — passed
+- ADMIN regression flow — passed
+- Restaurant/item 404 scenarios — passed
+- Eureka multi-instance discovery/failover — passed
+- Order continued working after one Restaurant instance was stopped — passed
 
-Remaining validation:
-
-- USER place-order flow through Feign
-- ADMIN regression flow
-- Restaurant/item 404 scenarios
-- Eureka multi-instance discovery/failover
-
-Unused legacy RestTemplate code/comments are intentionally retained and are not a pending task.
+Unused legacy RestTemplate code/comments are intentionally retained. Cleanup is deferred and does not block Phase 10 completion.
