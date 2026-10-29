@@ -18,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+
+import com.um.constants.ApplicationConstants;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -39,15 +41,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader(ApplicationConstants.AUTHORIZATION_HEADER);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith(ApplicationConstants.BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String jwt = authHeader.substring(7);
+            String jwt = authHeader.substring(ApplicationConstants.BEARER_PREFIX.length());
             String userEmail = jwtService.extractUsername(jwt);
             String role = jwtService.extractRole(jwt);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -84,7 +86,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return null;
         }
 
-        return role.startsWith("ROLE_") ? role : "ROLE_" + role;
+        return role.startsWith(ApplicationConstants.ROLE_PREFIX)
+                ? role
+                : ApplicationConstants.ROLE_PREFIX + role;
     }
 
     private boolean matchesRole(UserDetails userDetails, String authority) {

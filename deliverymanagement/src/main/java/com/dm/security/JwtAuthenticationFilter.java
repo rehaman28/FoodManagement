@@ -15,6 +15,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+
+import com.dm.constants.ApplicationConstants;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -34,17 +36,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authHeader =
-                request.getHeader("Authorization");
+                request.getHeader(ApplicationConstants.AUTHORIZATION_HEADER);
 
         if (authHeader == null ||
-                !authHeader.startsWith("Bearer ")) {
+                !authHeader.startsWith(ApplicationConstants.BEARER_PREFIX)) {
 
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String jwt = authHeader.substring(7);
+            String jwt = authHeader.substring(ApplicationConstants.BEARER_PREFIX.length());
             String username = jwtService.extractUsername(jwt);
             String role = jwtService.extractRole(jwt);
             if (username == null || username.isBlank() || role == null || role.isBlank()) {
@@ -52,7 +54,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+                String authority = role.startsWith(ApplicationConstants.ROLE_PREFIX)
+                        ? role
+                        : ApplicationConstants.ROLE_PREFIX + role;
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 username,

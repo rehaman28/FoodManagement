@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.om.constants.ApplicationConstants;
 import com.om.security.JwtAuthenticationFilter;
 
 @Configuration
@@ -54,27 +55,27 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
 
             .requestMatchers(
-                "/swagger-ui.html",
-                "/swagger-ui/**",
-                "/v3/api-docs/**")
+                ApplicationConstants.SWAGGER_UI_PATH,
+                ApplicationConstants.SWAGGER_UI_WILDCARD,
+                ApplicationConstants.API_DOCS_WILDCARD)
                 .permitAll()
 
-            .requestMatchers(HttpMethod.POST, "/orders/placeorder")
+            .requestMatchers(HttpMethod.POST, ApplicationConstants.PLACE_ORDER_PATH)
                 .hasAnyRole("USER", "ADMIN")
 
-            .requestMatchers(HttpMethod.GET, "/orders")
+            .requestMatchers(HttpMethod.GET, ApplicationConstants.ORDERS_PATH)
                 .hasRole("ADMIN")
 
-            .requestMatchers(HttpMethod.GET, "/orders/restaurant/**")
+            .requestMatchers(HttpMethod.GET, ApplicationConstants.RESTAURANT_ORDERS_PATH)
                 .hasRole("ADMIN")
 
-            .requestMatchers(HttpMethod.GET, "/orders/status")
+            .requestMatchers(HttpMethod.GET, ApplicationConstants.ORDER_STATUS_PATH)
                 .hasRole("ADMIN")
 
-            .requestMatchers(HttpMethod.PATCH, "/orders/**")
+            .requestMatchers(HttpMethod.PATCH, ApplicationConstants.ORDERS_WILDCARD)
                 .hasRole("ADMIN")
 
-            .requestMatchers(HttpMethod.GET, "/orders/**")
+            .requestMatchers(HttpMethod.GET, ApplicationConstants.ORDERS_WILDCARD)
                 .hasAnyRole("USER", "ADMIN")
 
             .anyRequest()

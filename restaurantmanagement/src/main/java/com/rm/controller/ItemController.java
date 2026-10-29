@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rm.dto.RequestDto.ItemRequestDto;
 import com.rm.dto.RequestDto.ItemUpdateRequestDto;
 import com.rm.dto.ResponseDto.ItemResponseDto;
+import com.rm.constants.ApplicationConstants;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.Exception.ErrorResponseDto;
 import com.rm.service.ItemService;
@@ -32,7 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping(value = "/restaurants/{restaurantId}/items", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApplicationConstants.RESTAURANT_ITEMS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Item Resource", description = "Item resource controller")
 public class ItemController {
 
@@ -42,7 +43,7 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GetMapping("/{itemId}")
+    @GetMapping(ApplicationConstants.ITEM_ID_PATH)
     @Operation(summary = "Get an item by restaurant and item ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item retrieved successfully",
@@ -93,7 +94,7 @@ public class ItemController {
                 .body(itemService.getRestaurantItems(restaurantId));
     }
 
-    @PostMapping(value = "/bulk", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = ApplicationConstants.BULK_ITEMS_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Add multiple items to a restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Items added successfully",
@@ -153,7 +154,7 @@ public class ItemController {
                 .body(itemService.addItem(restaurantId, itemRequestDto));
     }
 
-    @DeleteMapping("/{itemId}")
+    @DeleteMapping(ApplicationConstants.ITEM_ID_PATH)
     @Operation(summary = "Delete an item from a restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Item deleted successfully"),
@@ -177,7 +178,7 @@ public class ItemController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(value = "/{itemId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = ApplicationConstants.ITEM_ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update an item")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item updated successfully",

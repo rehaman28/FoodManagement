@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.dm.constants.ApplicationConstants;
 import com.dm.security.JwtAuthenticationFilter;
 
 @Configuration
@@ -52,15 +53,15 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(request -> request
                 .requestMatchers(
-                    "/swagger-ui.html",
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**")
+                    ApplicationConstants.SWAGGER_UI_PATH,
+                    ApplicationConstants.SWAGGER_UI_WILDCARD,
+                    ApplicationConstants.API_DOCS_WILDCARD)
                     .permitAll()
 
-                .requestMatchers("/delivery-person/**")
+                .requestMatchers(ApplicationConstants.DELIVERY_PERSON_WILDCARD)
                         .hasRole("ADMIN")
 
-                .requestMatchers("/delivery-assignments/**")
+                .requestMatchers(ApplicationConstants.DELIVERY_ASSIGNMENTS_WILDCARD)
                     .hasRole("ADMIN")
 
             .anyRequest()

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.um.dto.LoginRequestDto;
 import com.um.dto.LoginResponseDto;
+import com.um.constants.ApplicationConstants;
 import com.um.exception.ErrorResponseDto;
 import com.um.security.JwtService;
 
@@ -27,7 +28,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApplicationConstants.AUTH_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Authentication Resource", description = "Authentication resource controller")
 public class AuthController {
 
@@ -39,7 +40,8 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = ApplicationConstants.LOGIN_ENDPOINT_PATH,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Authenticate a user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Authentication successful",
@@ -70,13 +72,13 @@ public class AuthController {
                 .stream()
                 .findFirst()
                 .map(GrantedAuthority::getAuthority)
-                .map(authority -> authority.startsWith("ROLE_")
-                        ? authority.substring("ROLE_".length())
+                .map(authority -> authority.startsWith(ApplicationConstants.ROLE_PREFIX)
+                        ? authority.substring(ApplicationConstants.ROLE_PREFIX.length())
                         : authority)
                 .orElseThrow(() -> new IllegalStateException("Authenticated user has no role"));
 
         Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role", role);
+        extraClaims.put(ApplicationConstants.ROLE_CLAIM, role);
         String token = jwtService.generateToken(extraClaims, authentication.getName());
 
         return new LoginResponseDto(token);

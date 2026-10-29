@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.authentication.AuthenticationProvider;
+import com.um.constants.ApplicationConstants;
 import com.um.security.JwtAuthenticationFilter;
 
 
@@ -46,25 +47,25 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
 
                     //Any Initial Login or registeration
-                    .requestMatchers("/auth/login")
+                    .requestMatchers(ApplicationConstants.LOGIN_PATH)
                     .permitAll()
 
                     //Anyone can register
-                    .requestMatchers(HttpMethod.POST, "/users")
+                    .requestMatchers(HttpMethod.POST, ApplicationConstants.USERS_PATH)
                     .permitAll()
 
                     .requestMatchers(
-                        "/swagger-ui.html",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**")
+                        ApplicationConstants.SWAGGER_UI_PATH,
+                        ApplicationConstants.SWAGGER_UI_WILDCARD,
+                        ApplicationConstants.API_DOCS_WILDCARD)
                     .permitAll()
 
                     //Only Admin can get the details 
-                    .requestMatchers(HttpMethod.GET, "/users")
+                    .requestMatchers(HttpMethod.GET, ApplicationConstants.USERS_PATH)
                     .hasRole("ADMIN")
                 
                     //Only Admin can delete the user
-                    .requestMatchers(HttpMethod.DELETE, "/users/**")
+                    .requestMatchers(HttpMethod.DELETE, ApplicationConstants.USERS_WILDCARD)
                     .hasRole("ADMIN")
 
                     //Any Other Request need to authenticated

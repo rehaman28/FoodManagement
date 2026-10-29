@@ -29,10 +29,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.dm.constants.ApplicationConstants;
 
 
 @RestController 
-@RequestMapping(value = "/delivery-person", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApplicationConstants.DELIVERY_PERSON_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Delivery Person Resource", description = "Delivery person resource controller")
 public class DeliveryPersonController {
     
@@ -43,7 +44,7 @@ public class DeliveryPersonController {
     }
     
     //Post delivery person
-    @PostMapping(value = "/addperson", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = ApplicationConstants.ADD_PERSON_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Add a delivery person")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Delivery person added successfully",
@@ -68,7 +69,7 @@ public class DeliveryPersonController {
     
 
     //Get Delivery Person using ID 
-    @GetMapping("/{deliveryAgentId}")
+    @GetMapping(ApplicationConstants.DELIVERY_PERSON_ID_PATH)
     @Operation(summary = "Get a delivery person by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delivery person retrieved successfully",
@@ -113,7 +114,7 @@ public class DeliveryPersonController {
     }
 
     //UpdateDeliveryPersonDetails
-    @PatchMapping(value = "/update/{deliveryAgentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = ApplicationConstants.UPDATE_PERSON_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update a delivery person")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delivery person updated successfully",

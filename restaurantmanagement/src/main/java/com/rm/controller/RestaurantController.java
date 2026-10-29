@@ -20,6 +20,7 @@ import com.rm.dto.RequestDto.RestaurantRatingRequestDto;
 import com.rm.dto.RequestDto.RestaurantUpdateRequestDto;
 import com.rm.dto.ResponseDto.RestaurantInfoResponseDto;
 import com.rm.dto.ResponseDto.RestaurantResponseDto;
+import com.rm.constants.ApplicationConstants;
 import com.rm.Exception.ErrorResponseDto;
 import com.rm.service.RestaurantService;
 
@@ -33,7 +34,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping(value = "/restaurants", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApplicationConstants.RESTAURANTS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Restaurant Resource", description = "Restaurant resource controller")
 public class RestaurantController {
 
@@ -69,7 +70,7 @@ public class RestaurantController {
     }
 
     // Fetch Restaurant By Id
-    @GetMapping("/{restaurantId}")
+    @GetMapping(ApplicationConstants.RESTAURANT_ID_PATH)
     @Operation(summary = "Get a restaurant by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Restaurant retrieved successfully",
@@ -94,7 +95,7 @@ public class RestaurantController {
     }
 
     // Fetch RestaurantName by Id
-    @GetMapping("/{restaurantId}/name")
+    @GetMapping(ApplicationConstants.RESTAURANT_NAME_SUFFIX)
     @Operation(summary = "Get a restaurant name by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Restaurant name retrieved successfully",
@@ -141,7 +142,7 @@ public class RestaurantController {
 
     // Update Restaurant - restaurantName, Address,phone number dynamically as
     // through request
-    @PatchMapping(value = "/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = ApplicationConstants.RESTAURANT_ID_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update a restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Restaurant updated successfully",
@@ -170,7 +171,7 @@ public class RestaurantController {
     }
 
     // Delete Restaurant - Delete entire restaurant
-    @DeleteMapping("/{restaurantId}")
+    @DeleteMapping(ApplicationConstants.RESTAURANT_ID_PATH)
     @Operation(summary = "Delete a restaurant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Restaurant deleted successfully"),
@@ -193,7 +194,7 @@ public class RestaurantController {
     }
 
     // update restaurant rating
-    @PutMapping(value = "/{restaurantId}/rating", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = ApplicationConstants.RESTAURANT_RATING_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update a restaurant rating")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Restaurant rating updated successfully",

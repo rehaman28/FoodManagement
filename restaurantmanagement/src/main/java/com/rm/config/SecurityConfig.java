@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.rm.constants.ApplicationConstants;
 import com.rm.security.JwtAuthenticationFilter;
 
 @Configuration
@@ -54,30 +55,30 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
 
                     //Read Only Resources
-                    .requestMatchers(HttpMethod.GET, "/restaurants/**")
+                    .requestMatchers(HttpMethod.GET, ApplicationConstants.RESTAURANTS_WILDCARD)
                     .hasAnyRole("USER", "ADMIN")
 
                     //Create Only Resources
-                    .requestMatchers(HttpMethod.POST, "/restaurants/**")
+                    .requestMatchers(HttpMethod.POST, ApplicationConstants.RESTAURANTS_WILDCARD)
                     .hasAnyRole( "ADMIN")
 
                     //Update Resources
-                    .requestMatchers(HttpMethod.PUT, "/restaurants/**")
+                    .requestMatchers(HttpMethod.PUT, ApplicationConstants.RESTAURANTS_WILDCARD)
                     .hasAnyRole( "ADMIN")
                     
                     
-                    .requestMatchers(HttpMethod.PATCH,"/restaurants/**")
+                    .requestMatchers(HttpMethod.PATCH, ApplicationConstants.RESTAURANTS_WILDCARD)
                     .hasRole("ADMIN")
 
                     // Delete
-                    .requestMatchers(HttpMethod.DELETE,"/restaurants/**")
+                    .requestMatchers(HttpMethod.DELETE, ApplicationConstants.RESTAURANTS_WILDCARD)
                     .hasRole("ADMIN")
 
                     //swagger request
                     .requestMatchers(
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**")
+                                ApplicationConstants.SWAGGER_UI_PATH,
+                                ApplicationConstants.SWAGGER_UI_WILDCARD,
+                                ApplicationConstants.API_DOCS_WILDCARD)
                         .permitAll()
 
                     //Any Other Request needs authentications

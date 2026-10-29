@@ -29,10 +29,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.dm.constants.ApplicationConstants;
 
 
 @RestController 
-@RequestMapping(value = "/delivery-assignments", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApplicationConstants.DELIVERY_ASSIGNMENTS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(
     name = "Delivery Assignment Resource",
     description = "Delivery Assignment Resource Controller"
@@ -71,7 +72,7 @@ public class DeliveryAssignmentController {
                 .body(deliveryAssignmentService.postDeliveryAssignments(request));
     }
 
-    @GetMapping("/{deliveryAssignmentId}")
+    @GetMapping(ApplicationConstants.DELIVERY_ASSIGNMENT_ID_PATH)
     @Operation(summary = "Get a delivery assignment by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delivery assignment retrieved successfully",
@@ -95,7 +96,7 @@ public class DeliveryAssignmentController {
                 .body(deliveryAssignmentService.getDeliveryAssignments(deliveryAssignmentId));
     }
 
-    @GetMapping("/all")
+    @GetMapping(ApplicationConstants.ALL_ASSIGNMENTS_PATH)
     @Operation(summary = "Get all delivery assignments")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delivery assignments retrieved successfully",
@@ -116,7 +117,7 @@ public class DeliveryAssignmentController {
                 .body(deliveryAssignmentService.getAllDeliveryAssignments());
     }
 
-    @GetMapping("/delivery-person/{deliveryAgentId}/assignments")
+    @GetMapping(ApplicationConstants.PERSON_ASSIGNMENTS_PATH)
     @Operation(summary = "Get delivery assignments for a delivery person")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delivery assignments retrieved successfully",
@@ -143,7 +144,7 @@ public class DeliveryAssignmentController {
                 .getAssignmentsByDeliveryPerson(deliveryAgentId));
     }
 
-    @PatchMapping(value = "/{deliveryAssignmentId}/status", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = ApplicationConstants.ASSIGNMENT_STATUS_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update delivery assignment status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Delivery assignment status updated successfully",

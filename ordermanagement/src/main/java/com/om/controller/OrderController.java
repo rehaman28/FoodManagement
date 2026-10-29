@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.om.dto.OrderRequestDto;
 import com.om.dto.OrderResponseDto;
 import com.om.dto.OrderStatusRequestDto;
+import com.om.constants.ApplicationConstants;
 import com.om.Exception.ErrorResponseDto;
 import com.om.model.OrderStatus;
 import com.om.service.OrderService;
@@ -34,7 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 @RestController
-@RequestMapping(value = "/orders", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApplicationConstants.ORDERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Order Resource", description = "Order resource controller")
 public class OrderController {
 
@@ -46,7 +47,8 @@ public class OrderController {
     }
 
        
-    @PostMapping(value = "/placeorder", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = ApplicationConstants.PLACE_ORDER_ENDPOINT_PATH,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Place an order")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Order placed successfully",
@@ -75,7 +77,7 @@ public class OrderController {
     }
 
     //Get Order by ID
-    @GetMapping("/{orderId}")
+    @GetMapping(ApplicationConstants.ORDER_ID_PATH)
     @Operation(summary = "Get an order by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order retrieved successfully",
@@ -119,7 +121,7 @@ public class OrderController {
     }
 
     // GET /orders/user/{userId}
-    @GetMapping("/user/{userId}")
+    @GetMapping(ApplicationConstants.USER_ORDERS_PATH)
     @Operation(summary = "Get orders by user ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Orders retrieved successfully",
@@ -143,7 +145,7 @@ public class OrderController {
     }
     
     // GET /orders/restaurant/{restaurantId}
-    @GetMapping("/restaurant/{restaurantId}")
+    @GetMapping(ApplicationConstants.RESTAURANT_ORDERS_ID_PATH)
     @Operation(summary = "Get orders by restaurant ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Orders retrieved successfully",
@@ -167,7 +169,7 @@ public class OrderController {
     }
 
     // GET /orders/status/{status}
-    @GetMapping("/status")
+    @GetMapping(ApplicationConstants.ORDER_STATUS_ENDPOINT_PATH)
     @Operation(summary = "Get orders by status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Orders retrieved successfully",
@@ -193,7 +195,8 @@ public class OrderController {
 
     
     // PATCH /orders/{orderId}/status
-    @PatchMapping(value = "/{orderId}/status", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = ApplicationConstants.UPDATE_ORDER_STATUS_PATH,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update order status")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Order status updated successfully",

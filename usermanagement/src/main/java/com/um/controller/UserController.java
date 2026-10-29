@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.um.dto.UpdateUserRequestDto;
 import com.um.dto.UserRequestDto;
 import com.um.dto.UserResponseDto;
+import com.um.constants.ApplicationConstants;
 import com.um.exception.ErrorResponseDto;
 import com.um.service.UserService;
 
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController 
-@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApplicationConstants.USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "User Resource", description = "User resource controller")
 public class UserController {
 
@@ -83,7 +84,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUsers());
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping(ApplicationConstants.USER_ID_PATH)
     @Operation(summary = "Get a user by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User retrieved successfully",
@@ -106,7 +107,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUsersById(userId));
     }
 
-    @PatchMapping(value = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = ApplicationConstants.USER_ID_PATH,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update a user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated successfully",
@@ -133,7 +135,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userId, userRequestDto));
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping(ApplicationConstants.USER_ID_PATH)
     @Operation(summary = "Delete a user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User deleted successfully"),
