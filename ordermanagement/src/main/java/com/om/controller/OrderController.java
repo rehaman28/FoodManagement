@@ -16,6 +16,12 @@ import com.om.model.OrderStatus;
 import com.om.service.OrderService;
 
 import jakarta.validation.Valid;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,6 +32,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("/orders")
+@Produces(MediaType.APPLICATION_JSON)
+@Tag(name = "Order Resource", description = "Order resource controller")
 public class OrderController {
 
     private final OrderService orderService;
@@ -37,6 +45,15 @@ public class OrderController {
 
        
     @PostMapping("/placeorder")    
+    @Operation(summary = "Place an order")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Order placed successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "User, restaurant, or item not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<OrderResponseDto>placeOrder(@Valid @RequestBody OrderRequestDto orderRequest)
     {
         OrderResponseDto placedOrder = orderService.placeorder(orderRequest);
@@ -45,29 +62,68 @@ public class OrderController {
 
     //Get Order by ID
     @GetMapping("/{orderId}")
+    @Operation(summary = "Get an order by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public  ResponseEntity<OrderResponseDto> getOrders(@PathVariable (name ="orderId") Long orderId ){
         return  ResponseEntity.status(HttpStatus.OK).body(orderService.getOrder(orderId));
     }
     //Get All orders
     @GetMapping()
+    @Operation(summary = "Get all orders")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Orders retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<List<OrderResponseDto>> getAllOrders(){
         return  ResponseEntity.status(HttpStatus.OK).body(orderService.getAllOrder());
     }
 
     // GET /orders/user/{userId}
     @GetMapping("/user/{userId}")
+    @Operation(summary = "Get orders by user ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Orders retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<List<OrderResponseDto>> getOrdersByUserId(@PathVariable (name = "userId") Long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersByUserId(userId));
     }
     
     // GET /orders/restaurant/{restaurantId}
     @GetMapping("/restaurant/{restaurantId}")
+    @Operation(summary = "Get orders by restaurant ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Orders retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Restaurant not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<List<OrderResponseDto>> getOrdersByRestaurantId(@PathVariable (name = "restaurantId") Long restaurantId) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersByRestaurantId(restaurantId));
     }
 
     // GET /orders/status/{status}
     @GetMapping("/status")
+    @Operation(summary = "Get orders by status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Orders retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<List<OrderResponseDto>> getOrdersByStatus(
             @RequestParam(name = "orderStatus") OrderStatus orderStatus) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersByStatus(orderStatus));
@@ -76,6 +132,15 @@ public class OrderController {
     
     // PATCH /orders/{orderId}/status
     @PatchMapping("/{orderId}/status")
+    @Operation(summary = "Update order status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order status updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access to this service"),
+            @ApiResponse(responseCode = "403", description = "Forbidden access to this service"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<OrderResponseDto> updateOrderStatus(
             @PathVariable(name = "orderId") Long orderId,
             @Valid @RequestBody OrderStatusRequestDto orderStatus) {
