@@ -159,18 +159,29 @@ Implementation:
 - Service registration validation
 
 ### Phase 10 — OpenFeign + Eureka
-Status: Next implementation target
+Status: Implementation complete; runtime/regression validation pending
 
-Plan:
-1. Add OpenFeign and LoadBalancer dependencies to Order Management
-2. Enable Feign clients
-3. Create Restaurant Feign client
-4. Replace Order -> Restaurant RestTemplate calls
-5. Preserve JWT propagation for inter-service calls
-6. Map downstream Feign errors to existing business exceptions
-7. Remove obsolete RestTemplate configuration
-8. Remove hard-coded internal service URLs from Order Management
-9. Verify service discovery through Eureka
+Implemented:
+1. OpenFeign and LoadBalancer dependencies in Order Management
+2. Feign client enablement
+3. Restaurant Feign client for restaurant-name and item lookup
+4. Order -> Restaurant communication migrated from active RestTemplate calls to Feign
+5. JWT Authorization propagation through Feign
+6. Downstream Feign 404 mapping to existing business exceptions
+7. Active hard-coded Restaurant URL removed from the Order service flow
+8. Restaurant service ID aligned with the current Eureka registration name
+
+Validation still pending:
+1. Order -> Restaurant happy-path Postman scenario
+2. USER and ADMIN JWT regression through the Feign path
+3. Restaurant/item 404 regression
+4. Eureka discovery with more than one Restaurant instance
+5. Verify Order continues working when one Restaurant instance is stopped
+
+Cleanup decision:
+- The old `Config.java` RestTemplate bean is no longer invoked.
+- Legacy RestTemplate imports/comments kept in `OrderServiceImpl` are not part of the remaining Phase 10 work.
+- Cleanup/removal of these unused artifacts is explicitly deferred and does not block Phase 10 completion.
 
 ### Phase 11 — Kafka / Event-Driven Architecture
 Plan:
