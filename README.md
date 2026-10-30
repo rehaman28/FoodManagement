@@ -183,8 +183,8 @@ Cleanup decision:
 - Legacy RestTemplate imports/comments kept in `OrderServiceImpl` are not part of the remaining Phase 10 work.
 - Cleanup/removal of these unused artifacts is explicitly deferred and does not block Phase 10 completion.
 
-### Phase 11 — Kafka / Event-Driven Architecture
-Status: Synchronous communication baseline complete — implementation and validation successful
+### Phase 11 — Synchronous + Edge + Event-Driven Architecture
+Status: Synchronous communication baseline complete — implementation and validation successful; API Gateway and Kafka pending
 
 Completed synchronous communication:
 1. Order Management -> Restaurant Management through OpenFeign + Eureka — complete and validated in Phase 10
@@ -198,6 +198,59 @@ Current communication strategy:
 - Synchronous: Order -> User
 - Synchronous: Order -> Restaurant
 - Asynchronous Kafka communication will be introduced next between Order and Delivery services.
+
+Plan:
+1. Introduce Kafka infrastructure
+2. Define domain events
+3. Implement producers
+4. Implement consumers
+5. Define topics and consumer groups
+6. Add retry/error handling
+7. Add idempotency
+8. Add integration tests
+
+Candidate events:
+- OrderPlaced
+- OrderAccepted
+- OrderPreparing
+- OrderOutForDelivery
+- OrderDelivered
+- OrderCancelled
+
+#### Phase 11A — API Gateway
+Status: Pending — not implemented in the current repository
+
+Purpose:
+- Provide a single external entry point for all business APIs
+- Route client requests to User, Restaurant, Order, and Delivery Management
+- Integrate service discovery with gateway routing
+- Centralize edge-level authentication and request filtering
+- Preserve downstream USER / ADMIN authorization
+- Add route-level logging and correlation information
+- Prepare the architecture for future rate limiting, CORS policy, and resilience controls
+
+Planned implementation:
+1. Create a dedicated gateway Spring Boot module
+2. Add Spring Cloud Gateway dependency compatible with the project Spring Cloud release
+3. Register the Gateway with Eureka
+4. Define routes for /users/** and /auth/** -> User Management
+5. Define routes for /restaurants/** -> Restaurant Management
+6. Define routes for /orders/** -> Order Management
+7. Define routes for /delivery-person/** and /delivery-assignments/** -> Delivery Management
+8. Validate service-discovery-based routing
+9. Validate JWT forwarding / edge authentication strategy
+10. Add gateway-specific Postman regression scenarios
+11. Verify clients can use the Gateway without directly calling business-service ports
+
+Architectural position:
+Client -> API Gateway -> Business Services
+                         |
+                         +-> Eureka for service discovery
+
+Phase 11A will be implemented before the Kafka event-driven portion so the project has a clear external edge before asynchronous workflows are introduced.
+
+### Phase 11B — Kafka / Event-Driven Architecture
+Status: Pending
 
 Plan:
 1. Introduce Kafka infrastructure
