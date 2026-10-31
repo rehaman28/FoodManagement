@@ -1,0 +1,1044 @@
+FoodManagement — Commit History and Observability Status
+Repository: https://github.com/rehaman28/FoodManagement
+Audited branch: main
+Latest audited commit: 9074c622c3d32d7b09536d3b2da035dec729a4bf — observability dependencies — 2026-10-31T18:35:16Z
+Total commits returned by GitHub commit history at audit time: 161
+
+============================================================
+1. CURRENT OBSERVABILITY STATUS
+============================================================
+
+Latest observability commit:
+9074c622c3d32d7b09536d3b2da035dec729a4bf — observability dependencies
+
+Implemented in that commit:
+- User Management: Spring Boot Actuator + Micrometer Prometheus registry + health/metrics/prometheus exposure + application/environment metric tags.
+- Restaurant Management: same observability foundation.
+- Order Management: same observability foundation.
+- Delivery Management: same observability foundation.
+- API Gateway already had Spring Boot Actuator before this commit, but the latest observability commit did not add the Prometheus registry/exposure configuration to the Gateway.
+- Eureka was not modified by the latest observability dependency commit.
+
+The latest commit also adds .idea and .vscode to .gitignore.
+
+What remains to complete the Observability Foundation:
+1) Add/standardize Prometheus registry and metrics exposure for API Gateway.
+2) Add Prometheus server configuration and scrape jobs for API Gateway, User, Restaurant, Order, and Delivery.
+3) Add Grafana infrastructure and connect Grafana to Prometheus.
+4) Build the initial Grafana dashboard: request rate, latency, error rate, and basic service/JVM health.
+5) Generate normal application traffic and record the baseline before fault-tolerance tuning.
+6) Optionally add the lightweight Correlation ID filter now, as permitted by the roadmap.
+7) Validate the foundation end-to-end: actuator endpoints, Prometheus targets UP, metrics visible in Prometheus, dashboard panels populated in Grafana.
+
+After that foundation, the planned interleaved sequence is:
+- Fault tolerance: timeouts -> retries -> circuit breakers -> fallbacks -> bulkhead -> rate limiting.
+- Failure-path testing against the dashboard.
+- Remaining observability: centralized logging -> correlation IDs if not already added -> distributed tracing -> alerts.
+- Kafka starts only after those stages are complete.
+
+Observability is NOT fully complete yet.
+
+============================================================
+2. CUMULATIVE COMMIT HISTORY
+============================================================
+
+Each entry contains the commit, date, high-level change, and the reason/purpose inferred from the commit message. Exact file-level changes should be read from the linked commit when the commit message is broad or ambiguous.
+
+1. 9074c622c3d32d7b09536d3b2da035dec729a4bf
+   Date: 2026-10-31T18:35:16Z
+   Message: observability dependencies
+   Why: Start observability instrumentation by adding Actuator/Micrometer Prometheus dependencies and management metrics configuration to the business services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/9074c622c3d32d7b09536d3b2da035dec729a4bf
+
+2. 94c28b8c45d72929e6f05b144cd40c5c51b715b2
+   Date: 2026-10-31T17:48:35Z
+   Message: Align service README with observability and resilience roadmap
+   Why: Align each service README with the staged observability -> resilience -> failure testing -> observability expansion -> Kafka sequence.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/94c28b8c45d72929e6f05b144cd40c5c51b715b2
+
+3. bba30f4f0e6de02fd6e1ab7a48a874a78787444b
+   Date: 2026-10-31T17:48:31Z
+   Message: Align service README with observability and resilience roadmap
+   Why: Align each service README with the staged observability -> resilience -> failure testing -> observability expansion -> Kafka sequence.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bba30f4f0e6de02fd6e1ab7a48a874a78787444b
+
+4. 4fbf49852cc4938fee58bae16f427b758b968765
+   Date: 2026-10-31T17:48:29Z
+   Message: Align service README with observability and resilience roadmap
+   Why: Align each service README with the staged observability -> resilience -> failure testing -> observability expansion -> Kafka sequence.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/4fbf49852cc4938fee58bae16f427b758b968765
+
+5. be1b73444f8444abdb4cd639db926029f1b60d2c
+   Date: 2026-10-31T17:48:25Z
+   Message: Align service README with observability and resilience roadmap
+   Why: Align each service README with the staged observability -> resilience -> failure testing -> observability expansion -> Kafka sequence.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/be1b73444f8444abdb4cd639db926029f1b60d2c
+
+6. e9d22058e2902a41f8bfbc084e2a069b399275f3
+   Date: 2026-10-31T17:48:22Z
+   Message: Align service README with observability and resilience roadmap
+   Why: Align each service README with the staged observability -> resilience -> failure testing -> observability expansion -> Kafka sequence.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e9d22058e2902a41f8bfbc084e2a069b399275f3
+
+7. 98b23c33a89ea8ac3fab9db8c69001a576924e5a
+   Date: 2026-10-31T17:48:18Z
+   Message: Align service README with observability and resilience roadmap
+   Why: Align each service README with the staged observability -> resilience -> failure testing -> observability expansion -> Kafka sequence.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/98b23c33a89ea8ac3fab9db8c69001a576924e5a
+
+8. 2abb34adf25e843730b9217d825fcdb84bc1163f
+   Date: 2026-10-31T17:48:08Z
+   Message: Define staged observability and fault tolerance execution plan before Kafka
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/2abb34adf25e843730b9217d825fcdb84bc1163f
+
+9. 31657bc00d2a078a5c638846ca20f2f1afa55562
+   Date: 2026-10-31T17:20:21Z
+   Message: Add API Gateway README and Phase 11 validation status
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/31657bc00d2a078a5c638846ca20f2f1afa55562
+
+10. 02d6eb1dc25eda505d29bdb04eafb278289ca007
+   Date: 2026-10-31T17:20:10Z
+   Message: Document Phase 11 Delivery Management validation
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/02d6eb1dc25eda505d29bdb04eafb278289ca007
+
+11. 41aee9907929b1b3e7e9ccfccf87d9be13ce77ec
+   Date: 2026-10-31T17:20:07Z
+   Message: Mark Phase 11 Order Management validation complete
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/41aee9907929b1b3e7e9ccfccf87d9be13ce77ec
+
+12. 73b92043faa1bf16304c13deda16c27dd9175fdb
+   Date: 2026-10-31T17:20:04Z
+   Message: Document Phase 11 Restaurant Management validation
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/73b92043faa1bf16304c13deda16c27dd9175fdb
+
+13. 5f671b675a0d44322df8106db66df641e2ca6aa4
+   Date: 2026-10-31T17:20:01Z
+   Message: Document Phase 11 User Management validation
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/5f671b675a0d44322df8106db66df641e2ca6aa4
+
+14. a19e09cd1fb87070be1a72bc5543f81a4709d9d7
+   Date: 2026-10-31T17:19:58Z
+   Message: Document Phase 11 Eureka and Gateway validation
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/a19e09cd1fb87070be1a72bc5543f81a4709d9d7
+
+15. 5569fb69dbfaeb6c93b4ae462c399e7c4a7e43c6
+   Date: 2026-10-31T17:19:56Z
+   Message: Mark Phase 11 validation complete in root README
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/5569fb69dbfaeb6c93b4ae462c399e7c4a7e43c6
+
+16. 794377e3294eea3f4541bee81c07835ada09f2c1
+   Date: 2026-10-31T17:14:25Z
+   Message: Complete API Gateway documentation and Postman regression status
+   Why: Add/align Gateway regression coverage without removing direct-service troubleshooting coverage.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/794377e3294eea3f4541bee81c07835ada09f2c1
+
+17. c5beb268eafebf6ea11c9679ffbf6cbcf514649d
+   Date: 2026-10-31T17:14:15Z
+   Message: Add API Gateway regression to Overall Postman suite
+   Why: Add/align Gateway regression coverage without removing direct-service troubleshooting coverage.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c5beb268eafebf6ea11c9679ffbf6cbcf514649d
+
+18. 62f3104e74e07a5751d2b97f0e8dc2fb07f82fb6
+   Date: 2026-10-31T17:14:08Z
+   Message: Add API Gateway Postman regression collection
+   Why: Add/align Gateway regression coverage without removing direct-service troubleshooting coverage.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/62f3104e74e07a5751d2b97f0e8dc2fb07f82fb6
+
+19. 8d3ce90e05b2361737c743011b884f1c9a27d69e
+   Date: 2026-10-31T17:13:50Z
+   Message: Add API Gateway base URL to generic Postman environment
+   Why: Add/align Gateway regression coverage without removing direct-service troubleshooting coverage.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/8d3ce90e05b2361737c743011b884f1c9a27d69e
+
+20. 85014ed894c114f6616c65530157e53ed1864014
+   Date: 2026-10-31T17:04:41Z
+   Message: Add API Gateway base URL to Postman environments
+   Why: Add/align Gateway regression coverage without removing direct-service troubleshooting coverage.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/85014ed894c114f6616c65530157e53ed1864014
+
+21. 50097cd44c6384ea164e0975ebeda58da075e5a5
+   Date: 2026-10-31T17:04:38Z
+   Message: Add API Gateway base URL to Postman environments
+   Why: Add/align Gateway regression coverage without removing direct-service troubleshooting coverage.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/50097cd44c6384ea164e0975ebeda58da075e5a5
+
+22. 1bb139bed5eef5b2fbe77069ff871feafb40022c
+   Date: 2026-10-31T15:52:57Z
+   Message: JWT changes
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/1bb139bed5eef5b2fbe77069ff871feafb40022c
+
+23. 42285c498b8aeed9cdf37bb387090e8a98701320
+   Date: 2026-10-31T15:30:13Z
+   Message: API Gateway Changes
+   Why: Introduce or refine the API Gateway edge, routing, JWT validation, and service-discovery integration.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/42285c498b8aeed9cdf37bb387090e8a98701320
+
+24. 2b93fc2fb4dc4362693ac8d82c01822e7df1ea9b
+   Date: 2026-10-30T04:56:30Z
+   Message: Add API Gateway to Phase 11 roadmap
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/2b93fc2fb4dc4362693ac8d82c01822e7df1ea9b
+
+25. b278cb6e34cf57efccddd824edd6bbb5d4e5fea8
+   Date: 2026-10-29T17:32:02Z
+   Message: architecture refactor across all modules
+   Why: Refactor the project structure/architecture to support the evolving microservice design.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b278cb6e34cf57efccddd824edd6bbb5d4e5fea8
+
+26. 52dcc74bdf6d8037e431b0c76b1d346cdf4a1587
+   Date: 2026-10-29T17:27:56Z
+   Message: Document Order to User synchronous communication
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/52dcc74bdf6d8037e431b0c76b1d346cdf4a1587
+
+27. 677697ec8d37576a05bd2a6677b33572055d2a2f
+   Date: 2026-10-29T17:27:50Z
+   Message: Mark Phase 11 synchronous communication complete
+   Why: Record completion and validation of synchronous service communication and API Gateway work.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/677697ec8d37576a05bd2a6677b33572055d2a2f
+
+28. a536fbecaf9c000482e0b1a3be0426207a27d55c
+   Date: 2026-10-29T17:10:21Z
+   Message: Synchronous call order and user
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/a536fbecaf9c000482e0b1a3be0426207a27d55c
+
+29. b61480710b0db1130c8f3e33de9316e725865055
+   Date: 2026-10-29T15:06:18Z
+   Message: Implemented constants across all five projects
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b61480710b0db1130c8f3e33de9316e725865055
+
+30. 637fcb64d7c43f0cea7c8a89262f113b0bdd4167
+   Date: 2026-10-29T15:00:16Z
+   Message: Mark Restaurant Phase 10 validation complete
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/637fcb64d7c43f0cea7c8a89262f113b0bdd4167
+
+31. b01c12c54cf58527bcbdc206101b4677d011cb85
+   Date: 2026-10-29T15:00:11Z
+   Message: Mark Order Phase 10 validation complete
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b01c12c54cf58527bcbdc206101b4677d011cb85
+
+32. 40cfe858ca0ce1d781fef91c2e353ec799f2b2e2
+   Date: 2026-10-29T14:59:50Z
+   Message: Mark Phase 10 validation complete
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/40cfe858ca0ce1d781fef91c2e353ec799f2b2e2
+
+33. cb5bd4300b3ace3c71a9157c4061489dfe2aba00
+   Date: 2026-10-29T14:27:50Z
+   Message: Update Restaurant README for Eureka and Feign integration
+   Why: Introduce or document service discovery so services communicate by logical service ID instead of fixed addresses.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/cb5bd4300b3ace3c71a9157c4061489dfe2aba00
+
+34. f47cd0b126620316b00bd34df5c6cd19caa3f9bd
+   Date: 2026-10-29T14:27:44Z
+   Message: Update Order Management README for Feign integration
+   Why: Implement synchronous service-to-service calls through OpenFeign and Eureka.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f47cd0b126620316b00bd34df5c6cd19caa3f9bd
+
+35. fea14ffca4c60e16050f42215430207f374d615a
+   Date: 2026-10-29T14:27:38Z
+   Message: Mark Phase 10 implementation complete and cleanup deferred
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/fea14ffca4c60e16050f42215430207f374d615a
+
+36. db8bbdd02cf17c7e1c0ce6ccb1e7bcae6b95d5ef
+   Date: 2026-10-29T13:42:10Z
+   Message: Implemented response schemas across all API endpoints
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/db8bbdd02cf17c7e1c0ce6ccb1e7bcae6b95d5ef
+
+37. bcd651377bb7bc81b658d80b8b7837a8fc0b5404
+   Date: 2026-10-29T13:12:36Z
+   Message: OpenAPI documentation for resources
+   Why: Improve API contract/documentation coverage for the services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bcd651377bb7bc81b658d80b8b7837a8fc0b5404
+
+38. 00514dc734348c28f93dc57e68c7b96726d8bdca
+   Date: 2026-10-29T12:48:27Z
+   Message: OpenApi Definition
+   Why: Improve API contract/documentation coverage for the services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/00514dc734348c28f93dc57e68c7b96726d8bdca
+
+39. f0184c8df4f28e95699517057a903ff4e9159c99
+   Date: 2026-10-29T06:16:27Z
+   Message: Open APi documentation
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f0184c8df4f28e95699517057a903ff4e9159c99
+
+40. 5f1bd3bd996412604711ec081ec45361a81402be
+   Date: 2026-10-28T16:20:59Z
+   Message: updating the appName&Yml file
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/5f1bd3bd996412604711ec081ec45361a81402be
+
+41. d6c7fbc3af3167414aed839584f6a58bf8c25b8b
+   Date: 2026-10-28T16:19:53Z
+   Message: Upgrading SpringBoot Version
+   Why: Align the project with the selected Spring Boot version.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/d6c7fbc3af3167414aed839584f6a58bf8c25b8b
+
+42. e522a79c0b3be18663e46fa0c62f9e068bc4623c
+   Date: 2026-10-21T17:48:11Z
+   Message: Implemented FeignClient ServiceDiscovery OmtoRM
+   Why: Implement synchronous service-to-service calls through OpenFeign and Eureka.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e522a79c0b3be18663e46fa0c62f9e068bc4623c
+
+43. ad52492b3ab341538fb74ec1c8b62341fb65760f
+   Date: 2026-10-21T17:43:40Z
+   Message: Add eureka/README.md service README
+   Why: Introduce or document service discovery so services communicate by logical service ID instead of fixed addresses.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/ad52492b3ab341538fb74ec1c8b62341fb65760f
+
+44. f262ce512d68a2897b710a87741915e155bd26d4
+   Date: 2026-10-21T17:43:36Z
+   Message: Add deliverymanagement/README.md service README
+   Why: Implement or harden Delivery Management functionality and lifecycle behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f262ce512d68a2897b710a87741915e155bd26d4
+
+45. 4a1f5f72f6c19b5c107b3a1bd9794271b5e379a5
+   Date: 2026-10-21T17:43:31Z
+   Message: Add ordermanagement/README.md service README
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/4a1f5f72f6c19b5c107b3a1bd9794271b5e379a5
+
+46. af05cd70e2b7789160abf9bb208999dffdc99a84
+   Date: 2026-10-21T17:43:26Z
+   Message: Add restaurantmanagement/README.md service README
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/af05cd70e2b7789160abf9bb208999dffdc99a84
+
+47. 77a9b7eccb640ed5df9a8f94dde854295e175313
+   Date: 2026-10-21T17:43:19Z
+   Message: Add usermanagement/README.md service README
+   Why: Implement or refine User Management, authentication, validation, or credential handling.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/77a9b7eccb640ed5df9a8f94dde854295e175313
+
+48. a0c5febab3242228bf51eb5ece65254ec53cd2ff
+   Date: 2026-10-21T17:43:13Z
+   Message: Refine project README and documentation scope
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/a0c5febab3242228bf51eb5ece65254ec53cd2ff
+
+49. 6a15a0577c295ec38bcdc99af5280471a7d515f3
+   Date: 2026-10-21T17:35:42Z
+   Message: Add project and Postman validation README
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/6a15a0577c295ec38bcdc99af5280471a7d515f3
+
+50. 3af57bd8676015c5e89fcbad8c56689c46b132cc
+   Date: 2026-10-19T17:29:09Z
+   Message: Eureka -ServiceDiscovery
+   Why: Introduce or document service discovery so services communicate by logical service ID instead of fixed addresses.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/3af57bd8676015c5e89fcbad8c56689c46b132cc
+
+51. 0d43f7d24d19f86582544ba639b4afa429f12cea
+   Date: 2026-10-07T18:03:57Z
+   Message: Synchronize Overall Postman collection with explicit JWT auth
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/0d43f7d24d19f86582544ba639b4afa429f12cea
+
+52. 79aec124de21128f52c282ed0851c2a583357f1d
+   Date: 2026-10-07T18:03:52Z
+   Message: Postman RBAC - use explicit bearer auth for secured requests
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/79aec124de21128f52c282ed0851c2a583357f1d
+
+53. 8a36fc536566c967814643a473dd7ed5e96401ed
+   Date: 2026-10-07T18:03:47Z
+   Message: Postman RBAC - use explicit bearer auth for secured requests
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/8a36fc536566c967814643a473dd7ed5e96401ed
+
+54. bacce1f24edc6c5609ab083189828405a6d16cbf
+   Date: 2026-10-07T18:03:42Z
+   Message: Postman RBAC - use explicit bearer auth for secured requests
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bacce1f24edc6c5609ab083189828405a6d16cbf
+
+55. d9172e3765de42beb00901816f4662cf469843a1
+   Date: 2026-10-07T18:03:30Z
+   Message: Postman RBAC - use explicit bearer auth for secured requests
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/d9172e3765de42beb00901816f4662cf469843a1
+
+56. ea57f311c17efc87ca6bbead09603a04be47a391
+   Date: 2026-10-07T17:43:03Z
+   Message: Add FoodManagement ADMIN Postman environment
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/ea57f311c17efc87ca6bbead09603a04be47a391
+
+57. e654c29891e031897ce8b3336cfa460d523ee85f
+   Date: 2026-10-07T17:42:59Z
+   Message: Add FoodManagement USER Postman environment
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e654c29891e031897ce8b3336cfa460d523ee85f
+
+58. 3618fdf73946a406c5fc31885df39207498e6b6c
+   Date: 2026-10-07T17:42:56Z
+   Message: Add Postman login collection for JWT regression
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/3618fdf73946a406c5fc31885df39207498e6b6c
+
+59. c0da3dcc6244379569ff7c212669ef2b3efa2a4a
+   Date: 2026-10-07T17:42:52Z
+   Message: Synchronize Overall Postman regression collection with JWT/RBAC
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c0da3dcc6244379569ff7c212669ef2b3efa2a4a
+
+60. b143339fdb89fd49bff11284a7f9e0b1ded70187
+   Date: 2026-10-07T17:42:48Z
+   Message: Postman RBAC regression - Delivery Management
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b143339fdb89fd49bff11284a7f9e0b1ded70187
+
+61. 7779d04badae58a2101bdba9ed3cf6ac3d7408a5
+   Date: 2026-10-07T17:42:44Z
+   Message: Postman RBAC regression - Order Management
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/7779d04badae58a2101bdba9ed3cf6ac3d7408a5
+
+62. 155c7b4c113f6a72b3e99b76b4b616b9618e38e4
+   Date: 2026-10-07T17:42:39Z
+   Message: Postman RBAC regression - Restaurant Management
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/155c7b4c113f6a72b3e99b76b4b616b9618e38e4
+
+63. ba17ed96b163093f4d93ca8ff1a350d561721280
+   Date: 2026-10-07T17:42:34Z
+   Message: Postman RBAC regression - User Management
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/ba17ed96b163093f4d93ca8ff1a350d561721280
+
+64. c6201f5dd2b8120070665a29ea779704d76c9602
+   Date: 2026-10-07T17:22:48Z
+   Message: RBAC for OM and DM
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c6201f5dd2b8120070665a29ea779704d76c9602
+
+65. ec209dd1a12a7951ab0b26cf11dc557a14d59e1d
+   Date: 2026-10-06T17:13:53Z
+   Message: Revert
+   Why: Revert a prior change to restore the intended repository state.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/ec209dd1a12a7951ab0b26cf11dc557a14d59e1d
+
+66. dd8efbe56655ba0469dc7a51a70fd3175256e564
+   Date: 2026-10-06T17:05:40Z
+   Message:  reverting postman collection
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/dd8efbe56655ba0469dc7a51a70fd3175256e564
+
+67. cbece438bb5125edf4b4ac39194d6fbb308a80ea
+   Date: 2026-10-06T16:44:41Z
+   Message: Revert b92a545: restore Restaurant Postman RBAC collection
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/cbece438bb5125edf4b4ac39194d6fbb308a80ea
+
+68. 7ccbb5d39910929ade8eed1066b502dede84b2a5
+   Date: 2026-10-06T16:44:37Z
+   Message: Revert 1791714: remove shared TOKEN and role variables
+   Why: Revert a prior change to restore the intended repository state.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/7ccbb5d39910929ade8eed1066b502dede84b2a5
+
+69. 204b1a10ff60539a973893706e94571dda9216da
+   Date: 2026-10-06T16:44:35Z
+   Message: Revert 7d35ac6: remove ADMIN role variable
+   Why: Revert a prior change to restore the intended repository state.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/204b1a10ff60539a973893706e94571dda9216da
+
+70. 75e4af8476a394d5832478b58bcf81e542c41db3
+   Date: 2026-10-06T16:44:31Z
+   Message: Revert 0fdac4f: remove USER role variable
+   Why: Implement or refine User Management, authentication, validation, or credential handling.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/75e4af8476a394d5832478b58bcf81e542c41db3
+
+71. 1791714d64baaa8925510a76617a092efe3c2396
+   Date: 2026-10-06T16:26:53Z
+   Message: Postman: add shared TOKEN and role variables to base environment
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/1791714d64baaa8925510a76617a092efe3c2396
+
+72. aeea5b8d0bddc7bf05fffa7ac716eb39feb3af62
+   Date: 2026-10-06T16:25:44Z
+   Message: Postman: sync Overall collection with RBAC environments
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/aeea5b8d0bddc7bf05fffa7ac716eb39feb3af62
+
+73. b92a545730f4326fd7a963ddedb6b3847b9d6928
+   Date: 2026-10-06T16:25:40Z
+   Message: Postman: make Restaurant RBAC environment-switchable
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b92a545730f4326fd7a963ddedb6b3847b9d6928
+
+74. 7d35ac6cb7be8ca70340cd211ad61a42f6fb38fe
+   Date: 2026-10-06T16:25:37Z
+   Message: Postman: add ADMIN role variable for environment switching
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/7d35ac6cb7be8ca70340cd211ad61a42f6fb38fe
+
+75. 0fdac4fba68d297415a894b49fcf9905de8fec27
+   Date: 2026-10-06T16:25:35Z
+   Message: Postman: add USER role variable for environment switching
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/0fdac4fba68d297415a894b49fcf9905de8fec27
+
+76. cbc3a1c00fdf48cadcc4950acc4e91a12947645d
+   Date: 2026-10-06T16:13:48Z
+   Message: Add Restaurant RBAC Postman scenarios and TOKEN auth
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/cbc3a1c00fdf48cadcc4950acc4e91a12947645d
+
+77. 22d3d50f571bc1f25f58c1992fd2ab1f0d8cf231
+   Date: 2026-10-06T16:13:16Z
+   Message: Add ADMIN Postman environment for RBAC switching
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/22d3d50f571bc1f25f58c1992fd2ab1f0d8cf231
+
+78. 4de99b9fdc186f52ff5c8ec6d366309402ebf538
+   Date: 2026-10-06T16:13:13Z
+   Message: Add USER Postman environment for RBAC switching
+   Why: Add or refine role-based authorization and Postman regression coverage for USER/ADMIN behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/4de99b9fdc186f52ff5c8ec6d366309402ebf538
+
+79. dc786f282574be371c63b3d1432364ff2e8e2939
+   Date: 2026-10-06T15:39:49Z
+   Message: config changes in RM
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/dc786f282574be371c63b3d1432364ff2e8e2939
+
+80. 733f3a53418525b8bc324201c07a854a95462796
+   Date: 2026-10-06T15:21:29Z
+   Message: correcting the role to get users as ADMIN
+   Why: Implement or refine User Management, authentication, validation, or credential handling.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/733f3a53418525b8bc324201c07a854a95462796
+
+81. a50d65b3af978d1299364a1120075cb55fce59ad
+   Date: 2026-10-06T14:59:35Z
+   Message: Role based Authorization in UM
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/a50d65b3af978d1299364a1120075cb55fce59ad
+
+82. 3a75bbf71638386d6bb0384aa19f3eb58b8ddc56
+   Date: 2026-09-30T17:23:48Z
+   Message: JWT Phase-5: Order&DeliveryMangement
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/3a75bbf71638386d6bb0384aa19f3eb58b8ddc56
+
+83. 220b15c27048fcc7b781b2552e86e2db1c6ef30d
+   Date: 2026-09-30T17:00:28Z
+   Message: JWT- Phase-4:RestaurantManagement
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/220b15c27048fcc7b781b2552e86e2db1c6ef30d
+
+84. e85d33f7699b4ae6071a2214b5214434fa286105
+   Date: 2026-09-30T16:20:18Z
+   Message: JWT phase -3
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e85d33f7699b4ae6071a2214b5214434fa286105
+
+85. 0394b766ebc6e7c434699b9bd3656a3c95951a1d
+   Date: 2026-09-30T14:52:06Z
+   Message: JWT Phase -2
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/0394b766ebc6e7c434699b9bd3656a3c95951a1d
+
+86. 6f9fbaf9c9139397308368c313b93216866ef5a7
+   Date: 2026-09-30T13:55:53Z
+   Message: JWT Implementation Phase -1
+   Why: Implement or refine JWT authentication and authorization across the affected services.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/6f9fbaf9c9139397308368c313b93216866ef5a7
+
+87. 697ed0d84be4261fa4605fb7bd1955ff69b8a0f1
+   Date: 2026-09-29T16:50:38Z
+   Message: Postman collection
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/697ed0d84be4261fa4605fb7bd1955ff69b8a0f1
+
+88. bc82c7e513c2524bee67772c77f65b17b74828ce
+   Date: 2026-09-29T15:39:24Z
+   Message: Add Order Management Postman collection
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bc82c7e513c2524bee67772c77f65b17b74828ce
+
+89. 1c19a8475b37125e82d79e586bdcf1f3dc395c61
+   Date: 2026-09-29T15:39:20Z
+   Message: Add Restaurant Management Postman collection
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/1c19a8475b37125e82d79e586bdcf1f3dc395c61
+
+90. 0f6c9d6f041950a0735bbdf95c0ef66bdcc5439f
+   Date: 2026-09-29T15:39:16Z
+   Message: Add User Management Postman collection
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/0f6c9d6f041950a0735bbdf95c0ef66bdcc5439f
+
+91. c84f5f936c03bed539af799a6895ebc45372a3e5
+   Date: 2026-09-29T14:48:22Z
+   Message: Expand delivery lifecycle Postman coverage
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c84f5f936c03bed539af799a6895ebc45372a3e5
+
+92. 6a4b13790bc28c8a29e0268e06bf7adfc27f020f
+   Date: 2026-09-29T14:48:20Z
+   Message: Fix overall Postman execution order
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/6a4b13790bc28c8a29e0268e06bf7adfc27f020f
+
+93. b4cb21393d006bf898386b750af2af6a5c8f24ae
+   Date: 2026-09-24T19:18:41Z
+   Message: Intial AgentRegistration
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b4cb21393d006bf898386b750af2af6a5c8f24ae
+
+94. 672328219e297893f1c6ec8aec51ebf90aa5509e
+   Date: 2026-09-24T19:13:12Z
+   Message: Transactional statements
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/672328219e297893f1c6ec8aec51ebf90aa5509e
+
+95. 7f4be3646dea964f48e2972aceb8ed0cc4663dd1
+   Date: 2026-09-24T19:05:04Z
+   Message: Exception handling & Validation changes
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/7f4be3646dea964f48e2972aceb8ed0cc4663dd1
+
+96. f8355ba23a4d90573b657fd18d14fc7a681b79a1
+   Date: 2026-09-24T18:00:59Z
+   Message: Transistion changes ,Exception handling
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f8355ba23a4d90573b657fd18d14fc7a681b79a1
+
+97. bfbbd4d8f7675392573e4165332acff85c33c482
+   Date: 2026-09-23T18:52:26Z
+   Message: Merge pull request #1 from rehaman28/phase-2-restaurant-hardening |  | Phase 2 - Restaurant management hardening
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bfbbd4d8f7675392573e4165332acff85c33c482
+
+98. 3a89f4def997e212e829921ed56437d689c53752
+   Date: 2026-09-23T18:48:53Z
+   Message: Restaurant management validation and API hardening
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/3a89f4def997e212e829921ed56437d689c53752
+
+99. 53509201bef03f64aaa9607bf868fcc11c0d9c0b
+   Date: 2026-09-23T18:45:52Z
+   Message: validation fixes
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/53509201bef03f64aaa9607bf868fcc11c0d9c0b
+
+100. 697a3c7f17f3d33268997d3ac91b8535efdaf3c1
+   Date: 2026-09-23T18:09:22Z
+   Message: Handling responseEntity in controller
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/697a3c7f17f3d33268997d3ac91b8535efdaf3c1
+
+101. c2e362c8bb9217c95e854a1304655d5c678c29dd
+   Date: 2026-09-21T17:32:14Z
+   Message: violation handling
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c2e362c8bb9217c95e854a1304655d5c678c29dd
+
+102. 80e16cf27dc441454d989f7dd1b268f927dfea61
+   Date: 2026-09-21T17:18:38Z
+   Message: password encryption
+   Why: Implement or refine User Management, authentication, validation, or credential handling.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/80e16cf27dc441454d989f7dd1b268f927dfea61
+
+103. b4af3f81e8b4d40ce2bb60729d8e4abb6650f3ee
+   Date: 2026-09-21T16:56:06Z
+   Message: validation and exception handling
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b4af3f81e8b4d40ce2bb60729d8e4abb6650f3ee
+
+104. ce7250d358fb1be54a3c9b5c57d6a975290ea9e4
+   Date: 2026-09-21T16:31:05Z
+   Message: Validation constraints
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/ce7250d358fb1be54a3c9b5c57d6a975290ea9e4
+
+105. c4f1d210afa6bda7dec5058d7c09480f75410f2e
+   Date: 2026-09-17T15:00:12Z
+   Message: Controller changes
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c4f1d210afa6bda7dec5058d7c09480f75410f2e
+
+106. abf0bcd431380cb9a1c7d3aeab1a47c7b4dc60a6
+   Date: 2026-09-12T13:04:26Z
+   Message: Model classes
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/abf0bcd431380cb9a1c7d3aeab1a47c7b4dc60a6
+
+107. b91b35a9bfdccc3e4fb12bdc81a01f4ed779de8b
+   Date: 2026-09-08T18:43:38Z
+   Message: Exception handling
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b91b35a9bfdccc3e4fb12bdc81a01f4ed779de8b
+
+108. 6060f31783da1a52ef8184f32fa806241c0de3a0
+   Date: 2026-09-08T17:53:19Z
+   Message: Validations patterns
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/6060f31783da1a52ef8184f32fa806241c0de3a0
+
+109. ed6b339ed5812d209d241653d678b97a5f9386ac
+   Date: 2026-09-07T20:22:39Z
+   Message: Minor Fixes
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/ed6b339ed5812d209d241653d678b97a5f9386ac
+
+110. 38a6852d16090ded440cad307c1f0357d23b55e2
+   Date: 2026-09-07T20:02:56Z
+   Message: DeliveryManagement- API +ExceptionHandling
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/38a6852d16090ded440cad307c1f0357d23b55e2
+
+111. 89f1a5b6f1f73d7532cb2a128c73b2f85b34ddc5
+   Date: 2026-09-07T13:12:51Z
+   Message: bussiness logic validation for restaurant & Items
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/89f1a5b6f1f73d7532cb2a128c73b2f85b34ddc5
+
+112. e9ca546e47fd5861b01517354d2beec7322f516a
+   Date: 2026-09-07T12:27:31Z
+   Message: Validation for proper status codes
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e9ca546e47fd5861b01517354d2beec7322f516a
+
+113. f2464912eb509fe2db458e222c594741e9e842ce
+   Date: 2026-09-06T17:59:23Z
+   Message: OrderManagement -API
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f2464912eb509fe2db458e222c594741e9e842ce
+
+114. a2510407e0e4301f73817a8919c0a290abf26192
+   Date: 2026-09-06T13:54:34Z
+   Message: removed old code
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/a2510407e0e4301f73817a8919c0a290abf26192
+
+115. caab91f53cfb485495c4821a890002214637b769
+   Date: 2026-09-06T13:38:56Z
+   Message: Validation handling
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/caab91f53cfb485495c4821a890002214637b769
+
+116. 65715473d396d3d8c4d1294fa056c1175aeaf538
+   Date: 2026-09-06T13:12:05Z
+   Message: Error Response
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/65715473d396d3d8c4d1294fa056c1175aeaf538
+
+117. aaf7fd8ec819283a1d5bff0805342161650cd24e
+   Date: 2026-09-06T12:42:17Z
+   Message: add address validation for restaurant requests
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/aaf7fd8ec819283a1d5bff0805342161650cd24e
+
+118. bac64837d6f9ff313cad8245c65e2f5a40dfe8d0
+   Date: 2026-09-06T12:42:10Z
+   Message: apply validation to bulk item requests
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bac64837d6f9ff313cad8245c65e2f5a40dfe8d0
+
+119. c82554d8717454a1dc7fa8c68ab0ae0b97ca880f
+   Date: 2026-09-06T12:42:00Z
+   Message: fix restaurant PATCH validation semantics
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c82554d8717454a1dc7fa8c68ab0ae0b97ca880f
+
+120. e9bf04032e513adc312d993fa66853050f5cce28
+   Date: 2026-09-06T12:40:26Z
+   Message: Validation of Request
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e9bf04032e513adc312d993fa66853050f5cce28
+
+121. e62221d92bc581a405abe0ffdb06bd13e3f24994
+   Date: 2026-09-06T12:14:28Z
+   Message: Postman Test fixes
+   Why: Build or synchronize API regression coverage, environments, execution order, or security scenarios.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e62221d92bc581a405abe0ffdb06bd13e3f24994
+
+122. ac0a25f5e0a9657923c5a58d1c33fbd97ae264f1
+   Date: 2026-09-05T18:46:16Z
+   Message: status code updates
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/ac0a25f5e0a9657923c5a58d1c33fbd97ae264f1
+
+123. 2205ec7cd1b99760c0dfc75684b6be1c31456158
+   Date: 2026-09-05T18:36:50Z
+   Message: Minor updates
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/2205ec7cd1b99760c0dfc75684b6be1c31456158
+
+124. 91afa6e5181183e5cdb025fcf52411dc1879999a
+   Date: 2026-09-05T18:33:21Z
+   Message: minor updtes
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/91afa6e5181183e5cdb025fcf52411dc1879999a
+
+125. c1d70429913c7894f22579ce4235a70de3b42185
+   Date: 2026-09-05T18:26:30Z
+   Message: Item update
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c1d70429913c7894f22579ce4235a70de3b42185
+
+126. efc19970d35e4e349ffa5b54c7b3a47c1dc3f282
+   Date: 2026-09-05T18:18:01Z
+   Message: bulk edits for items
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/efc19970d35e4e349ffa5b54c7b3a47c1dc3f282
+
+127. 282571e14609cfd25efde0e756105790861afa71
+   Date: 2026-09-05T18:06:14Z
+   Message: Base routing changes
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/282571e14609cfd25efde0e756105790861afa71
+
+128. 83abd8f78228430a0dc76d5c5d969c1d513b6b8f
+   Date: 2026-09-05T17:38:21Z
+   Message: Item API
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/83abd8f78228430a0dc76d5c5d969c1d513b6b8f
+
+129. 741e385289fea9e249218bbbbd42800e026d28ce
+   Date: 2026-09-02T17:35:00Z
+   Message: seperating Item and Restaurant endpoints
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/741e385289fea9e249218bbbbd42800e026d28ce
+
+130. f94e790e0fd464796f453d0d3f877f9da00d8a0b
+   Date: 2026-09-02T17:22:47Z
+   Message: Eureka server
+   Why: Introduce or document service discovery so services communicate by logical service ID instead of fixed addresses.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f94e790e0fd464796f453d0d3f877f9da00d8a0b
+
+131. 47497df779dc84e0badbfafb8bdd394a749d538d
+   Date: 2026-09-02T17:22:33Z
+   Message: UpdateItemRating
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/47497df779dc84e0badbfafb8bdd394a749d538d
+
+132. 1a321560b66a83b075701437f636bf286af1acf1
+   Date: 2026-09-02T16:47:19Z
+   Message: Add Item to Restaurant
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/1a321560b66a83b075701437f636bf286af1acf1
+
+133. 7408b900b325842733a3d7ae1c3d5c7206572dfe
+   Date: 2026-08-29T14:00:04Z
+   Message: Delete Restaurant API
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/7408b900b325842733a3d7ae1c3d5c7206572dfe
+
+134. d567bb249cb95ba0ba4578b81b96f31252102b1c
+   Date: 2026-08-29T13:42:09Z
+   Message: Update Restaurant API
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/d567bb249cb95ba0ba4578b81b96f31252102b1c
+
+135. 212cfa259aeb841c08f217174213e09eb1f3f99d
+   Date: 2026-08-29T07:43:11Z
+   Message: Fixing build issues
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/212cfa259aeb841c08f217174213e09eb1f3f99d
+
+136. f01c7b9242d1e189928a2b1c3ae7f1e383ec3645
+   Date: 2026-08-29T05:23:50Z
+   Message: seperating Request and ResponseBuilders
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f01c7b9242d1e189928a2b1c3ae7f1e383ec3645
+
+137. 364ea6f741d467fcdcb45c711a4d0227d0f02cf5
+   Date: 2026-08-29T04:09:55Z
+   Message: Exception Handling -RM
+   Why: Harden API validation/error handling and make response behavior predictable for regression testing.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/364ea6f741d467fcdcb45c711a4d0227d0f02cf5
+
+138. e1c36e4bb286f68fcff19885093149f6e4affd98
+   Date: 2026-08-29T03:12:29Z
+   Message: dynamic Calculation of total orderprice
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e1c36e4bb286f68fcff19885093149f6e4affd98
+
+139. 3e79beae0ccd914a1eae257a1636c3bc1fc89321
+   Date: 2026-08-29T02:30:24Z
+   Message: restaurant -Items API
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/3e79beae0ccd914a1eae257a1636c3bc1fc89321
+
+140. dd84fd5996e38fd7da98d9a8c64902fc6595df38
+   Date: 2026-08-28T14:45:28Z
+   Message: Fix quantity Mapping
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/dd84fd5996e38fd7da98d9a8c64902fc6595df38
+
+141. 8a6f6d27c2b0bff5362d665c089e4766d5d55076
+   Date: 2026-08-28T14:11:22Z
+   Message: Minor Pojo Updates
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/8a6f6d27c2b0bff5362d665c089e4766d5d55076
+
+142. c90ad0faa7a6b137939a2f96f9d8462f5f85b44a
+   Date: 2026-08-28T11:24:02Z
+   Message: PlaceOrder API - OrderManagement
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c90ad0faa7a6b137939a2f96f9d8462f5f85b44a
+
+143. 958101db71a10a44627c024dc373a39d4c1868fe
+   Date: 2026-08-28T08:13:42Z
+   Message: Get restaurant Mapping
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/958101db71a10a44627c024dc373a39d4c1868fe
+
+144. 4161f53aa92d158b97662a0b65a7f8b7ab6a7a9d
+   Date: 2026-08-26T18:59:28Z
+   Message: Dto and first controller
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/4161f53aa92d158b97662a0b65a7f8b7ab6a7a9d
+
+145. 16e7173ff4787f9c5a18749adccfa086685152e4
+   Date: 2026-08-26T17:48:52Z
+   Message: Dto-RestaurantMangement
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/16e7173ff4787f9c5a18749adccfa086685152e4
+
+146. a5d056abb7e4a75664bb9e3861f0f6797c5156a4
+   Date: 2026-08-26T17:32:47Z
+   Message: DAo layer
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/a5d056abb7e4a75664bb9e3861f0f6797c5156a4
+
+147. 9ae4f7f61bfadc9732851f9921496e4ba62d33f5
+   Date: 2026-08-26T17:28:43Z
+   Message: DAO layer for RestaurantManagement
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/9ae4f7f61bfadc9732851f9921496e4ba62d33f5
+
+148. 10225e8b86a41e7ca4c0cd35af5d8e307517e8f3
+   Date: 2026-08-26T17:00:35Z
+   Message:  Updating Pojo and server port
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/10225e8b86a41e7ca4c0cd35af5d8e307517e8f3
+
+149. d36758df916e077c0992e024910d6054b6d56bfb
+   Date: 2026-08-26T15:24:34Z
+   Message: renaming all the models
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/d36758df916e077c0992e024910d6054b6d56bfb
+
+150. 032923fd58f27161da6e499b8c54bbbc7ac5924b
+   Date: 2026-08-25T15:53:10Z
+   Message: OrderManagement-POJO
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/032923fd58f27161da6e499b8c54bbbc7ac5924b
+
+151. 6fdf737528ccecf8144c28850535bf4aa4a2e67e
+   Date: 2026-08-25T15:48:12Z
+   Message: RestaurantManagement-Model Class
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/6fdf737528ccecf8144c28850535bf4aa4a2e67e
+
+152. 42ff030a9c6cec0829790314ec948014be7bbb9d
+   Date: 2026-08-25T15:33:31Z
+   Message: Initial commit
+   Why: Establish the initial repository baseline.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/42ff030a9c6cec0829790314ec948014be7bbb9d
+
+153. eed195b7a9622ddd7e9793e2bbfd63bd0bfca5a8
+   Date: 2026-08-25T14:57:04Z
+   Message: Adding RestaurantManagement project
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/eed195b7a9622ddd7e9793e2bbfd63bd0bfca5a8
+
+154. 0b239ccfef3369911c109794452f24b076afcc96
+   Date: 2026-08-25T14:51:05Z
+   Message: Delete usermanagement directory
+   Why: Implement or refine User Management, authentication, validation, or credential handling.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/0b239ccfef3369911c109794452f24b076afcc96
+
+155. f2dd1b205ce80b62d23583a283b658bfbf1f1267
+   Date: 2026-08-25T14:50:51Z
+   Message: Delete .vscode directory
+   Why: Repository change; exact rationale is inferred from the commit message because the commit message is the available high-level description.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/f2dd1b205ce80b62d23583a283b658bfbf1f1267
+
+156. c2427819e85382c737445002f576cf7966aa2941
+   Date: 2026-08-25T14:50:28Z
+   Message: Delete restaurantmangement directory
+   Why: Implement or refine Restaurant Management and food-item behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c2427819e85382c737445002f576cf7966aa2941
+
+157. e6addd7ba7f84e2a3ba2e268edbd23285cb3d9fb
+   Date: 2026-08-25T14:50:17Z
+   Message: Delete ordermanagement directory
+   Why: Implement or refine Order Management behavior and order lifecycle logic.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/e6addd7ba7f84e2a3ba2e268edbd23285cb3d9fb
+
+158. 6cc6165ad42514b7871bb0a9cf3d057e2c32ca63
+   Date: 2026-08-25T14:50:06Z
+   Message: Delete deliverymanagement directory
+   Why: Implement or harden Delivery Management functionality and lifecycle behavior.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/6cc6165ad42514b7871bb0a9cf3d057e2c32ca63
+
+159. 26c4dd102de80387683af694eda20aba60ad8c5f
+   Date: 2026-08-24T18:00:42Z
+   Message: JDK 21 upgrade
+   Why: Move the project to the selected JDK version.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/26c4dd102de80387683af694eda20aba60ad8c5f
+
+160. 7071d2d5cbedc1b934491587e868b18972a88b53
+   Date: 2026-08-24T17:42:14Z
+   Message: converting to Gradle project
+   Why: Align the build structure with Gradle/JDK requirements.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/7071d2d5cbedc1b934491587e868b18972a88b53
+
+161. 8126e3b7ca9fb3f4f1566cb736c1db5c9fccf4b2
+   Date: 2026-08-24T16:54:57Z
+   Message: Initial commit
+   Why: Establish the initial repository baseline.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/8126e3b7ca9fb3f4f1566cb736c1db5c9fccf4b2
+
+============================================================
+3. KEY MILESTONE SUMMARY
+============================================================
+
+Initial platform and service construction:
+- Gradle/JDK 21 foundation and early service/module construction.
+- Restaurant, Item, Order, Delivery, and User Management APIs evolved from initial controllers/models into validated microservices.
+
+Hardening and validation:
+- Validation, exception handling, status-code behavior, transactions, and Postman regression coverage were progressively added.
+- API documentation/OpenAPI response schemas were added to make the APIs easier to test and consume.
+
+Security:
+- JWT authentication was implemented across the business services.
+- USER/ADMIN RBAC and Postman regression environments were added and refined.
+
+Service discovery and synchronous communication:
+- Eureka became the service-discovery layer.
+- Order -> Restaurant and Order -> User synchronous calls were moved to OpenFeign + Eureka with JWT propagation and regression validation.
+
+API Gateway:
+- API Gateway was introduced as the external edge.
+- Eureka-backed routes, JWT edge validation, and downstream RBAC preservation were implemented and validated.
+- Gateway Postman regression was added while retaining direct-service regression for troubleshooting.
+
+Documentation and roadmap:
+- Phase 11 validation was marked complete across the root and service READMEs.
+- The README roadmap was changed to interleave observability foundation, fault tolerance, failure-path testing, observability expansion, and then Kafka.
+
+Current point:
+- The repository has just started the observability implementation with the `observability dependencies` commit.
+- The next implementation slice is Prometheus + Grafana + baseline validation, not Kafka.
