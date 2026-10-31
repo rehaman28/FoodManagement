@@ -257,3 +257,21 @@ Current implementation includes:
 - Eureka client registration
 
 Future platform phases add service-to-service communication, messaging, resilience, testing, containerization, CI/CD, and observability.
+
+
+## Phase 11 validation status
+
+Status: Complete — User Management participation in synchronous and Gateway validation successful
+
+Validated successfully:
+
+- Order Management -> User Management synchronous validation via OpenFeign + Eureka — passed
+- Authorization header/JWT propagation — passed
+- Existing-user lookup flow — passed
+- Non-existent user lookup mapped to HTTP 404 — passed
+- API Gateway `/auth/**` and `/users/**` routing — passed
+- Gateway login flow — passed
+- Gateway protected User Management endpoints without JWT -> 401 — passed
+- Gateway downstream USER / ADMIN authorization behavior — passed
+
+Existing direct-service Postman testing remains supported through `userServiceUrl`.
