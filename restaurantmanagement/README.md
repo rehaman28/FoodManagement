@@ -272,3 +272,21 @@ Order Management resolves this service by name rather than using an active hard-
 Status: Complete — implementation, runtime validation, and regression validation successful
 
 Order Management successfully communicates with this service through OpenFeign and Eureka service discovery. JWT propagation and Restaurant/item lookup error handling were validated successfully, including multi-instance discovery/failover with the Order flow continuing after one Restaurant instance was stopped.
+
+
+## Phase 11 validation status
+
+Status: Complete — Restaurant synchronous and API Gateway validation successful
+
+Validated successfully:
+
+- Order Management -> Restaurant Management OpenFeign communication — passed
+- Eureka-based `restaurantmanagement` service resolution — passed
+- JWT propagation to Restaurant Management — passed
+- Restaurant-name and item lookup flow — passed
+- Restaurant/item 404 regression — passed
+- API Gateway `/restaurants/**` routing — passed
+- Gateway protected Restaurant endpoint without JWT -> 401 — passed
+- Gateway invalid JWT handling -> 401 — passed
+- Gateway USER / ADMIN downstream RBAC preservation — passed
+- Existing direct-service Postman collection remains intact for troubleshooting.
