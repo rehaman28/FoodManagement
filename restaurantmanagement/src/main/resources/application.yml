@@ -25,6 +25,8 @@ eureka:
     instance-id: "${spring.application.name}:${server.port}"
     
 management:
+  server:
+    port: 9101
   endpoints:
     web:
       exposure:
@@ -36,3 +38,9 @@ management:
     tags:
       application: "${spring.application.name}"
       environment: "local"
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            request: true
+
