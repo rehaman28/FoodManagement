@@ -279,7 +279,7 @@ API Gateway :8080
   +--> Delivery Management :8004
 
 ### Phase 11B — Kafka / Event-Driven Architecture
-Status: Pending
+Status: Deferred until Observability Foundation + Fault Tolerance + Failure-Path Testing + Observability Expansion are complete
 
 Plan:
 1. Introduce Kafka infrastructure
@@ -300,14 +300,43 @@ Candidate events:
 - OrderCancelled
 
 ### Phase 12 — Resilience and Fault Tolerance
-Plan:
-1. Timeouts
-2. Retry policies
-3. Circuit breakers
-4. Fallbacks
-5. Bulkhead isolation
-6. Rate limiting
-7. Failure-path testing
+Status: Planned — executed between the observability foundation and the final observability expansion
+
+Purpose:
+- Protect synchronous service calls from latency spikes and dependency failures
+- Make retries, circuit breakers, fallbacks, isolation, and rate limits visible through metrics
+- Validate failure behavior deliberately before Kafka is introduced
+
+Execution order:
+1. Observability Foundation first:
+   - Spring Boot Actuator
+   - Micrometer metrics
+   - Prometheus-format metrics endpoint
+   - Basic Grafana dashboard for request rate, latency, and error rate
+   - Optional early Correlation ID filter for readable failure-path logs
+2. Fault-tolerance implementation:
+   - Timeouts
+   - Retry policies
+   - Circuit breakers
+   - Fallbacks
+   - Bulkhead isolation
+   - Rate limiting
+3. Failure-path testing:
+   - Deliberately trigger dependency failures, slow responses, retry conditions, breaker-open conditions, and rate-limit conditions
+   - Observe the resulting metrics and service behavior
+4. Finish observability:
+   - Centralized logging
+   - Correlation IDs if not added during the foundation slice
+   - Distributed tracing
+   - Alerts
+
+The sequence intentionally does not finish all observability work before resilience. The foundation gives a baseline first, resilience is then added against that baseline, and the remaining observability capabilities are completed after the failure-path validation.
+
+Definition of done before Kafka:
+- Fault-tolerance patterns implemented and validated
+- Failure-path tests completed
+- Baseline and resilience metrics visible
+- Logging, correlation, tracing, and alerts completed for the current local architecture
 
 ### Phase 13 — Data and Transaction Hardening
 Plan:
@@ -365,14 +394,36 @@ Plan:
 8. Release automation
 
 ### Phase 18 — Observability
+Status: Staged — foundation first, remaining capabilities after resilience and failure testing
+
+This phase is intentionally interleaved with Phase 12.
+
+### Phase 18A — Observability Foundation
 Plan:
 1. Spring Boot Actuator
-2. Metrics
-3. Centralized logging
-4. Correlation IDs
-5. Distributed tracing
-6. Dashboards
-7. Alerts
+2. Health endpoints
+3. Micrometer metrics
+4. Prometheus-format metrics
+5. Basic Grafana dashboard
+6. Baseline request rate, latency, and error rate
+7. Optional early Correlation ID filter
+
+### Phase 18B — Resilience Visibility
+Delivered through Phase 12:
+1. Expose Resilience4j metrics automatically
+2. Observe timeout, retry, circuit-breaker, bulkhead, and rate-limit behavior
+3. Compare resilience behavior with the pre-resilience baseline
+4. Execute failure-path testing while monitoring the dashboard
+
+### Phase 18C — Observability Expansion
+Plan after Phase 12 failure-path testing:
+1. Centralized logging
+2. Correlation IDs if not already introduced
+3. Distributed tracing
+4. Grafana dashboards for resilience and dependency behavior
+5. Alerts
+
+Kafka is intentionally deferred until Phase 18A, Phase 12, Phase 18B, and Phase 18C are complete.
 
 ### Phase 19 — AWS / Cloud Deployment
 Plan:
