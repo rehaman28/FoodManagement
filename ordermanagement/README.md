@@ -357,3 +357,41 @@ Completed implementation and validation:
 - Order continued working after one Restaurant instance was stopped — passed
 
 Unused legacy RestTemplate code/comments are intentionally retained. Cleanup is deferred and does not block Phase 10 completion.
+
+
+## Platform roadmap sequence after Phase 11
+
+The next implementation sequence is intentionally interleaved rather than completing all observability first:
+
+1. Observability Foundation
+   - Spring Boot Actuator
+   - Micrometer metrics
+   - Prometheus-format metrics
+   - Basic Grafana dashboard
+   - Baseline request rate, latency, and error rate
+   - Optional early Correlation ID filter
+
+2. Fault Tolerance
+   - Timeouts
+   - Retry policies
+   - Circuit breakers
+   - Fallbacks
+   - Bulkhead isolation
+   - Rate limiting
+
+3. Failure-Path Testing
+   - Deliberately exercise dependency failures and slow responses
+   - Validate timeout, retry, breaker, fallback, isolation, and rate-limit behavior
+   - Observe resilience metrics against the baseline
+
+4. Observability Expansion
+   - Centralized logging
+   - Correlation IDs if not already introduced
+   - Distributed tracing
+   - Resilience/dependency dashboards
+   - Alerts
+
+5. Kafka / Event-Driven Architecture
+   - Kafka starts only after the observability foundation, fault-tolerance implementation, failure-path testing, and observability expansion are complete.
+
+This ordering is the project baseline for the next phases and prevents resilience tuning from being done without measurable baseline and failure visibility.
