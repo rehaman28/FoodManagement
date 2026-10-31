@@ -228,3 +228,18 @@ Use:
     /postman/FoodManagement-Overall.postman_collection.json
 
 for the complete baseline.
+
+
+## Phase 11 validation status
+
+Status: Complete — Delivery Management API Gateway edge validation successful
+
+Validated successfully:
+
+- API Gateway `/delivery-person/**` routing — passed
+- API Gateway `/delivery-assignments/**` routing — passed
+- Gateway protected Delivery endpoint without JWT -> 401 — passed
+- Gateway invalid JWT handling -> 401 — passed
+- Gateway USER / ADMIN downstream RBAC preservation — passed
+- Existing direct Delivery Management Postman regression collection remains intact.
+- Delivery Management remains ready for the planned Kafka event-driven Phase 11B work.
