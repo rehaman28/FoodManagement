@@ -28,7 +28,7 @@ Dashboard:
 | Service | Service ID | Port |
 |---|---|---:|
 | User Management | usermanagement | 8002 |
-| Restaurant Management | restaurantmangement | 8001 |
+| Restaurant Management | restaurantmanagement | 8001 |
 | Order Management | ordermanagement | 8003 |
 | Delivery Management | deliverymanagement | 8004 |
 
@@ -86,7 +86,7 @@ Phase 10:
     Order Management uses OpenFeign
         |
         v
-    Eureka resolves restaurantmangement
+    Eureka resolves restaurantmanagement
         |
         v
     Restaurant Management instance

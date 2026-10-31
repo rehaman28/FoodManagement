@@ -14,10 +14,10 @@ import io.swagger.v3.oas.annotations.info.Info;
 		description = "Restaurant Management owns restaurants, restaurant addresses, food items, ratings, and restaurant/item retrieval used by other services."
 	)
 )
-public class RestaurantmangementApplication {
+public class RestaurantmanagementApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RestaurantmangementApplication.class, args);
+		SpringApplication.run(RestaurantmanagementApplication.class, args);
 	}
 
 }

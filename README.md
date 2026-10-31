@@ -21,11 +21,11 @@ Current local ports:
 |---|---|---:|
 | Eureka Server | \`eureka\` | 8761 |
 | User Management | \`usermanagement\` | 8002 |
-| Restaurant Management | \`restaurantmangement\` | 8001 |
+| Restaurant Management | \`restaurantmanagement\` | 8001 |
 | Order Management | \`ordermanagement\` | 8003 |
 | Delivery Management | \`deliverymanagement\` | 8004 |
 
-> The repository directory is \`restaurantmanagement\`, while the existing Spring application/service ID is \`restaurantmangement\`. The service ID is intentionally kept unchanged because it is used for discovery.
+> The repository directory is \`restaurantmanagement\`, while the existing Spring application/service ID is \`restaurantmanagement\`. The service ID is intentionally kept unchanged because it is used for discovery.
 
 ## Technology stack
 
