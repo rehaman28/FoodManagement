@@ -11,6 +11,7 @@ The current system contains:
 - Order Management
 - Delivery Management
 - Eureka Service Discovery
+- API Gateway (Spring Cloud Gateway Server WebMVC)
 - JWT authentication
 - USER / ADMIN role-based authorization
 - Postman API regression collections
@@ -218,36 +219,55 @@ Candidate events:
 - OrderCancelled
 
 #### Phase 11A — API Gateway
-Status: Pending — not implemented in the current repository
+Status: Complete — Gateway implementation and Postman regression coverage committed; direct-service regression suites preserved
 
-Purpose:
-- Provide a single external entry point for all business APIs
-- Route client requests to User, Restaurant, Order, and Delivery Management
-- Integrate service discovery with gateway routing
-- Centralize edge-level authentication and request filtering
-- Preserve downstream USER / ADMIN authorization
-- Add route-level logging and correlation information
-- Prepare the architecture for future rate limiting, CORS policy, and resilience controls
+Implemented:
+1. Dedicated apigateway Spring Boot module using Spring Cloud Gateway Server WebMVC
+2. Eureka registration and discovery-backed lb:// routing
+3. User routes: /auth/** and /users/** -> User Management
+4. Restaurant route: /restaurants/** -> Restaurant Management
+5. Order route: /orders/** -> Order Management
+6. Delivery routes: /delivery-person/** and /delivery-assignments/** -> Delivery Management
+7. Gateway JWT edge validation for protected routes
+8. Public Gateway access for POST /auth/login, POST /users, and OPTIONS
+9. Downstream JWT/RBAC remains authoritative for USER / ADMIN authorization
+10. No StripPrefix behavior; business-service paths are preserved
 
-Planned implementation:
-1. Create a dedicated gateway Spring Boot module
-2. Add Spring Cloud Gateway dependency compatible with the project Spring Cloud release
-3. Register the Gateway with Eureka
-4. Define routes for /users/** and /auth/** -> User Management
-5. Define routes for /restaurants/** -> Restaurant Management
-6. Define routes for /orders/** -> Order Management
-7. Define routes for /delivery-person/** and /delivery-assignments/** -> Delivery Management
-8. Validate service-discovery-based routing
-9. Validate JWT forwarding / edge authentication strategy
-10. Add gateway-specific Postman regression scenarios
-11. Verify clients can use the Gateway without directly calling business-service ports
+Postman regression:
+- Added postman/FoodManagement-API-Gateway.postman_collection.json
+- Added gatewayBaseUrl=http://localhost:8080 to USER, ADMIN, and generic environments
+- Added an additive 00A - API Gateway Regression section to FoodManagement-Overall.postman_collection.json
+- Existing direct-service variables remain unchanged:
+  - userServiceUrl=http://localhost:8002
+  - restaurantServiceUrl=http://localhost:8001
+  - orderServiceUrl=http://localhost:8003
+  - deliveryServiceUrl=http://localhost:8004
+- Existing direct-service collections were not rewritten and remain available for troubleshooting
 
-Architectural position:
-Client -> API Gateway -> Business Services
-                         |
-                         +-> Eureka for service discovery
+Gateway regression scenarios:
+1. Login through Gateway
+2. Protected route without JWT -> 401
+3. Protected route with invalid JWT -> 401
+4. Restaurant routing through Gateway
+5. USER / ADMIN RBAC preservation for User, Order, and Delivery routes
+6. Unknown Gateway route -> 404
 
-Phase 11A will be implemented before the Kafka event-driven portion so the project has a clear external edge before asynchronous workflows are introduced.
+Validation note:
+- The repository now contains the complete Gateway implementation and regression definitions.
+- Postman runtime execution against the locally running stack must still be performed in the user's environment before reporting live request execution as passed.
+
+Architecture:
+Client
+  |
+  v
+API Gateway :8080
+  |
+  +--> Eureka :8761
+  |
+  +--> User Management :8002
+  +--> Restaurant Management :8001
+  +--> Order Management :8003
+  +--> Delivery Management :8004
 
 ### Phase 11B — Kafka / Event-Driven Architecture
 Status: Pending
@@ -383,6 +403,7 @@ Start services in this order:
     Restaurant Management :8001
     Order Management :8003
     Delivery Management :8004
+    API Gateway :8080
 
 ### Swagger documentation
 
@@ -491,6 +512,7 @@ Collections:
     FoodManagement-OrderManagement.postman_collection.json
     FoodManagement-DeliveryManagement.postman_collection.json
     FoodManagement-Overall.postman_collection.json
+    FoodManagement-API-Gateway.postman_collection.json
 
 Environments:
 
@@ -501,9 +523,10 @@ Environments:
 Basic Postman sequence:
 
     Select USER or ADMIN environment
-    -> Run Login - Current Environment
-    -> Copy/use generated TOKEN automatically
-    -> Run the required service collection
+    -> For Gateway testing, run FoodManagement-API-Gateway / Login - Through Gateway
+    -> For existing direct-service testing, run FoodManagement-Login / Login - Current Environment
+    -> Use the generated TOKEN automatically
+    -> Run Gateway regression or the required direct-service collection
     -> Review response status and response body
 
 ## Project documentation
