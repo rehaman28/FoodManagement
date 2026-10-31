@@ -185,7 +185,7 @@ Cleanup decision:
 - Cleanup/removal of these unused artifacts is explicitly deferred and does not block Phase 10 completion.
 
 ### Phase 11 — Synchronous + Edge + Event-Driven Architecture
-Status: Synchronous communication baseline complete — implementation and validation successful; API Gateway and Kafka pending
+Status: Phase 11 synchronous + edge validation complete — implementation and validation successful; Kafka Phase 11B remains pending
 
 Completed synchronous communication:
 1. Order Management -> Restaurant Management through OpenFeign + Eureka — complete and validated in Phase 10
@@ -198,6 +198,7 @@ Completed synchronous communication:
 Current communication strategy:
 - Synchronous: Order -> User
 - Synchronous: Order -> Restaurant
+- Edge: Client -> API Gateway -> Business Services
 - Asynchronous Kafka communication will be introduced next between Order and Delivery services.
 
 Plan:
@@ -252,9 +253,17 @@ Gateway regression scenarios:
 5. USER / ADMIN RBAC preservation for User, Order, and Delivery routes
 6. Unknown Gateway route -> 404
 
-Validation note:
-- The repository now contains the complete Gateway implementation and regression definitions.
-- Postman runtime execution against the locally running stack must still be performed in the user's environment before reporting live request execution as passed.
+Validation completed successfully:
+1. Order -> User synchronous communication — passed
+2. Order -> Restaurant OpenFeign/Eureka communication — passed
+3. JWT/Authorization propagation through synchronous calls — passed
+4. User existence validation and 404 handling — passed
+5. API Gateway Eureka-based routing — passed
+6. Gateway protected-route missing JWT -> 401 — passed
+7. Gateway invalid JWT -> 401 — passed
+8. Gateway USER / ADMIN downstream RBAC preservation — passed
+9. Gateway unknown-route handling -> 404 — passed
+10. Existing direct-service Postman regression remained intact — passed
 
 Architecture:
 Client
