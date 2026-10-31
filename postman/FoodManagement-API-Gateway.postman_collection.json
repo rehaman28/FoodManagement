@@ -1,0 +1,318 @@
+{
+  "info": {
+    "_postman_id": "d0bb1c0a-9f4c-4f27-8c40-11a2e8b4d901",
+    "name": "FoodManagement - API Gateway Regression",
+    "description": "Phase 11A Gateway regression suite. Use FoodManagement-USER or FoodManagement-ADMIN environment. Login through the Gateway first, then validate edge JWT enforcement, Eureka-based routing, and downstream USER/ADMIN RBAC. Existing direct-service collections remain unchanged for troubleshooting.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "gatewayBaseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "TOKEN",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Gateway Authentication",
+      "item": [
+        {
+          "name": "Login - Through Gateway",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"{{loginPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gatewayBaseUrl}}/auth/login",
+              "host": [
+                "{{gatewayBaseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 200\",()=>pm.response.to.have.status(200));",
+                  "const body=pm.response.json();",
+                  "pm.test(\"Login response contains token\",()=>pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.environment.set(\"TOKEN\",body.token);",
+                  "const parts=body.token.split(\".\");",
+                  "pm.test(\"JWT has 3 segments\",()=>pm.expect(parts.length).to.eql(3));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Protected Route - No Token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayBaseUrl}}/restaurants"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Gateway returns 401 without token\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Protected Route - Invalid JWT",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "invalid.jwt.token"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayBaseUrl}}/restaurants"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Gateway returns 401 for invalid JWT\",()=>pm.response.to.have.status(401));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 - Gateway Routing",
+      "item": [
+        {
+          "name": "Restaurant Route - Get All Restaurants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayBaseUrl}}/restaurants",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Restaurant route returns 200\",()=>pm.response.to.have.status(200));",
+                  "pm.test(\"Gateway route returned a response\",()=>pm.expect(pm.response.code).to.eql(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User Route - RBAC Through Gateway",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayBaseUrl}}/users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\");",
+                  "const expected=role===\"USER\"?403:200;",
+                  "pm.test(\"Downstream USER/ADMIN RBAC is preserved\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Order Route - RBAC Through Gateway",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayBaseUrl}}/orders",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\");",
+                  "const expected=role===\"USER\"?403:200;",
+                  "pm.test(\"Order route reaches downstream authorization\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delivery Route - RBAC Through Gateway",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayBaseUrl}}/delivery-person",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\");",
+                  "const expected=role===\"USER\"?403:200;",
+                  "pm.test(\"Delivery route reaches downstream authorization\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unknown Route - Gateway 404",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayBaseUrl}}/not-a-real-gateway-route"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Unknown Gateway route returns 404\",()=>pm.response.to.have.status(404));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
