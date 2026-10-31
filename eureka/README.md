@@ -31,6 +31,7 @@ Dashboard:
 | Restaurant Management | restaurantmanagement | 8001 |
 | Order Management | ordermanagement | 8003 |
 | Delivery Management | deliverymanagement | 8004 |
+| API Gateway | api-gateway | 8080 |
 
 ## Configuration
 
@@ -96,3 +97,20 @@ Later phases can use the same discovery model when additional synchronous servic
 ## No business APIs
 
 Eureka does not own users, restaurants, orders, or delivery data. It is infrastructure for service registration and discovery.
+
+
+## Phase 11 validation status
+
+Status: Complete — service discovery and API Gateway edge validation successful
+
+Validated successfully:
+
+- API Gateway registered with Eureka as `api-gateway`
+- Gateway resolved User Management through Eureka
+- Gateway resolved Restaurant Management through Eureka
+- Gateway resolved Order Management through Eureka
+- Gateway resolved Delivery Management through Eureka
+- Existing synchronous OpenFeign discovery remained functional
+- Gateway routing and downstream authorization regression passed
+
+The Kafka/event-driven portion remains planned under Phase 11B and does not change the completed Eureka/Gateway validation baseline.
