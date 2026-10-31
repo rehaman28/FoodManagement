@@ -23,3 +23,16 @@ eureka:
     fetch-registry: true
   instance:
     instance-id: "${spring.application.name}:${server.port}"
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus"
+  endpoint:
+    health:
+      show-details: "never"
+  metrics:
+    tags:
+      application: "${spring.application.name}"
+      environment: "local"
