@@ -319,17 +319,24 @@ For a complete end-to-end sequence, use:
 
     /postman/FoodManagement-Overall.postman_collection.json
 
-## Phase 11 synchronous communication status
+## Phase 11 validation status
 
-Status: Complete — Order -> User synchronous communication implemented and validated successfully
+Status: Complete — synchronous communication and API Gateway edge validation successful
 
 Validated:
-- Eureka-based User Management service resolution
-- OpenFeign UserClient
+- Order -> User Eureka/OpenFeign service resolution
+- Order -> Restaurant Eureka/OpenFeign service resolution
+- OpenFeign UserClient and Restaurant client flows
 - JWT/Authorization propagation
 - Existing-user order flow
 - Non-existent-user 404 handling
 - User validation before order persistence
+- Restaurant/item lookup through Eureka/OpenFeign
+- API Gateway `/orders/**` routing
+- Gateway protected Order endpoint without JWT -> 401
+- Gateway invalid JWT handling -> 401
+- Gateway USER / ADMIN downstream RBAC preservation
+- End-to-end order flow through the validated synchronous architecture
 
 ## Phase 10 status
 
