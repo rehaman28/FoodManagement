@@ -53,6 +53,8 @@ public class SecurityConfig {
                     authenticationEntryPoint))
 
             .authorizeHttpRequests(request -> request
+            .requestMatchers("/actuator/**")
+                .permitAll()
 
             .requestMatchers(
                 ApplicationConstants.SWAGGER_UI_PATH,
@@ -77,6 +79,7 @@ public class SecurityConfig {
 
             .requestMatchers(HttpMethod.GET, ApplicationConstants.ORDERS_WILDCARD)
                 .hasAnyRole("USER", "ADMIN")
+            
 
             .anyRequest()
             .authenticated())

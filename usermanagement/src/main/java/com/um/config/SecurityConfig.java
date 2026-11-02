@@ -68,6 +68,9 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.DELETE, ApplicationConstants.USERS_WILDCARD)
                     .hasRole("ADMIN")
 
+                    .requestMatchers("/actuator/**")
+                    .permitAll()
+
                     //Any Other Request need to authenticated
                     .anyRequest()
                     .authenticated())

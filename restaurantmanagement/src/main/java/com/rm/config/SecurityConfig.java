@@ -53,6 +53,8 @@ public class SecurityConfig {
                     authenticationEntryPoint))
 
             .authorizeHttpRequests(request -> request
+                    .requestMatchers("/actuator/**")
+                    .permitAll()
 
                     //Read Only Resources
                     .requestMatchers(HttpMethod.GET, ApplicationConstants.RESTAURANTS_WILDCARD)

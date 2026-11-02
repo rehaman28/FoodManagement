@@ -25,7 +25,7 @@ eureka:
     instance-id: "${spring.application.name}:${server.port}"
 management:
   server:
-    port: 9103
+    port: 9102
   endpoints:
     web:
       exposure:
