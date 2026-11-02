@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: "FoodManagement"
+    orgId: 1
+    folder: "FoodManagement"
+    type: file
+    disableDeletion: true
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards
