@@ -313,3 +313,23 @@ The next implementation sequence is intentionally interleaved rather than comple
    - Kafka starts only after the observability foundation, fault-tolerance implementation, failure-path testing, and observability expansion are complete.
 
 This ordering is the project baseline for the next phases and prevents resilience tuning from being done without measurable baseline and failure visibility.
+
+
+## Observability Foundation — Complete
+
+Management port: 9102
+
+    http://localhost:9102/actuator/health
+    http://localhost:9102/actuator/prometheus
+
+Both were validated locally with HTTP 200.
+
+Prometheus target:
+
+    host.docker.internal:9102
+
+Actuator is permitted on the dedicated management port so monitoring does not require a business JWT. User Management business endpoints remain protected by the existing JWT / USER / ADMIN rules.
+
+The service emits HTTP request histogram metrics used by the Grafana P95/P99 latency panels.
+
+Full service containerization is deferred to the later Docker phase; the current Docker Compose stack runs Prometheus and Grafana only.
