@@ -601,3 +601,93 @@ Each service directory contains its own README describing:
 - Basic Postman flow
 - Role expectations
 - Implementation scope
+
+
+## Observability Foundation — Complete
+
+Status: Implemented and locally validated.
+
+### Management ports
+
+| Component | App port | Management port |
+|---|---:|---:|
+| API Gateway | 8080 | 9100 |
+| Restaurant Management | 8001 | 9101 |
+| User Management | 8002 | 9102 |
+| Order Management | 8003 | 9103 |
+| Delivery Management | 8004 | 9104 |
+
+The management ports expose Actuator separately from business traffic. Business APIs retain the existing JWT / USER / ADMIN security model.
+
+### Prometheus + Grafana
+
+The local observability infrastructure is under /observability and contains Docker Compose, Prometheus configuration, Grafana datasource provisioning, dashboard provisioning, and the FoodManagement dashboard.
+
+Current Docker scope:
+
+    Prometheus :9090
+    Grafana    :3000
+
+The Spring Boot services remain local JVM processes. Full application containerization is deferred to the later Docker phase.
+
+### Validation
+
+    curl.exe -i http://localhost:<management-port>/actuator/health
+    curl.exe -i http://localhost:<management-port>/actuator/prometheus
+
+Expected: HTTP 200.
+
+Validate Docker:
+
+    docker --version
+    docker compose version
+    docker info
+    cd observability
+    docker compose config
+    docker compose pull
+    docker compose up -d
+    docker compose ps
+
+Validate Prometheus at http://localhost:9090, then Status -> Targets. Expected targets: API Gateway, User, Restaurant, Order, Delivery, and Prometheus all UP.
+
+Prometheus baseline queries:
+
+    up
+    http_server_requests_seconds_count
+    http_server_requests_seconds_bucket
+
+Validate Grafana at http://localhost:3000. Confirm the FoodManagement Prometheus datasource and FoodManagement Observability Overview dashboard.
+
+### Docker image workflow
+
+An image is the packaged template. A container is a running instance of an image. docker push uploads an image to a registry; it does not push an image into a container.
+
+The current observability Compose file uses:
+
+    prom/prometheus:latest
+    grafana/grafana:latest
+
+Future application image workflow, after Dockerfiles are introduced:
+
+    docker build -t <registry>/<namespace>/foodmanagement-<service>:<version> ./<service>
+    docker login <registry>
+    docker push <registry>/<namespace>/foodmanagement-<service>:<version>
+
+On another machine:
+
+    docker pull <registry>/<namespace>/foodmanagement-<service>:<version>
+
+Do not use the application-image commands yet for this observability-only Docker setup.
+
+### Observability validation checklist
+
+- All five management health endpoints -> 200
+- All five Prometheus endpoints -> 200
+- Prometheus targets -> UP
+- Grafana datasource -> successful
+- Request rate -> populated
+- Error rate -> validated with a deliberate 4xx/5xx request
+- P95/P99 latency -> populated
+- Service health -> populated
+- JVM heap -> populated
+- CPU -> populated
