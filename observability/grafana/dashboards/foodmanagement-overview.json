@@ -89,7 +89,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (application, status) (rate(http_server_requests_seconds_count{status=~\"4..|5..\"}[5m])) / sum by (application) (rate(http_server_requests_seconds_count[5m])) * 100",
+          "expr": "100 *sum by (application) (rate(http_server_requests_seconds_count{status=~\"4..|5..\"}[5m]))/sum by (application) (rate(http_server_requests_seconds_count[5m]))",
           "legendFormat": "{{application}} {{status}}",
           "refId": "A"
         }

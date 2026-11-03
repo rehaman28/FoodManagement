@@ -42,5 +42,5 @@ management:
       percentiles-histogram:
         http:
           server:
-            request: true
+            requests: true
 
