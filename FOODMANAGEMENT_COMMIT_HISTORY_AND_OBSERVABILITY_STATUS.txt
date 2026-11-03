@@ -38,6 +38,61 @@ After that foundation, the planned interleaved sequence is:
 
 Observability is NOT fully complete yet.
 
+
+============================================================
+LATEST AUDIT DELTA — 2026-11-03
+============================================================
+
+Observability and documentation commits added after the previous audit snapshot:
+
+1. 2bba5d045279096cdefd4151e50e8757969552be
+   Message: Document observability and Docker workflow
+   Why: Update the root project README with the completed observability foundation, Docker Compose workflow, image/container terminology, image publication procedure for the later Docker phase, and validation steps.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/2bba5d045279096cdefd4151e50e8757969552be
+
+2. bae70de445c5bafddf9f75b80e283e159b0b6cf6
+   Message: Document API Gateway observability
+   Why: Document the Gateway management port 9100, Actuator/Prometheus endpoints, and the boundary between monitoring and JWT-protected business routes.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bae70de445c735a17428c5dc8a2b0986bc13337dc
+
+3. be87048cf7a2806176609f69b2e4f222b59f5ec0
+   Message: Document Eureka observability scope
+   Why: Document that Eureka remains local infrastructure and is not currently part of the Prometheus scrape set.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/be87048cf7a2806176609f69b2e4f222b59f5ec0
+
+4. 5c0765e3aac118d93301ec6f7cfa45fcfbce2b10
+   Message: Document User Management observability
+   Why: Document management port 9102, Actuator validation, Prometheus scrape target, and security separation.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/5c0765e3aac118d93301ec6f7cfa45fcfbce2b10
+
+5. d6ce4bfd873af3e408f91640c37aa814ba8635b6
+   Message: Document Restaurant Management observability
+   Why: Document management port 9101, Actuator validation, Prometheus target, and Docker scope.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/d6ce4bfd873af3e408f91640c37aa814ba8635b6
+
+6. 600358a7c31a965f66ffb2858b4ef81603cce41b
+   Message: Document Order Management observability
+   Why: Document management port 9103, Actuator validation, Prometheus target, and Docker scope.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/600358a7c31a965f66ffb2858b4ef81603cce41b
+
+7. 38c87a733ec71f04fc99cd10362d70328b60f533
+   Message: Document Delivery Management observability
+   Why: Document management port 9104, Actuator validation, Prometheus target, and Docker scope.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/38c87a733ec71f04fc99cd10362d70328b60f533
+
+8. c6679ec4c3cb306cb2827f5d2b72d384ada6e5f5
+   Message: Add observability setup and validation README
+   Why: Add a dedicated observability README covering the directory structure, Docker Compose lifecycle, Prometheus/Grafana validation, and future application image publication workflow.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/c6679ec4c3cb306cb2827f5d2b72d384ada6e5f5
+
+Current documentation state:
+- Root README updated with Observability Foundation completion and Docker workflow.
+- API Gateway, Eureka, User, Restaurant, Order, and Delivery READMEs updated with observability responsibilities and management-port validation.
+- New /observability/README.md added.
+- Commit history file is being updated in the current commit.
+
+Observability Foundation remains COMPLETE and locally validated. The next planned implementation step remains Phase 12 — Fault Tolerance, starting with timeouts.
+
 ============================================================
 2. CUMULATIVE COMMIT HISTORY
 ============================================================
