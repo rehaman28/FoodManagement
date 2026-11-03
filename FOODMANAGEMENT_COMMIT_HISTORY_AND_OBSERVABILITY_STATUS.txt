@@ -1,43 +1,55 @@
 FoodManagement — Commit History and Observability Status
 Repository: https://github.com/rehaman28/FoodManagement
 Audited branch: main
-Latest audited commit: 9074c622c3d32d7b09536d3b2da035dec729a4bf — observability dependencies — 2026-10-31T18:35:16Z
+Latest audited commit: 25324ebff09258c2ac27cb4e8caa7248f8210c20 — Update cumulative history and observability status — 2026-11-03
 Total commits returned by GitHub commit history at audit time: 161
 
 ============================================================
 1. CURRENT OBSERVABILITY STATUS
-============================================================
 
-Latest observability commit:
-9074c622c3d32d7b09536d3b2da035dec729a4bf — observability dependencies
+Latest audited observability implementation commit:
+c5ce44052c735a17428c5dc8a2b0986bc13337dc — Grafana request fix — 2026-11-03T17:23:25Z
 
-Implemented in that commit:
-- User Management: Spring Boot Actuator + Micrometer Prometheus registry + health/metrics/prometheus exposure + application/environment metric tags.
-- Restaurant Management: same observability foundation.
-- Order Management: same observability foundation.
-- Delivery Management: same observability foundation.
-- API Gateway already had Spring Boot Actuator before this commit, but the latest observability commit did not add the Prometheus registry/exposure configuration to the Gateway.
-- Eureka was not modified by the latest observability dependency commit.
+Latest documentation/history commit:
+25324ebff09258c2ac27cb4e8caa7248f8210c20 — Update cumulative history and observability status
 
-The latest commit also adds .idea and .vscode to .gitignore.
+Observability Foundation status:
+COMPLETE — implementation and local runtime validation successful.
 
-What remains to complete the Observability Foundation:
-1) Add/standardize Prometheus registry and metrics exposure for API Gateway.
-2) Add Prometheus server configuration and scrape jobs for API Gateway, User, Restaurant, Order, and Delivery.
-3) Add Grafana infrastructure and connect Grafana to Prometheus.
-4) Build the initial Grafana dashboard: request rate, latency, error rate, and basic service/JVM health.
-5) Generate normal application traffic and record the baseline before fault-tolerance tuning.
-6) Optionally add the lightweight Correlation ID filter now, as permitted by the roadmap.
-7) Validate the foundation end-to-end: actuator endpoints, Prometheus targets UP, metrics visible in Prometheus, dashboard panels populated in Grafana.
+Implemented:
+- Dedicated management ports: Gateway 9100, Restaurant 9101, User 9102, Order 9103, Delivery 9104.
+- Standardized Actuator exposure for health, info, metrics, and Prometheus.
+- Micrometer Prometheus registry for all monitored application services.
+- Actuator access separated from business traffic through dedicated management ports.
+- Prometheus scrape configuration for all five application services plus Prometheus itself.
+- Docker Compose infrastructure for Prometheus and Grafana.
+- Grafana datasource and dashboard provisioning.
+- Baseline Grafana dashboard for request rate, error rate, P95/P99 latency, service health, JVM heap, and CPU.
+- Corrected HTTP request histogram configuration for Restaurant and Order Management.
+- Corrected Grafana error-rate PromQL label matching.
 
-After that foundation, the planned interleaved sequence is:
-- Fault tolerance: timeouts -> retries -> circuit breakers -> fallbacks -> bulkhead -> rate limiting.
-- Failure-path testing against the dashboard.
-- Remaining observability: centralized logging -> correlation IDs if not already added -> distributed tracing -> alerts.
-- Kafka starts only after those stages are complete.
+Local validation completed:
+- All five application management health endpoints returned HTTP 200.
+- All five application Prometheus endpoints returned HTTP 200.
+- Prometheus Targets showed all application jobs UP.
+- Grafana datasource and dashboard provisioning succeeded.
+- Request rate, error rate, P95/P99 latency, service health, JVM heap, and CPU panels populated.
+- Deliberate 401 traffic populated the Error Rate panel.
 
-Observability is NOT fully complete yet.
+Docker scope:
+- Docker currently runs Prometheus and Grafana only.
+- Full application containerization remains deferred to the later Docker phase.
+- Current upstream observability images are prom/prometheus:latest and grafana/grafana:latest.
 
+Current next phase:
+Phase 12 — Resilience and Fault Tolerance, beginning with Timeouts.
+
+Remaining observability expansion after resilience and failure-path testing:
+- Centralized logging
+- Correlation IDs if desired
+- Distributed tracing
+- Resilience/dependency dashboards
+- Alerts
 
 ============================================================
 LATEST AUDIT DELTA — 2026-11-03
@@ -53,7 +65,7 @@ Observability and documentation commits added after the previous audit snapshot:
 2. bae70de445c5bafddf9f75b80e283e159b0b6cf6
    Message: Document API Gateway observability
    Why: Document the Gateway management port 9100, Actuator/Prometheus endpoints, and the boundary between monitoring and JWT-protected business routes.
-   Commit: https://github.com/rehaman28/FoodManagement/commit/bae70de445c735a17428c5dc8a2b0986bc13337dc
+   Commit: https://github.com/rehaman28/FoodManagement/commit/bae70de445c5bafddf9f75b80e283e159b0b6cf6
 
 3. be87048cf7a2806176609f69b2e4f222b59f5ec0
    Message: Document Eureka observability scope
