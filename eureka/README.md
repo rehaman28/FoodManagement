@@ -152,3 +152,14 @@ The next implementation sequence is intentionally interleaved rather than comple
    - Kafka starts only after the observability foundation, fault-tolerance implementation, failure-path testing, and observability expansion are complete.
 
 This ordering is the project baseline for the next phases and prevents resilience tuning from being done without measurable baseline and failure visibility.
+
+
+## Observability Foundation Note
+
+Eureka remains a local service-discovery process on:
+
+    http://localhost:8761
+
+Eureka is not currently included in the Prometheus scrape set. The current observability foundation monitors API Gateway plus the four business services through management ports 9100-9104.
+
+Docker currently runs Prometheus and Grafana only. Eureka containerization remains part of the later Docker phase.
