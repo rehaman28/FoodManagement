@@ -135,77 +135,28 @@ Status: Complete — synchronous communication and API Gateway edge validation s
 Kafka / event-driven communication between Order Management and Delivery Management remains the next planned part of Phase 11. The synchronous and Gateway portions of Phase 11 are complete and validated.
 
 
-## Platform roadmap sequence after Phase 11
-
-The next implementation sequence is intentionally interleaved rather than completing all observability first:
-
-1. Observability Foundation
-   - Spring Boot Actuator
-   - Micrometer metrics
-   - Prometheus-format metrics
-   - Basic Grafana dashboard
-   - Baseline request rate, latency, and error rate
-   - Optional early Correlation ID filter
-
-2. Fault Tolerance
-   - Timeouts
-   - Retry policies
-   - Circuit breakers
-   - Fallbacks
-   - Bulkhead isolation
-   - Rate limiting
-
-3. Failure-Path Testing
-   - Deliberately exercise dependency failures and slow responses
-   - Validate timeout, retry, breaker, fallback, isolation, and rate-limit behavior
-   - Observe resilience metrics against the baseline
-
-4. Observability Expansion
-   - Centralized logging
-   - Correlation IDs if not already introduced
-   - Distributed tracing
-   - Resilience/dependency dashboards
-   - Alerts
-
-5. Kafka / Event-Driven Architecture
-   - Kafka starts only after the observability foundation, fault-tolerance implementation, failure-path testing, and observability expansion are complete.
-
-This ordering is the project baseline for the next phases and prevents resilience tuning from being done without measurable baseline and failure visibility.
-
-
-## Observability Foundation — Complete
-
-Management port: 9100
-
-    http://localhost:9100/actuator/health
-    http://localhost:9100/actuator/prometheus
-
-Both were validated locally with HTTP 200.
-
-Business API: 8080
-Management:   9100
-
-Prometheus target:
-
-    host.docker.internal:9100
-
-Actuator is intentionally available on the dedicated management port; normal Gateway business routes remain JWT protected.
-
-See /observability/README.md for Docker Compose, Prometheus, Grafana, and validation procedures.
 ## Current roadmap status
 
-Project-level architecture and execution roadmap:
+Project-level roadmap and architecture:
 
     /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
 
-Current gate:
+Current execution gate:
 
-    API Gateway + synchronous communication -> Complete
-    Observability Foundation -> Complete
-    Fault Tolerance -> Next: Timeouts
-    Failure-Path Testing -> After resilience controls
-    Observability Expansion -> After failure-path testing
-    Kafka -> Deferred until the resilience/observability gates pass
+1. Phase 11 — API Gateway + synchronous communication: Complete and validated
+2. Phase 18A — Observability Foundation: Complete and validated
+3. Phase 12 — Fault Tolerance: Next, beginning with Timeouts
+4. Failure-Path Testing: after resilience controls
+5. Phase 18C — Observability Expansion: after failure-path testing
+6. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
 
-Full application Dockerization, Kubernetes, CI/CD, AWS/cloud deployment, and production hardening remain later platform phases.
+Later platform phases:
+
+    Full application Dockerization
+        -> Kubernetes
+        -> CI/CD
+        -> AWS / Cloud Deployment
+        -> Production Hardening
+
+This ordering keeps the project measurable before resilience tuning and prevents Kafka/event-driven complexity from being introduced before failure behavior is observable and controlled.
 
