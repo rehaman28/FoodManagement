@@ -163,3 +163,20 @@ Eureka remains a local service-discovery process on:
 Eureka is not currently included in the Prometheus scrape set. The current observability foundation monitors API Gateway plus the four business services through management ports 9100-9104.
 
 Docker currently runs Prometheus and Grafana only. Eureka containerization remains part of the later Docker phase.
+## Current roadmap status
+
+Project-level architecture and execution roadmap:
+
+    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+
+Current gate:
+
+    API Gateway + synchronous communication -> Complete
+    Observability Foundation -> Complete
+    Fault Tolerance -> Next: Timeouts
+    Failure-Path Testing -> After resilience controls
+    Observability Expansion -> After failure-path testing
+    Kafka -> Deferred until the resilience/observability gates pass
+
+Full application Dockerization, Kubernetes, CI/CD, AWS/cloud deployment, and production hardening remain later platform phases.
+
