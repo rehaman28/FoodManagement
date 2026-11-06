@@ -123,6 +123,20 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
+        @ExceptionHandler(DownstreamServiceTimeoutException.class)
+        public ResponseEntity<ErrorResponseDto> handleDownstreamServiceTimeoutException(
+                        DownstreamServiceTimeoutException ex,
+                        HttpServletRequest httpServletRequest) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.GATEWAY_TIMEOUT,
+                                 "Downstream Service Timeout",
+                                ex.getMessage(),
+                                httpServletRequest.getRequestURI());
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
         private ErrorResponseDto buildErrorResponse(
                         HttpStatus status,
                         String error,

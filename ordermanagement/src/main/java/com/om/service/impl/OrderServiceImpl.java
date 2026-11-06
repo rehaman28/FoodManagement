@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 // import org.springframework.web.client.RestTemplate;
 
+import com.om.exception.DownstreamServiceTimeoutException;
 import com.om.exception.InvalidOrderStatusTransitionException;
 import com.om.exception.ItemNotFoundException;
 import com.om.exception.OrderNotFoundException;
@@ -28,6 +29,7 @@ import com.om.model.OrderStatus;
 import com.om.service.OrderService;
 
 import feign.FeignException;
+import feign.RetryableException;
 
 @Service
 @Transactional
@@ -35,18 +37,18 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     // private final RestTemplate restTemplate;
-    private final  RestaurantClient restaurantClient;
-    private final  UserClient userClient;
-    
+    private final RestaurantClient restaurantClient;
+    private final UserClient userClient;
 
-    // public OrderServiceImpl(OrderRepository orderRepository, RestTemplate restTemplate) {
-    //     this.orderRepository = orderRepository;
-    //     this.restTemplate = restTemplate;
+    // public OrderServiceImpl(OrderRepository orderRepository, RestTemplate
+    // restTemplate) {
+    // this.orderRepository = orderRepository;
+    // this.restTemplate = restTemplate;
     // }
 
     public OrderServiceImpl(OrderRepository orderRepository,
-                            RestaurantClient restaurantClient,
-                            UserClient userClient) {
+            RestaurantClient restaurantClient,
+            UserClient userClient) {
         this.orderRepository = orderRepository;
         this.restaurantClient = restaurantClient;
         this.userClient = userClient;
@@ -153,8 +155,8 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto updateOrderStatus(Long orderId, OrderStatusRequestDto orderStatusRequestDto) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order Not Found"));
-        OrderStatus currentOrderStatus =order.getOrderStatus();
-        OrderStatus requestedOrderStatus =orderStatusRequestDto.getOrderStatus();
+        OrderStatus currentOrderStatus = order.getOrderStatus();
+        OrderStatus requestedOrderStatus = orderStatusRequestDto.getOrderStatus();
 
         if (!isValidTransition(currentOrderStatus, requestedOrderStatus)) {
 
@@ -172,18 +174,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // RestTemplate for Inter-service Communications
-    //Moving The below method to FeignClient Service Discovery approach
+    // Moving The below method to FeignClient Service Discovery approach
     // private String fetchRestaurantNameFromId(long restaurantId) {
-    //     return restTemplate.getForObject("http://localhost:8001/restaurants/" + restaurantId + "/name", String.class);
+    // return restTemplate.getForObject("http://localhost:8001/restaurants/" +
+    // restaurantId + "/name", String.class);
     // }
 
-    // private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId) {
-    //     String url = "http://localhost:8001/restaurants/{restaurantId}/items/{itemId}";
-    //     return restTemplate.getForObject(url, ItemResponseDto.class, restaurantId, itemId);
+    // private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long
+    // restaurantId, long itemId) {
+    // String url =
+    // "http://localhost:8001/restaurants/{restaurantId}/items/{itemId}";
+    // return restTemplate.getForObject(url, ItemResponseDto.class, restaurantId,
+    // itemId);
     // }
 
-
-    //FeignClient ServiceDiscovery
+    // FeignClient ServiceDiscovery
     private String fetchRestaurantNameFromId(long restaurantId) {
         try {
             return restaurantClient.getRestaurantName(restaurantId);
@@ -192,6 +197,10 @@ public class OrderServiceImpl implements OrderService {
             throw new RestaurantNotFoundException(
                     "Restaurant was not found with Id: "
                             + restaurantId);
+        } catch (RetryableException ex) {
+            throw new DownstreamServiceTimeoutException(
+                    "Restaurant Management service did not respond within the configured timeout",
+                    ex);
         }
     }
 
@@ -224,10 +233,14 @@ public class OrderServiceImpl implements OrderService {
                     "Item id " + itemId
                             + " not found in Restaurant "
                             + restaurantId);
+        } catch (RetryableException ex) {
+            throw new DownstreamServiceTimeoutException(
+                    "Restaurant Management service did not respond within the configured timeout",
+                    ex);
         }
     }
 
-    //Helper Method to validate if the transition was valid & allowed
+    // Helper Method to validate if the transition was valid & allowed
     private boolean isValidTransition(OrderStatus currentStatus,
             OrderStatus requestedStatus) {
 
@@ -251,17 +264,20 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    //Helper Methods to validate user Synchronously
-    private UserResponseDto validateUser(Long userId){
+    // Helper Methods to validate user Synchronously
+    private UserResponseDto validateUser(Long userId) {
         try {
-            return userClient.getUserById(userId);            
+            return userClient.getUserById(userId);
         } catch (FeignException.NotFound e) {
 
-             throw new UserNotFoundException(
+            throw new UserNotFoundException(
                     "User was not found with Id: "
                             + userId);
+        } catch (RetryableException ex) {
+            throw new DownstreamServiceTimeoutException(
+                    "User Management service did not respond within the configured timeout",
+                    ex);
         }
     }
-
 
 }
