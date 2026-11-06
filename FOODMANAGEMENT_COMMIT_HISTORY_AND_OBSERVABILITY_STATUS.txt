@@ -1,7 +1,7 @@
 FoodManagement — Commit History and Observability Status
 Repository: https://github.com/rehaman28/FoodManagement
 Audited branch: main
-Latest audited commit: 25324ebff09258c2ac27cb4e8caa7248f8210c20 — Update cumulative history and observability status — 2026-11-03
+Latest audited commit: 65c1281d8b022714450c2193c4ebad94ac916833 — Correct observability audit status and commit references — 2026-11-03
 Total commits returned by GitHub commit history at audit time: 161
 
 ============================================================
@@ -10,8 +10,9 @@ Total commits returned by GitHub commit history at audit time: 161
 Latest audited observability implementation commit:
 c5ce44052c735a17428c5dc8a2b0986bc13337dc — Grafana request fix — 2026-11-03T17:23:25Z
 
-Latest documentation/history commit:
+Latest documentation/history commits:
 25324ebff09258c2ac27cb4e8caa7248f8210c20 — Update cumulative history and observability status
+65c1281d8b022714450c2193c4ebad94ac916833 — Correct observability audit status and commit references
 
 Observability Foundation status:
 COMPLETE — implementation and local runtime validation successful.
@@ -96,6 +97,10 @@ Observability and documentation commits added after the previous audit snapshot:
    Message: Add observability setup and validation README
    Why: Add a dedicated observability README covering the directory structure, Docker Compose lifecycle, Prometheus/Grafana validation, and future application image publication workflow.
    Commit: https://github.com/rehaman28/FoodManagement/commit/c6679ec4c3cb306cb2827f5d2b72d384ada6e5f5
+
+Additional history/doc commits after the prior snapshot:
+- 25324ebff09258c2ac27cb4e8caa7248f8210c20 — Update cumulative history and observability status
+- 65c1281d8b022714450c2193c4ebad94ac916833 — Correct observability audit status and commit references
 
 Current documentation state:
 - Root README updated with Observability Foundation completion and Docker workflow.
@@ -1108,4 +1113,4 @@ Documentation and roadmap:
 
 Current point:
 - The repository has just started the observability implementation with the `observability dependencies` commit.
-- The next implementation slice is Prometheus + Grafana + baseline validation, not Kafka.
+- The next implementation slice is Fault Tolerance, beginning with Timeouts; Kafka remains deferred behind the resilience and observability gates.
