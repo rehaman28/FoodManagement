@@ -4,6 +4,45 @@
 
 This document is the project-level architecture and delivery roadmap. It separates what is implemented today from the next engineering gates and the later container/cloud platform phases.
 
+## Visual architecture
+
+```mermaid
+flowchart TB
+    C[Clients / Postman] --> G[API Gateway :8080]
+    G --> E[Eureka :8761]
+    G --> U[User Management :8002]
+    G --> R[Restaurant Management :8001]
+    G --> O[Order Management :8003]
+    G --> D[Delivery Management :8004]
+
+    O -->|OpenFeign + JWT| U
+    O -->|OpenFeign + JWT| R
+
+    U --- UM[Actuator :9102]
+    R --- RM[Actuator :9101]
+    O --- OM[Actuator :9103]
+    D --- DM[Actuator :9104]
+    G --- GM[Actuator :9100]
+
+    UM --> P[Prometheus :9090]
+    RM --> P
+    OM --> P
+    DM --> P
+    GM --> P
+    P --> F[Grafana :3000]
+
+    F --> B[Baseline dashboard: request rate / errors / P95 / P99 / health / JVM / CPU]
+
+    T[Phase 12: Timeouts] --> RT[Retries]
+    RT --> CB[Circuit Breakers]
+    CB --> FB[Fallbacks]
+    FB --> BH[Bulkhead]
+    BH --> RL[Rate Limiting]
+    RL --> FT[Failure-Path Testing]
+    FT --> OE[Observability Expansion]
+    OE --> K[Kafka / Event-Driven Architecture]
+```
+
 ## 1. Current runtime architecture
 
 ```
