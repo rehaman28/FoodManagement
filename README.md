@@ -691,3 +691,7 @@ Do not use the application-image commands yet for this observability-only Docker
 - Service health -> populated
 - JVM heap -> populated
 - CPU -> populated
+
+## Project-level architecture roadmap
+
+See **FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md** for the current runtime architecture, observability architecture, execution gates, and future Docker/Kubernetes/AWS roadmap.
