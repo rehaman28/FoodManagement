@@ -1,7 +1,7 @@
 FoodManagement — Commit History and Observability Status
 Repository: https://github.com/rehaman28/FoodManagement
 Audited branch: main
-Latest audited commit: 65c1281d8b022714450c2193c4ebad94ac916833 — Correct observability audit status and commit references — 2026-11-03
+Latest audited commit: 8802a3aecf153d68ba0736a1d7a1453f40315555 — Add Mermaid project architecture diagram — 2026-11-06
 Total commits returned by GitHub commit history at audit time: 161
 
 ============================================================
@@ -109,6 +109,74 @@ Current documentation state:
 - Commit history file is being updated in the current commit.
 
 Observability Foundation remains COMPLETE and locally validated. The next planned implementation step remains Phase 12 — Fault Tolerance, starting with timeouts.
+
+============================================================
+LATEST ROADMAP AUDIT DELTA — 2026-11-06
+============================================================
+
+Project roadmap and README alignment commits since the previous audit:
+
+1. 8802a3aecf153d68ba0736a1d7a1453f40315555
+   Message: Add Mermaid project architecture diagram
+   Why: Add a GitHub-renderable architecture diagram to the project-level roadmap document.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/8802a3aecf153d68ba0736a1d7a1453f40315555
+
+2. 8d742bda1523da888a55072ce8e7cef8c9b14701
+   Message: Align Delivery Management README with project roadmap
+   Why: Synchronize Delivery Management documentation with the completed observability foundation and the next Fault Tolerance gate.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/8d742bda1523da888a55072ce8e7cef8c9b14701
+
+3. fef76054bdc85203c5ec3953adf0e180e3a43c93
+   Message: Align Order Management README with project roadmap
+   Why: Synchronize Order Management documentation with the project-level roadmap.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/fef76054bdc85203c5ec3953adf0e180e3a43c93
+
+4. 388263c551b724867ded969116735c412a1d9016
+   Message: Align Restaurant Management README with project roadmap
+   Why: Synchronize Restaurant Management documentation with the project-level roadmap.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/388263c551b724867ded969116735c412a1d9016
+
+5. b8dd769bff32cd7815ae286756fd80bf733c6d9e
+   Message: Align User Management README with project roadmap
+   Why: Synchronize User Management documentation with the project-level roadmap.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/b8dd769bff32cd7815ae286756fd80bf733c6d9e
+
+6. 51c8cd3f9b55e9a0d7df61bd742342790e76385f
+   Message: Align Eureka README with project roadmap
+   Why: Synchronize Eureka documentation with the project-level roadmap and clarify its observability scope.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/51c8cd3f9b55e9a0d7df61bd742342790e76385f
+
+7. 5918ebc0025af1c778ec22f676410aae3e37928e
+   Message: Align API Gateway README with project roadmap
+   Why: Synchronize API Gateway documentation with the project-level roadmap.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/5918ebc0025af1c778ec22f676410aae3e37928e
+
+8. a11c8ad916747ed38cc2af0881e54f0e85e86ddf
+   Message: Add project roadmap architecture document
+   Why: Establish the project-level architecture, roadmap gates, resilience sequence, Docker lifecycle, and Kafka entry criteria.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/a11c8ad916747ed38cc2af0881e54f0e85e86ddf
+
+9. 3bee0777d83a256ac46cde742498224af4b3f3e4
+   Message: Update roadmap and latest commit audit status
+   Why: Align the cumulative history and observability audit with the project-level roadmap status.
+   Commit: https://github.com/rehaman28/FoodManagement/commit/3bee0777d83a256ac46cde742498224af4b3f3e4
+
+10. 96ecf591c108df360fd70d26080c4e08804a4806
+    Message: Update project roadmap status and architecture reference
+    Why: Mark Observability Foundation complete and link the root project README to the roadmap architecture document.
+    Commit: https://github.com/rehaman28/FoodManagement/commit/96ecf591c108df360fd70d26080c4e08804a4806
+
+Project-level roadmap state:
+- Phase 11 API Gateway + synchronous communication: COMPLETE
+- Phase 18A Observability Foundation: COMPLETE and locally validated
+- Phase 12 Fault Tolerance: NEXT, beginning with Timeouts
+- Failure-path testing: after resilience controls
+- Observability Expansion: after failure-path testing
+- Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+- Full application Dockerization: later platform phase
+- Kubernetes / CI/CD / AWS / Production Hardening: later platform phases
+
+The generated visual roadmap is maintained as a separate project artifact, while FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md contains the GitHub-renderable Mermaid version.
 
 ============================================================
 2. CUMULATIVE COMMIT HISTORY
