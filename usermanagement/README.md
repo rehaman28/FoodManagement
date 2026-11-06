@@ -333,3 +333,20 @@ Actuator is permitted on the dedicated management port so monitoring does not re
 The service emits HTTP request histogram metrics used by the Grafana P95/P99 latency panels.
 
 Full service containerization is deferred to the later Docker phase; the current Docker Compose stack runs Prometheus and Grafana only.
+## Current roadmap status
+
+Project-level architecture and execution roadmap:
+
+    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+
+Current gate:
+
+    API Gateway + synchronous communication -> Complete
+    Observability Foundation -> Complete
+    Fault Tolerance -> Next: Timeouts
+    Failure-Path Testing -> After resilience controls
+    Observability Expansion -> After failure-path testing
+    Kafka -> Deferred until the resilience/observability gates pass
+
+Full application Dockerization, Kubernetes, CI/CD, AWS/cloud deployment, and production hardening remain later platform phases.
+
