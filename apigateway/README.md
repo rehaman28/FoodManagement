@@ -192,3 +192,20 @@ Prometheus target:
 Actuator is intentionally available on the dedicated management port; normal Gateway business routes remain JWT protected.
 
 See /observability/README.md for Docker Compose, Prometheus, Grafana, and validation procedures.
+## Current roadmap status
+
+Project-level architecture and execution roadmap:
+
+    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+
+Current gate:
+
+    API Gateway + synchronous communication -> Complete
+    Observability Foundation -> Complete
+    Fault Tolerance -> Next: Timeouts
+    Failure-Path Testing -> After resilience controls
+    Observability Expansion -> After failure-path testing
+    Kafka -> Deferred until the resilience/observability gates pass
+
+Full application Dockerization, Kubernetes, CI/CD, AWS/cloud deployment, and production hardening remain later platform phases.
+
