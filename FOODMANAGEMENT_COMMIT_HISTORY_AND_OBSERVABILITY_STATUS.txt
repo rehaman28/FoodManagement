@@ -1,7 +1,7 @@
 FoodManagement — Commit History and Observability Status
 Repository: https://github.com/rehaman28/FoodManagement
 Audited branch: main
-Latest audited commit: 8802a3aecf153d68ba0736a1d7a1453f40315555 — Add Mermaid project architecture diagram — 2026-11-06
+Latest audited commit: 7afdf2b95065bba1b61ec839f2364001355f9fc7 — Refresh service README roadmap status — 2026-11-06
 Total commits returned by GitHub commit history at audit time: 161
 
 ============================================================
@@ -177,6 +177,31 @@ Project-level roadmap state:
 - Kubernetes / CI/CD / AWS / Production Hardening: later platform phases
 
 The generated visual roadmap is maintained as a separate project artifact, while FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md contains the GitHub-renderable Mermaid version.
+
+============================================================
+LATEST README / ROADMAP ALIGNMENT DELTA — 2026-11-06
+============================================================
+
+The service README roadmap blocks were refreshed to remove the stale "Observability Foundation is next" wording and align all services with the current project gate:
+
+- Phase 11 API Gateway + synchronous communication -> Complete
+- Phase 18A Observability Foundation -> Complete and validated
+- Phase 12 Fault Tolerance -> Next, beginning with Timeouts
+- Failure-Path Testing -> after resilience controls
+- Phase 18C Observability Expansion -> after failure-path testing
+- Kafka -> deferred until resilience and observability gates pass
+- Full Dockerization, Kubernetes, CI/CD, AWS/Cloud, and Production Hardening -> later phases
+
+README alignment commits:
+- a5e97fbd16425b72f82a1e2b3c26ed8ed9ee4aeb — API Gateway
+- 9e9d90f21ddaba5bf467d78fffea6c2a6571991f — Eureka
+- dffef249be1bbbeb30aed15f5743abfc14e4ed62 — User Management
+- 3bca81a6eda0c98b8094d04798a0cdc73cee943c — Restaurant Management
+- 32b9b688051707239dd96f39bfa56580667f05ba — Order Management
+- 7afdf2b95065bba1b61ec839f2364001355f9fc7 — Delivery Management
+
+The project-level roadmap document also contains a GitHub-renderable Mermaid architecture/roadmap diagram:
+FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
 
 ============================================================
 2. CUMULATIVE COMMIT HISTORY
