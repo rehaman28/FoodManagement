@@ -1,7 +1,7 @@
 FoodManagement — Commit History and Observability Status
 Repository: https://github.com/rehaman28/FoodManagement
 Audited branch: main
-Latest audited commit: 7afdf2b95065bba1b61ec839f2364001355f9fc7 — Refresh service README roadmap status — 2026-11-06
+Latest audited commit: 9161b49f798757926f17aca73050c874111050f2 — Align architecture roadmap with AWS deployment phase — 2026-11-07
 Total commits returned by GitHub commit history at audit time: 161
 
 ============================================================
@@ -18,7 +18,7 @@ Observability Foundation status:
 COMPLETE — implementation and local runtime validation successful.
 
 Implemented:
-- Dedicated management ports: Gateway 9100, Restaurant 9101, User 9102, Order 9103, Delivery 9104.
+- Dedicated management ports: Gateway 9100, Restaurant 9101, User 9103, Order 9102, Delivery 9104.
 - Standardized Actuator exposure for health, info, metrics, and Prometheus.
 - Micrometer Prometheus registry for all monitored application services.
 - Actuator access separated from business traffic through dedicated management ports.
@@ -44,6 +44,12 @@ Docker scope:
 
 Current next phase:
 Phase 12 — Resilience and Fault Tolerance, beginning with Timeouts.
+
+AWS roadmap alignment:
+- The AWS deployment phase is gated until Phases 12–18C are complete and validated.
+- The roadmap is aligned to AWS Certified Cloud Practitioner (CLF-C02) and AWS Certified Developer - Associate (DVA-C03).
+- Production AWS topics include IAM, VPC, ECR, EKS, RDS, Route 53, ALB, Secrets Manager, KMS, CloudWatch, CloudTrail, WAF, S3, messaging, CI/CD, cost management, and Well-Architected practices.
+- Certification-only services and concepts will be covered through focused labs when they do not belong in the production FoodManagement architecture.
 
 Remaining observability expansion after resilience and failure-path testing:
 - Centralized logging
