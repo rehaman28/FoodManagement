@@ -425,29 +425,345 @@ Plan after Phase 12 failure-path testing:
 
 Kafka is intentionally deferred until Phase 18A, Phase 12, Phase 18B, and Phase 18C are complete.
 
-### Phase 19 — AWS / Cloud Deployment
-Plan:
-1. Cloud infrastructure
-2. Managed database
-3. Container platform
-4. Container registry
-5. Kafka deployment
-6. Secrets management
-7. Load balancing
-8. Monitoring
+### Phase 19 — AWS Cloud + Certification-Aligned Deployment
+Status: Planned — starts only after Phases 12–18C are implemented and validated
 
-### Phase 20 — Production Hardening
-Plan:
-1. Externalize secrets
-2. Environment-specific configuration
-3. HTTPS
-4. Security headers
-5. API versioning
-6. Caching
-7. Database migration strategy
-8. Performance/load testing
-9. Dependency/security scanning
-10. Backup and recovery
+The AWS phase is intentionally gated behind resilience, testing, containerization, Kubernetes, CI/CD, and observability. The project will not move to AWS deployment while those local/cloud-neutral foundations are incomplete.
+
+Certification targets:
+- AWS Certified Cloud Practitioner (CLF-C02)
+- AWS Certified Developer - Associate (DVA-C03)
+- DVA-C02 remains relevant only for candidates completing that exam before November 30, 2026; DVA-C03 GA delivery begins December 1, 2026.
+
+Official references:
+- https://aws.amazon.com/certification/certified-cloud-practitioner/
+- https://aws.amazon.com/certification/certified-developer-associate/
+- https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html
+- https://docs.aws.amazon.com/aws-certification/latest/developer-associate-03/
+
+AWS implementation sequence:
+
+#### Phase 19A — Cloud Foundations and Account Governance
+Hands-on:
+1. AWS account structure and environment separation
+2. AWS Regions and Availability Zones
+3. Shared responsibility model
+4. AWS Well-Architected Framework
+5. AWS Cloud Adoption Framework awareness
+6. AWS CLI and CloudShell
+7. Tagging and environment naming conventions
+8. AWS Pricing Calculator
+9. Cost Explorer
+10. AWS Budgets
+11. Support plans and AWS Knowledge Center / re:Post awareness
+
+Certification coverage:
+- CLF-C02 Cloud Concepts
+- CLF-C02 Billing, Pricing, and Support
+- DVA-C03 AWS account/application lifecycle fundamentals
+
+#### Phase 19B — IAM and Application Security
+Hands-on:
+1. IAM users, groups, roles, and policies
+2. Principle of least privilege
+3. Root-account protection and MFA
+4. IAM role-based access for workloads
+5. AWS STS / temporary credentials
+6. EKS Pod Identity / workload IAM
+7. AWS Secrets Manager
+8. AWS KMS
+9. Encryption at rest and in transit
+10. CloudTrail audit logging
+11. AWS WAF
+12. GuardDuty and security-service awareness
+13. Preserve application JWT/RBAC while adding AWS authorization boundaries
+14. Compare application authentication with AWS resource authorization
+
+Certification coverage:
+- CLF-C02 Security and Compliance
+- DVA-C03 Security
+
+#### Phase 19C — VPC and Networking
+Hands-on:
+1. VPC
+2. CIDR planning
+3. Public and private subnets
+4. Route tables
+5. Internet Gateway
+6. NAT Gateway
+7. Security Groups
+8. Network ACL awareness
+9. DNS and Route 53
+10. Private database networking
+11. Load-balancer networking
+12. VPC endpoints / PrivateLink awareness
+13. High availability across Availability Zones
+
+Target network:
+Client -> Route 53 -> ALB -> EKS -> RDS
+
+Certification coverage:
+- CLF-C02 global infrastructure and network services
+- DVA-C03 networking and secure application connectivity
+
+#### Phase 19D — Containers, ECR, and EKS
+Hands-on:
+1. Docker image creation
+2. Image versioning with Git SHA / semantic tags
+3. Amazon ECR repositories
+4. Image scanning and lifecycle concepts
+5. Amazon EKS cluster
+6. Kubernetes namespaces
+7. Deployments
+8. Services
+9. ConfigMaps
+10. Secrets integration
+11. Liveness/readiness/startup probes
+12. Requests/limits
+13. Horizontal Pod Autoscaler
+14. PodDisruptionBudget
+15. Rolling deployment
+16. ALB integration through AWS Load Balancer Controller
+17. EKS logging and observability
+
+Target runtime:
+ECR -> EKS -> Spring Boot microservices
+
+Certification coverage:
+- CLF-C02 compute/containers
+- DVA-C03 container management, deployment, testing, troubleshooting
+
+#### Phase 19E — Managed Data
+Hands-on:
+1. Amazon RDS for MySQL
+2. RDS connectivity from private EKS subnets
+3. Multi-AZ concepts
+4. Backups and point-in-time recovery
+5. Parameter groups / option concepts
+6. Database credentials through Secrets Manager
+7. Database migrations
+8. DynamoDB fundamentals and access-pattern thinking
+9. ElastiCache awareness and caching use cases
+10. S3 for object storage / exports / deployment artifacts
+
+Production application path:
+Spring Boot -> RDS MySQL
+
+Certification labs:
+- RDS
+- DynamoDB
+- ElastiCache
+- S3
+
+#### Phase 19F — Application Integration and Event-Driven AWS
+Hands-on:
+1. Amazon SQS
+2. Amazon SNS
+3. Amazon EventBridge
+4. Compare queue, pub/sub, and event-bus patterns
+5. Dead-letter queues
+6. Idempotency
+7. Retry and backoff
+8. Event-driven failure handling
+9. Compare Kafka/Apache Kafka with AWS managed messaging services
+10. Later map the project's Kafka design to Amazon MSK where appropriate
+
+Certification coverage:
+- DVA-C03 messaging and event-driven development
+- CLF-C02 application integration awareness
+
+#### Phase 19G — API, Edge, and Delivery
+Hands-on:
+1. Existing Spring Cloud Gateway as the application gateway
+2. AWS Application Load Balancer as the infrastructure ingress
+3. Amazon API Gateway comparison/lab
+4. Route 53 DNS
+5. HTTPS/TLS and ACM
+6. CloudFront awareness and static/content delivery use cases
+7. WAF protection at the edge
+
+Architecture:
+Internet -> Route 53 -> ALB -> API Gateway -> Services
+
+The project will explicitly compare:
+- ALB vs API Gateway
+- Spring Cloud Gateway vs API Gateway
+- Kubernetes Service discovery vs Eureka
+
+#### Phase 19H — Observability, Troubleshooting, and Performance
+Hands-on:
+1. CloudWatch metrics
+2. CloudWatch Logs
+3. CloudWatch dashboards
+4. CloudWatch alarms
+5. CloudWatch Container Insights
+6. AWS X-Ray / distributed tracing concepts
+7. Structured application logging
+8. Correlation IDs
+9. Health/readiness/liveness monitoring
+10. Root-cause analysis from logs, metrics, and traces
+11. CPU/memory optimization
+12. Connection-pool tuning
+13. Autoscaling
+14. Caching
+15. Performance and load testing
+
+The existing Prometheus + Grafana stack remains the local development baseline. AWS observability is added as the cloud runtime layer.
+
+Certification coverage:
+- CLF-C02 cloud operations concepts
+- DVA-C03 Troubleshooting and Optimization
+
+#### Phase 19I — CI/CD and Infrastructure as Code
+Hands-on:
+1. GitHub as the source repository
+2. AWS CodeBuild
+3. AWS CodePipeline
+4. Deployment artifacts
+5. Automated unit/integration/security tests
+6. Docker build and ECR push
+7. Kubernetes deployment
+8. Environment promotion
+9. Rolling / blue-green / canary deployment concepts
+10. Rollback
+11. Infrastructure as Code
+12. AWS CloudFormation
+13. AWS CDK awareness and comparison
+14. Versioned configuration
+15. Release tagging
+
+Target pipeline:
+Git push -> build -> test -> security checks -> Docker build -> ECR -> EKS deployment -> health validation
+
+Certification coverage:
+- DVA-C03 Testing and Deployment
+- CLF-C02 deployment and management concepts
+
+#### Phase 19J — Serverless and Developer AWS Labs
+These services will be used for focused learning labs rather than forced into the FoodManagement production architecture.
+
+Labs:
+1. AWS Lambda
+2. Lambda environment variables and configuration
+3. Lambda timeout, memory, concurrency, and retry behavior
+4. Lambda + SQS
+5. Lambda + EventBridge
+6. API Gateway + Lambda
+7. AWS SDK usage from Java
+8. AWS CLI workflows
+9. Amazon Q Developer for development assistance
+10. Amazon Bedrock awareness/lab
+11. AI-service security and sensitive-data handling awareness
+
+Certification coverage:
+- DVA-C03 Development with AWS Services
+- DVA-C03 security for AWS-integrated applications
+- Current AWS developer certification emphasis on AI-assisted development
+
+#### Phase 19K — AWS Cost and Reliability Engineering
+Hands-on:
+1. Cost allocation tags
+2. Cost Explorer
+3. AWS Budgets
+4. Pricing Calculator
+5. On-Demand vs Reserved/Savings Plans/Spot concepts
+6. Right-sizing
+7. EKS/RDS cost drivers
+8. Log/metric retention cost awareness
+9. Multi-AZ trade-offs
+10. Availability vs cost trade-offs
+11. AWS Well-Architected review
+12. Reliability and disaster-recovery concepts
+
+#### Phase 19L — Final AWS Deployment
+Target architecture:
+
+Internet
+  |
+Route 53
+  |
+ALB
+  |
+EKS
+  |
+  +-- API Gateway
+  |
+  +-- User Management
+  +-- Restaurant Management
+  +-- Order Management
+  +-- Delivery Management
+  |
+  +-- Eureka initially; Kubernetes DNS evaluated as a later modernization
+  |
+RDS MySQL
+
+Supporting AWS services:
+- ECR
+- Secrets Manager
+- KMS
+- CloudWatch
+- CloudTrail
+- WAF
+- IAM
+- S3
+- SQS/SNS/EventBridge
+- Route 53
+- ACM
+- CodeBuild / CodePipeline
+- X-Ray / tracing
+- Budgets / Cost Explorer
+
+#### AWS phase Definition of Done
+
+The application is considered AWS-ready only when:
+- No runtime dependency requires localhost
+- No production credential or JWT secret is committed to Git
+- Configuration is environment-specific
+- Docker images are reproducible and versioned
+- Images are stored in ECR
+- Services deploy successfully to EKS
+- Health probes are configured
+- RDS connectivity works from private subnets
+- Secrets are managed outside source control
+- ALB routing works
+- HTTPS is enabled
+- IAM follows least privilege
+- Application and infrastructure logs/metrics are observable
+- CI/CD can build, test, publish, deploy, and roll back
+- Cost controls are configured
+- Failure scenarios have been tested
+- AWS architecture has been reviewed against the Well-Architected Framework
+
+### AWS certification coverage matrix
+
+| Certification area | FoodManagement hands-on/lab coverage |
+|---|---|
+| CLF-C02 — Cloud Concepts | Regions, AZs, shared responsibility, Well-Architected, cloud economics, migration concepts |
+| CLF-C02 — Security & Compliance | IAM, MFA, least privilege, KMS, Secrets Manager, WAF, CloudTrail, GuardDuty awareness |
+| CLF-C02 — Technology & Services | EC2 concepts, ECR, EKS, RDS, S3, VPC, ALB, Route 53, CloudWatch, Lambda, messaging |
+| CLF-C02 — Billing/Pricing/Support | Pricing Calculator, Cost Explorer, Budgets, tags, support concepts |
+| DVA-C03 — Development | Java AWS SDK/CLI, containers, EKS, ECR, Lambda, messaging, APIs, resilient integration |
+| DVA-C03 — Security | IAM, STS, roles, Secrets Manager, KMS, JWT/RBAC, encryption, secure service-to-service access |
+| DVA-C03 — Testing & Deployment | Unit/integration tests, Docker, ECR, CloudFormation/CDK awareness, CodeBuild, CodePipeline, deployment strategies |
+| DVA-C03 — Troubleshooting & Optimization | CloudWatch, logs, metrics, traces, health probes, root-cause analysis, scaling, caching, performance tuning |
+| DVA-C03 — AI-enabled developer workflow | Amazon Q Developer, Bedrock awareness/lab, AI-sensitive-data and access-control considerations |
+
+Not every AWS service will be forced into the production FoodManagement runtime. Services that do not add architectural value will be covered through focused labs so the project teaches the certification topic without creating artificial production dependencies.
+
+### Pre-AWS gate
+
+AWS deployment is blocked until all of the following are complete and validated:
+- Phase 12 — Fault Tolerance
+- Phase 13 — Data and Transaction Hardening
+- Phase 14 — Testing and Quality Engineering
+- Phase 15 — Docker
+- Phase 16 — Kubernetes
+- Phase 17 — CI/CD
+- Phase 18A — Observability Foundation
+- Phase 18B — Resilience Visibility
+- Phase 18C — Observability Expansion
+- Kafka / event-driven design remains deferred until those gates are complete.
+
 
 ## Basic API testing
 
