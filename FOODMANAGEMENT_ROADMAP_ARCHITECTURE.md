@@ -18,9 +18,9 @@ flowchart TB
     O -->|OpenFeign + JWT| U
     O -->|OpenFeign + JWT| R
 
-    U --- UM[Actuator :9102]
+    U --- UM[Actuator :9103]
     R --- RM[Actuator :9101]
-    O --- OM[Actuator :9103]
+    O --- OM[Actuator :9102]
     D --- DM[Actuator :9104]
     G --- GM[Actuator :9100]
 
@@ -248,3 +248,45 @@ Before Kafka starts, the project should have:
 - Logging/correlation/tracing/alerts completed for the current local architecture
 
 This is the project-level architectural gate for moving into event-driven communication.
+
+
+## 9. AWS deployment target — gated roadmap
+
+AWS deployment is intentionally the final cloud phase after resilience, data hardening, testing, Docker, Kubernetes, CI/CD, and observability are complete.
+
+Target:
+
+```
+Internet
+   |
+Route 53
+   |
+ALB
+   |
+EKS
+   |
+   +--> API Gateway
+   +--> User Management
+   +--> Restaurant Management
+   +--> Order Management
+   +--> Delivery Management
+   |
+   +--> RDS MySQL
+
+Supporting services:
+ECR
+Secrets Manager
+KMS
+IAM
+CloudWatch
+CloudTrail
+WAF
+S3
+SQS / SNS / EventBridge
+CodeBuild / CodePipeline
+ACM
+```
+
+The project keeps Eureka during the first AWS deployment so the existing Spring Cloud discovery model remains demonstrable. Kubernetes-native service discovery will be evaluated as a later AWS modernization step.
+
+The AWS phase is aligned to AWS Certified Cloud Practitioner (CLF-C02) and AWS Certified Developer - Associate (DVA-C03), including cloud concepts, shared responsibility, IAM, networking, containers, databases, storage, messaging, observability, CI/CD, troubleshooting, optimization, and cost management. AWS services that are not justified in the production FoodManagement path will be covered through focused certification labs instead of artificial runtime dependencies.
