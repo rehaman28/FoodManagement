@@ -784,13 +784,26 @@ AWS deployment is blocked until all of the following are complete and validated:
 - Kafka / event-driven design remains deferred until those gates are complete.
 
 
-## Basic API testing
+## API testing with sample data
 
-The project uses Postman for basic request/response testing.
+### Canonical test endpoint
+
+All Postman collections use the API Gateway as the default test endpoint:
+
+    http://localhost:8080
+
+Postman variable:
+
+    testBaseUrl=http://localhost:8080
+
+Direct service URLs remain available for troubleshooting:
+
+    userServiceUrl=http://localhost:8002
+    restaurantServiceUrl=http://localhost:8001
+    orderServiceUrl=http://localhost:8003
+    deliveryServiceUrl=http://localhost:8004
 
 ### Start the system
-
-Start services in this order:
 
     MySQL
     Eureka Server :8761
@@ -800,98 +813,267 @@ Start services in this order:
     Delivery Management :8004
     API Gateway :8080
 
-### Swagger documentation
+### Login
 
-Each API service exposes a public Swagger UI and OpenAPI specification:
+    POST {{testBaseUrl}}/auth/login
 
-| Service | Swagger UI | OpenAPI specification |
-|---|---|---|
-| User Management | http://localhost:8002/swagger-ui/index.html | http://localhost:8002/v3/api-docs |
-| Restaurant Management | http://localhost:8001/swagger-ui/index.html | http://localhost:8001/v3/api-docs |
-| Order Management | http://localhost:8003/swagger-ui/index.html | http://localhost:8003/v3/api-docs |
-| Delivery Management | http://localhost:8004/swagger-ui/index.html | http://localhost:8004/v3/api-docs |
-
-### Generate a USER JWT
-
-Send:
-
-    POST http://localhost:8002/auth/login
-
-Body:
+Request:
 
     {
-      "email": "<valid-user-email>",
-      "password": "<valid-user-password>"
+      "email": "<valid-user-or-admin-email>",
+      "password": "<valid-password>"
     }
 
-Expected response:
+Response:
 
     {
       "token": "<JWT>"
     }
 
-Use the returned token for secured requests:
+The Postman login request stores the JWT in \`TOKEN\`. After a user is promoted to ADMIN, log in again to receive a JWT containing the new role.
 
-    Authorization: Bearer <JWT>
+### User — create USER
 
-### Generate an ADMIN JWT
+    POST {{testBaseUrl}}/users
 
-Use the same login endpoint with an existing ADMIN account:
-
-    POST http://localhost:8002/auth/login
-
-Body:
+Request:
 
     {
-      "email": "<valid-admin-email>",
-      "password": "<valid-admin-password>"
+      "userName": "Jacob",
+      "userPhone": "9876543210",
+      "email": "jacob@example.com",
+      "password": "Password@123",
+      "userAddresses": [
+        {
+          "doorNumber": "12-3",
+          "street": "MG Road",
+          "city": "Hyderabad",
+          "district": "Hyderabad",
+          "country": "India",
+          "pincode": "500001"
+        }
+      ]
     }
 
-Expected response:
+Response:
 
     {
-      "token": "<JWT>"
+      "userId": 101,
+      "userName": "Jacob",
+      "userPhone": "9876543210",
+      "userRoles": "USER"
     }
 
-Use that token for ADMIN-protected requests:
+Public registration always creates USER. Sending \`"role": "ADMIN"\` in the public request cannot create an ADMIN.
 
-    Authorization: Bearer <JWT>
+### User — own profile update
 
-The project does not expose public ADMIN registration. The first ADMIN must be bootstrapped through a controlled database/bootstrap process; after that, ADMINs can promote or demote users through the protected role-management API.
+    PATCH {{testBaseUrl}}/users/{{currentUserId}}
 
-### Basic response-generation examples
+Request:
 
-User:
+    {
+      "userName": "Jacob Updated"
+    }
 
-    POST /users
-    -> 201 Created
-    -> UserResponseDto
+Response:
 
-Restaurant:
+    {
+      "userId": 101,
+      "userName": "Jacob Updated",
+      "userPhone": "9876543210",
+      "userRoles": "USER"
+    }
 
-    POST /restaurants
-    -> 201 Created
-    -> RestaurantResponseDto
+USER may update only the authenticated user's own profile. ADMIN may update any user.
 
-Order:
+### User — ADMIN role management
 
-    POST /orders/placeorder
-    -> 201 Created
-    -> OrderResponseDto
+    PATCH {{testBaseUrl}}/users/{{otherUserId}}/role
 
-Delivery person:
+Request:
 
-    POST /delivery-person/addperson
-    -> 2xx response
-    -> DeliveryPersonResponseDto
+    {
+      "role": "ADMIN"
+    }
 
-Delivery assignment:
+Response:
 
-    POST /delivery-assignments
-    -> 201 Created
-    -> DeliveryAssignmentResponseDto
+    {
+      "userId": 102,
+      "userName": "Admin Candidate",
+      "userPhone": "9876543211",
+      "userRoles": "ADMIN"
+    }
 
-For the exact request payloads, endpoint lists, and service-specific response examples, refer to each microservice README.
+Only ADMIN may promote/demote users. The final remaining ADMIN cannot be demoted.
+
+### Restaurant — create restaurant
+
+    POST {{testBaseUrl}}/restaurants
+
+Request:
+
+    {
+      "restaurantName": "Hyderabad Food Hub",
+      "phoneNumber": "9123456789",
+      "rating": 4.2,
+      "addressRequestDto": {
+        "landmark": "Near Metro",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500081"
+      },
+      "itemRequestDto": [
+        {
+          "itemName": "Paneer Bowl",
+          "itemPrice": 180,
+          "itemCategory": "Main",
+          "itemType": "Veg",
+          "itemRating": 4
+        }
+      ]
+    }
+
+Response:
+
+    {
+      "Id": 201,
+      "Name": "Hyderabad Food Hub",
+      "Rating": 4.2
+    }
+
+### Restaurant — add item
+
+    POST {{testBaseUrl}}/restaurants/{{restaurantId}}/items
+
+Request:
+
+    {
+      "itemName": "Paneer Wrap",
+      "itemPrice": 120,
+      "itemCategory": "Snack",
+      "itemType": "Veg",
+      "itemRating": 4.3
+    }
+
+Response:
+
+    {
+      "itemId": 301,
+      "itemName": "Paneer Wrap",
+      "itemPrice": 120.0,
+      "itemCategory": "Snack",
+      "itemType": "Veg",
+      "itemRating": 4.3
+    }
+
+### Order — place order
+
+    POST {{testBaseUrl}}/orders/placeorder
+
+Request:
+
+    {
+      "userId": 101,
+      "restaurantId": "{{restaurantId}}",
+      "OrderingItems": [
+        {
+          "quantity": 2,
+          "itemId": "{{itemId}}"
+        }
+      ]
+    }
+
+Response:
+
+    {
+      "orderId": 401,
+      "restaurantName": "Hyderabad Food Hub",
+      "orderPrice": 240.0,
+      "orderStatus": "Ordered",
+      "orderItems": [
+        {
+          "orderItemId": 501,
+          "quantity": 2,
+          "itemId": 301
+        }
+      ]
+    }
+
+### Order — update status
+
+    PATCH {{testBaseUrl}}/orders/{{orderId}}/status
+
+Request:
+
+    {
+      "OrderStatus": "Accepted"
+    }
+
+Response:
+
+    {
+      "orderId": 401,
+      "restaurantName": "Hyderabad Food Hub",
+      "orderPrice": 240.0,
+      "orderStatus": "Accepted",
+      "orderItems": [
+        {
+          "orderItemId": 501,
+          "quantity": 2,
+          "itemId": 301
+        }
+      ]
+    }
+
+### Delivery — create agent
+
+    POST {{testBaseUrl}}/delivery-person/addperson
+
+Request:
+
+    {
+      "deliveryAgentName": "Rahul Kumar",
+      "deliveryAgentAadhar": "234567890123",
+      "deliveryAgentPhone": "9876543211",
+      "deliveryAgentEmail": "rahul@example.com"
+    }
+
+Response:
+
+    {
+      "deliveryAgentId": 601,
+      "deliveryAgentName": "Rahul Kumar",
+      "deliveryAgentAadhar": "234567890123",
+      "deliveryAgentPhone": "9876543211",
+      "deliveryAgentEmail": "rahul@example.com",
+      "isAgentAvailable": true
+    }
+
+### Delivery — create assignment
+
+    POST {{testBaseUrl}}/delivery-assignments
+
+Request:
+
+    {
+      "orderId": "{{orderId}}",
+      "deliveryAgentId": "{{deliveryAgentId}}"
+    }
+
+Response:
+
+    {
+      "deliveryAssignmentId": 701,
+      "deliveryStatus": "ASSIGNED",
+      "orderId": 401,
+      "assignmentDate": "2026-11-09T16:00:00",
+      "deliveryAgentId": 601,
+      "deliveryAgentName": "Rahul Kumar"
+    }
+
+The IDs above are illustrative. During Postman execution, use the IDs captured in the active environment.
 
 ## Postman collections
 
