@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FoodManagement - Restaurant Management",
-    "description": "FoodManagement Phase 5 — Postman-only API regression baseline. JWT/RBAC regression uses FoodManagement-USER or FoodManagement-ADMIN with {{TOKEN}}.",
+    "description": "Restaurant Management regression. All requests use {{testBaseUrl}} (API Gateway) by default. Direct Restaurant Management URLs remain available for troubleshooting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -22,7 +22,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants",
+            "url": "{{testBaseUrl}}/restaurants",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"Postman Restaurant {{$timestamp}}\",\n  \"phoneNumber\": \"9123456789\",\n  \"rating\": 4.2,\n  \"addressRequestDto\": {\n    \"landmark\": \"Near Metro\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"itemRequestDto\": [\n    {\n      \"itemName\": \"Paneer Bowl\",\n      \"itemPrice\": 180,\n      \"itemCategory\": \"Main\",\n      \"itemType\": \"Veg\",\n      \"itemRating\": 4\n    }\n  ]\n}",
@@ -71,7 +71,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants",
+            "url": "{{testBaseUrl}}/restaurants",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\",\n  \"rating\": 6,\n  \"addressRequestDto\": null,\n  \"itemRequestDto\": []\n}",
@@ -116,7 +116,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants",
+            "url": "{{testBaseUrl}}/restaurants",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -151,7 +151,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -186,7 +186,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "url": "{{testBaseUrl}}/restaurants/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -222,7 +222,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/name",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/name",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -257,7 +257,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/name",
+            "url": "{{testBaseUrl}}/restaurants/999999999/name",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -297,7 +297,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"Updated Postman Restaurant\"\n}",
@@ -345,7 +345,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\"\n}",
@@ -394,7 +394,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "url": "{{testBaseUrl}}/restaurants/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"Updated\"\n}",
@@ -443,7 +443,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/rating",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 4.5\n}",
@@ -491,7 +491,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/rating",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 6\n}",
@@ -540,7 +540,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/rating",
+            "url": "{{testBaseUrl}}/restaurants/999999999/rating",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 4\n}",
@@ -585,7 +585,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "url": "{{testBaseUrl}}/restaurants/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -620,7 +620,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -659,7 +659,7 @@
               }
             ],
             "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants"
+              "raw": "{{testBaseUrl}}/restaurants"
             }
           },
           "event": [
@@ -691,7 +691,7 @@
               }
             ],
             "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants"
+              "raw": "{{testBaseUrl}}/restaurants"
             },
             "body": {
               "mode": "raw",
@@ -742,7 +742,7 @@
               }
             ],
             "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999"
+              "raw": "{{testBaseUrl}}/restaurants/999999999"
             },
             "auth": {
               "type": "bearer",
@@ -788,7 +788,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -823,7 +823,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -863,7 +863,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"Postman Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\",\n  \"itemRating\": 4\n}",
@@ -912,7 +912,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"\",\n  \"itemPrice\": -10,\n  \"itemCategory\": \"\",\n  \"itemType\": \"\"\n}",
@@ -961,7 +961,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\"\n}",
@@ -1010,7 +1010,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/bulk",
             "body": {
               "mode": "raw",
               "raw": "[\n  {\n    \"itemName\": \"Bulk A\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  },\n  {\n    \"itemName\": \"Bulk B\",\n    \"itemPrice\": 75,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"NonVeg\"\n  }\n]",
@@ -1058,7 +1058,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/bulk",
             "body": {
               "mode": "raw",
               "raw": "[]",
@@ -1107,7 +1107,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/bulk",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items/bulk",
             "body": {
               "mode": "raw",
               "raw": "[\n  {\n    \"itemName\": \"Bulk\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  }\n]",
@@ -1152,7 +1152,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1187,7 +1187,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1223,7 +1223,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items/{{itemId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1263,7 +1263,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -1311,7 +1311,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": -1\n}",
@@ -1360,7 +1360,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -1409,7 +1409,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -1454,7 +1454,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1489,7 +1489,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1526,5 +1526,11 @@
         "value": "{{TOKEN}}"
       }
     ]
-  }
+  },
+  "variable": [
+    {
+      "key": "testBaseUrl",
+      "value": "{{testBaseUrl}"
+    }
+  ]
 }
