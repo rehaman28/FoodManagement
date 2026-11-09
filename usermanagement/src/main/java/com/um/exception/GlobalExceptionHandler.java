@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(
             UserNotFoundException ex,
             HttpServletRequest httpServletRequest) {
+
+        log.warn("User not found: path={}, message={}", httpServletRequest.getRequestURI(), ex.getMessage());
 
         ErrorResponseDto response = buildErrorResponse(
                 HttpStatus.NOT_FOUND,
@@ -40,6 +46,8 @@ public class GlobalExceptionHandler {
                         DuplicateUserException ex,
                         HttpServletRequest request) {
 
+                log.warn("Duplicate user data: path={}, message={}", request.getRequestURI(), ex.getMessage());
+
                 ErrorResponseDto response = buildErrorResponse(
                                 HttpStatus.CONFLICT,
                                 "Duplicate User",
@@ -55,6 +63,8 @@ public class GlobalExceptionHandler {
                         InvalidUserRequestException ex,
                         HttpServletRequest request) {
 
+                log.warn("Invalid user request: path={}, message={}", request.getRequestURI(), ex.getMessage());
+
                 ErrorResponseDto response = buildErrorResponse(
                                 HttpStatus.BAD_REQUEST,
                                 "Invalid Request",
@@ -69,6 +79,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(
             AccessDeniedException ex,
             HttpServletRequest request) {
+
+        log.warn("Access denied: path={}, message={}", request.getRequestURI(), ex.getMessage());
 
         ErrorResponseDto response = buildErrorResponse(
                 HttpStatus.FORBIDDEN,
