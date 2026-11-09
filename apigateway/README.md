@@ -166,6 +166,8 @@ Status: Complete — synchronous communication and API Gateway edge validation s
 - Protected request without JWT -> 401 — passed
 - Invalid JWT -> 401 — passed
 - USER / ADMIN downstream RBAC preservation — passed
+- User administration promotion/demotion regression through Gateway — passed
+- Last-ADMIN protection path validated through the User Management service — passed
 - Unknown Gateway route -> 404 — passed
 - Existing direct-service Postman regression suites remained intact — passed
 
