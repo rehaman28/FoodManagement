@@ -18,5 +18,6 @@ public final class ApplicationConstants {
     public static final String USERS_WILDCARD = USERS_PATH + "/**";
     public static final String USER_ID_PATH = "/{userId}";
     public static final String ROLE_CLAIM = "role";
-    public static final String USER_ROLE_PATH = USER_ID_PATH + "/role";
+    public static final String USER_ROLE_SUBPATH = USER_ID_PATH + "/role";
+    public static final String USER_ROLE_PATH = USERS_PATH + USER_ID_PATH + "/role";
 }
