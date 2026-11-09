@@ -110,7 +110,7 @@ public class UserController {
         }
 
         // Patch Role for Admin
-        @PatchMapping(value = ApplicationConstants.USER_ROLE_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
+        @PatchMapping(value = ApplicationConstants.USER_ROLE_SUBPATH, consumes = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Update a user")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserResponseDto.class))),
