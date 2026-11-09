@@ -1,5 +1,8 @@
 package com.um.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping(value = ApplicationConstants.USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "User Resource", description = "User resource controller")
 public class UserController {
+
+        private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
         private final UserService userService;
 
@@ -121,8 +126,17 @@ public class UserController {
                         @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDto.class)))
         })
         public ResponseEntity<UserResponseDto> updateUserRole(@PathVariable(name = "userId") Long userId,
-                        @Valid @RequestBody UpdateUserRoleRequestDto userRoleRequestDto) {
-                return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserRole(userId, userRoleRequestDto));
+                        @Valid @RequestBody UpdateUserRoleRequestDto userRoleRequestDto,
+                        Authentication authentication) {
+                log.info("Role update request: actor={}, authorities={}, targetUserId={}, requestedRole={}",
+                        authentication.getName(), authentication.getAuthorities(), userId,
+                        userRoleRequestDto.getRole());
+
+                UserResponseDto response = userService.updateUserRole(userId, userRoleRequestDto);
+
+                log.info("Role update successful: actor={}, targetUserId={}, newRole={}",
+                        authentication.getName(), response.getUserId(), response.getUserRoles());
+                return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
 }
