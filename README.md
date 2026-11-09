@@ -137,6 +137,25 @@ Implementation:
 - ADMIN-only management operations
 - USER-accessible operations
 
+### Phase 7A — User Administration Hardening
+Status: Implementation complete — runtime/Postman validation pending
+
+Security model:
+- Public `POST /users` always creates `USER`
+- Client-supplied role cannot create an `ADMIN`
+- `PATCH /users/{userId}`: USER can update only their own profile; ADMIN can update any user
+- `PATCH /users/{userId}/role`: ADMIN only
+- At least one ADMIN must remain
+- Role changes are separated from normal profile updates
+- Ownership denials return HTTP 403
+
+Validation assets:
+- `postman/FoodManagement-UserManagement.postman_collection.json`
+- `postman/FoodManagement-API-Gateway.postman_collection.json`
+- `postman/FoodManagement-Overall.postman_collection.json`
+
+Do not mark this hardening slice complete until the direct-service and Gateway Postman scenarios have passed.
+
 ### Phase 8 — Security Postman Regression
 Status: Complete
 
@@ -838,7 +857,7 @@ Use that token for ADMIN-protected requests:
 
     Authorization: Bearer <JWT>
 
-The project does not expose a public ADMIN-registration endpoint, so an ADMIN account must already exist in the local database.
+The project does not expose public ADMIN registration. The first ADMIN must be bootstrapped through a controlled database/bootstrap process; after that, ADMINs can promote or demote users through the protected role-management API.
 
 ### Basic response-generation examples
 
