@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.um.model.Role;
 import com.um.model.User;
 
 public interface UserRepository extends JpaRepository<User,Long>{
@@ -13,4 +14,6 @@ public interface UserRepository extends JpaRepository<User,Long>{
 	boolean existsByUserPhone(String userPhone);
 
 	Optional<User> findByEmail(String email);
+
+	long countByRole(Role role);
 }

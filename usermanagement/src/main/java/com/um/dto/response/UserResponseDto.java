@@ -1,5 +1,7 @@
 package com.um.dto.response;
 
+import com.um.model.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import lombok.AllArgsConstructor;
@@ -18,5 +20,7 @@ public class UserResponseDto {
     private String userName;
     @Schema(description = "User phone number.")
     private String userPhone;
+    @Schema(description = "User Role.")
+    private Role userRoles;
     
 }

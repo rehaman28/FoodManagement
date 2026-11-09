@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -16,6 +17,7 @@ import com.um.security.JwtAuthenticationFilter;
 
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
@@ -66,6 +68,9 @@ public class SecurityConfig {
                 
                     //Only Admin can delete the user
                     .requestMatchers(HttpMethod.DELETE, ApplicationConstants.USERS_WILDCARD)
+                    .hasRole("ADMIN")
+
+                    .requestMatchers(HttpMethod.PATCH, ApplicationConstants.USER_ROLE_PATH)
                     .hasRole("ADMIN")
 
                     .requestMatchers("/actuator/**")

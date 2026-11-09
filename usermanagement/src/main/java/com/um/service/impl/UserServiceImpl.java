@@ -2,11 +2,15 @@ package com.um.service.impl;
 
 import java.util.List;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.um.config.CurrentUserService;
 import com.um.dao.UserRepository;
 import com.um.dto.request.UpdateUserRequestDto;
+import com.um.dto.request.UpdateUserRoleRequestDto;
 import com.um.dto.request.UserAddressRequestDto;
 import com.um.dto.request.UserRequestDto;
 import com.um.dto.response.UserResponseDto;
@@ -23,10 +27,13 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder  passwordEncoder;
+    private final CurrentUserService currentUserService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            CurrentUserService currentUserService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.currentUserService = currentUserService;
     }
 
     @Override
@@ -64,34 +71,43 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserResponseDto updateUser(Long userId,
-            UpdateUserRequestDto userRequestDto) {
+    public UserResponseDto updateUser(Long userId,UpdateUserRequestDto userRequestDto) {
+
         validateUpdateRequest(userRequestDto);
 
-        User user = findUserById(userId);
+        User targetUser  = findUserById(userId);
+        User currentUser = currentUserService.getCurrentUser();
+
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        boolean isSelf = currentUser.getUserId() == userId;
+
+        if (!isAdmin && !isSelf) {
+        throw new AccessDeniedException(
+                "Users can update only their own profile");
+        }
+        
         validateUniqueUserFields(
-            userRequestDto.getEmail(),
-            userRequestDto.getUserPhone(),
-            user
-        );
+                userRequestDto.getEmail(),
+                userRequestDto.getUserPhone(),
+                targetUser);
 
         if (userRequestDto.getEmail() != null) {
-            user.setEmail(userRequestDto.getEmail());
+            targetUser.setEmail(userRequestDto.getEmail());
         }
         if (userRequestDto.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
+            targetUser.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         }
         if (userRequestDto.getUserName() != null) {
-            user.setUserName(userRequestDto.getUserName());
+            targetUser.setUserName(userRequestDto.getUserName());
         }
         if (userRequestDto.getUserPhone() != null) {
-            user.setUserPhone(userRequestDto.getUserPhone());
+            targetUser.setUserPhone(userRequestDto.getUserPhone());
         }
         if (userRequestDto.getUserAddresses() != null) {
-            user.setUserAddresses(toUserAddresses(userRequestDto.getUserAddresses()));
+            targetUser.setUserAddresses(toUserAddresses(userRequestDto.getUserAddresses()));
         }
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(targetUser);
 
         UserResponseDto userResponse = buildUserResponseEntity(savedUser);
         return userResponse;
@@ -125,7 +141,8 @@ public class UserServiceImpl implements UserService{
         return  new UserResponseDto(
             savedUser.getUserId(),
             savedUser.getUserName(),
-            savedUser.getUserPhone()
+            savedUser.getUserPhone(),
+            savedUser.getRole()
         );
     }
 
@@ -170,6 +187,35 @@ public class UserServiceImpl implements UserService{
             })
             .toList();
     }
-   
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponseDto updateUserRole(Long userId, UpdateUserRoleRequestDto userRoleRequestDto) {
+        User targetUser = findUserById(userId);
+        Role oldRole = targetUser.getRole();
+        Role newRole = userRoleRequestDto.getRole();
+
+        validateRoleChange(targetUser, oldRole, newRole);
+
+        if (userRoleRequestDto.getRole() != null) {
+            targetUser.setRole(newRole);
+        }
+        User savedUser = userRepository.save(targetUser);
+        return buildUserResponseEntity(savedUser);
+    }  
+    
+    private void validateRoleChange(
+        User targetUser,
+        Role oldRole,
+        Role newRole) {
+
+    if (oldRole == Role.ADMIN
+            && newRole != Role.ADMIN
+            && userRepository.countByRole(Role.ADMIN) <= 1) {
+
+        throw new InvalidUserRequestException(
+                "At least one ADMIN user must remain");
+        }
+    }
     
 }
