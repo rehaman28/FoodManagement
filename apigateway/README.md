@@ -198,16 +198,19 @@ Project-level roadmap and architecture:
 
 Current execution gate:
 
-1. Phase 11 — API Gateway + synchronous communication: Complete and validated
-2. Phase 18A — Observability Foundation: Complete and validated
-3. Phase 12 — Fault Tolerance: Next, beginning with Timeouts
-4. Failure-Path Testing: after resilience controls
-5. Phase 18C — Observability Expansion: after failure-path testing
-6. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+1. Phase 7A — User Administration Hardening: Complete and validated
+2. Phase 11 / 11A — Synchronous communication + API Gateway: Complete and validated
+3. Phase 18A — Observability Foundation: Complete and validated
+4. Phase 12 — Fault Tolerance: In progress, beginning with Timeouts
+5. Failure-Path Testing: pending after resilience controls
+6. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
+7. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
 
 Later platform phases:
 
-    Full application Dockerization
+    Data and Transaction Hardening
+        -> Testing and Quality Engineering
+        -> Full application Dockerization
         -> Kubernetes
         -> CI/CD
         -> AWS / Cloud Deployment
