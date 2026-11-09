@@ -313,6 +313,199 @@
           ]
         }
       ]
+    },
+    {
+      "name": "02 - User Administration Through Gateway",
+      "item": [
+        {
+          "name": "Create User - Role Injection Attempt Through Gateway",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": "{{gatewayBaseUrl}}/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Gateway Security User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"gateways{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"role\": \"ADMIN\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "const body=pm.response.json();",
+                  "pm.test(\"Public Gateway registration creates USER only\",()=>pm.expect(body.userRoles).to.eql(\"USER\"));",
+                  "if(body.userId!==undefined) pm.environment.set(\"otherUserId\",body.userId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Own Profile Through Gateway - 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{gatewayBaseUrl}}/users/{{currentUserId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Gateway Self Update {{$timestamp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Own profile update through Gateway returns 200\",()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[RBAC] Update Other User Through Gateway - USER 403 / ADMIN 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{gatewayBaseUrl}}/users/{{otherUserId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Gateway Cross User Update {{$timestamp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\"); const expected=role===\"USER\"?403:200; pm.test(\"Gateway preserves ownership RBAC\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[RBAC] Promote Other User Through Gateway - USER 403 / ADMIN 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{gatewayBaseUrl}}/users/{{otherUserId}}/role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\"); const expected=role===\"USER\"?403:200; pm.test(\"Gateway preserves ADMIN-only role management\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
