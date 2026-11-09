@@ -242,6 +242,75 @@ Example response:
         v
     Read HTTP status + JSON response
 
+## API testing with sample data
+
+Canonical endpoint:
+
+    http://localhost:8080
+
+Postman uses testBaseUrl for all requests. Direct Restaurant Management port 8001 remains available for troubleshooting.
+
+### Create restaurant
+
+    POST {{testBaseUrl}}/restaurants
+
+Request:
+
+    {
+      "restaurantName": "Hyderabad Food Hub",
+      "phoneNumber": "9123456789",
+      "rating": 4.2,
+      "addressRequestDto": {
+        "landmark": "Near Metro",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500081"
+      },
+      "itemRequestDto": [
+        {
+          "itemName": "Paneer Bowl",
+          "itemPrice": 180,
+          "itemCategory": "Main",
+          "itemType": "Veg",
+          "itemRating": 4
+        }
+      ]
+    }
+
+Response:
+
+    {
+      "Id": 201,
+      "Name": "Hyderabad Food Hub",
+      "Rating": 4.2
+    }
+
+### Add item
+
+    POST {{testBaseUrl}}/restaurants/{{restaurantId}}/items
+
+Request:
+
+    {
+      "itemName": "Paneer Wrap",
+      "itemPrice": 120,
+      "itemCategory": "Snack",
+      "itemType": "Veg",
+      "itemRating": 4.3
+    }
+
+Response:
+
+    {
+      "itemId": 301,
+      "itemName": "Paneer Wrap",
+      "itemPrice": 120.0,
+      "itemCategory": "Snack",
+      "itemType": "Veg",
+      "itemRating": 4.3
+    }
+
+
 ## Postman collection
 
 Use:
