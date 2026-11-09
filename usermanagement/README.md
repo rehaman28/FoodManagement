@@ -90,7 +90,7 @@ Response:
       "token": "<JWT>"
     }
 
-The ADMIN account must already exist.
+The public registration API intentionally creates USER accounts only. The first ADMIN must be bootstrapped through a controlled database/bootstrap process. After at least one ADMIN exists, an ADMIN can promote or demote users through `PATCH /users/{userId}/role`.
 
 ## Register user
 
@@ -206,6 +206,51 @@ Header:
 Expected:
 
     204 No Content
+
+## User administration security
+
+The security model is deliberately split between profile updates and role management.
+
+### Registration
+`POST /users` is public and always persists `Role.USER`. A client-supplied `role=ADMIN` cannot create an ADMIN account.
+
+### Profile update
+`PATCH /users/{userId}`
+- USER -> authenticated user's own profile only
+- ADMIN -> any user profile
+- USER -> another user's profile returns 403 Forbidden
+- role is not part of `UpdateUserRequestDto`
+
+### Role management
+`PATCH /users/{userId}/role`
+- USER -> 403 Forbidden
+- ADMIN -> allowed
+- `ADMIN` and `USER` role transitions are explicit and separate from profile updates
+
+Example:
+
+    PATCH http://localhost:8002/users/{userId}/role
+
+    {
+      "role": "ADMIN"
+    }
+
+### Last-ADMIN protection
+The service prevents demoting the final remaining ADMIN. At least one ADMIN must always remain.
+
+### Postman validation
+Use:
+- `postman/FoodManagement-UserManagement.postman_collection.json`
+- `postman/FoodManagement-API-Gateway.postman_collection.json`
+- `postman/FoodManagement-Overall.postman_collection.json`
+
+Set:
+- `currentUserId` to the logged-in user's ID
+- `otherUserId` is populated by the role-injection registration request
+- `FoodManagement-USER` for USER tests
+- `FoodManagement-ADMIN` for ADMIN tests
+
+Validation status: **Implementation ready; runtime/Postman validation pending.**
 
 ## Basic testing flow
 
