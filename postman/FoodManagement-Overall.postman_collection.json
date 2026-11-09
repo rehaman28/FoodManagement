@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "3db09377-5e3b-415a-43f-393628fcbd7d",
     "name": "FoodManagement - Overall API + Security Regression",
-    "description": "FoodManagement regression suite. Existing direct-service API + security regression remains unchanged. Phase 11A adds an additive API Gateway regression section using {{gatewayBaseUrl}}; select FoodManagement-USER or FoodManagement-ADMIN and run Gateway Login first.",
+    "description": "Full FoodManagement regression. All service requests use {{testBaseUrl}} (API Gateway) by default; direct service variables remain available for troubleshooting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "46865333",
     "_collection_link": "https://go.postman.co/collection/46865333-3db09377-5e3b-415a-43f-393628fcbd7d?source=collection_link"
@@ -38,7 +38,7 @@
             "auth": {
               "type": "noauth"
             },
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Overall Security User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"overallsecurity{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"role\": \"ADMIN\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
@@ -89,7 +89,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{currentUserId}}",
+            "url": "{{testBaseUrl}}/users/{{currentUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Overall Self Update {{$timestamp}}\"\n}",
@@ -137,7 +137,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Overall Cross User Update {{$timestamp}}\"\n}",
@@ -185,7 +185,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"ADMIN\"\n}",
@@ -233,7 +233,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"USER\"\n}",
@@ -293,9 +293,9 @@
                   }
                 },
                 "url": {
-                  "raw": "{{gatewayBaseUrl}}/auth/login",
+                  "raw": "{{testBaseUrl}}/auth/login",
                   "host": [
-                    "{{gatewayBaseUrl}}"
+                    "{{testBaseUrl}}"
                   ],
                   "path": [
                     "auth",
@@ -333,7 +333,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{gatewayBaseUrl}}/restaurants"
+                "url": "{{testBaseUrl}}/restaurants"
               },
               "event": [
                 {
@@ -368,7 +368,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{gatewayBaseUrl}}/restaurants"
+                "url": "{{testBaseUrl}}/restaurants"
               },
               "event": [
                 {
@@ -398,7 +398,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{gatewayBaseUrl}}/restaurants",
+                "url": "{{testBaseUrl}}/restaurants",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -433,7 +433,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{gatewayBaseUrl}}/users",
+                "url": "{{testBaseUrl}}/users",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -469,7 +469,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{gatewayBaseUrl}}/orders",
+                "url": "{{testBaseUrl}}/orders",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -505,7 +505,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{gatewayBaseUrl}}/delivery-person",
+                "url": "{{testBaseUrl}}/delivery-person",
                 "auth": {
                   "type": "bearer",
                   "bearer": [
@@ -544,7 +544,7 @@
                     "value": "application/json"
                   }
                 ],
-                "url": "{{gatewayBaseUrl}}/not-a-real-gateway-route"
+                "url": "{{testBaseUrl}}/not-a-real-gateway-route"
               },
               "event": [
                 {
@@ -593,9 +593,9 @@
               }
             },
             "url": {
-              "raw": "{{userServiceUrl}}/auth/login",
+              "raw": "{{testBaseUrl}}/auth/login",
               "host": [
-                "{{userServiceUrl}}"
+                "{{testBaseUrl}}"
               ],
               "path": [
                 "auth",
@@ -656,9 +656,9 @@
               }
             },
             "url": {
-              "raw": "{{userServiceUrl}}/auth/login",
+              "raw": "{{testBaseUrl}}/auth/login",
               "host": [
-                "{{userServiceUrl}}"
+                "{{testBaseUrl}}"
               ],
               "path": [
                 "auth",
@@ -707,9 +707,9 @@
               }
             },
             "url": {
-              "raw": "{{userServiceUrl}}/auth/login",
+              "raw": "{{testBaseUrl}}/auth/login",
               "host": [
-                "{{userServiceUrl}}"
+                "{{testBaseUrl}}"
               ],
               "path": [
                 "auth",
@@ -750,7 +750,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Postman User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"postman{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
@@ -792,7 +792,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"P\",\n  \"userPhone\": \"123\",\n  \"email\": \"bad-email\",\n  \"password\": \"short\",\n  \"userAddresses\": []\n}",
@@ -830,7 +830,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -865,7 +865,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -900,7 +900,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999",
+            "url": "{{testBaseUrl}}/users/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -940,7 +940,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Updated Postman User\"\n}",
@@ -988,7 +988,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userPhone\": \"123\"\n}",
@@ -1037,7 +1037,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999",
+            "url": "{{testBaseUrl}}/users/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Updated\"\n}",
@@ -1082,7 +1082,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999",
+            "url": "{{testBaseUrl}}/users/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1118,7 +1118,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1157,7 +1157,7 @@
               }
             ],
             "url": {
-              "raw": "{{userServiceUrl}}/users"
+              "raw": "{{testBaseUrl}}/users"
             }
           },
           "event": [
@@ -1185,7 +1185,7 @@
               }
             ],
             "url": {
-              "raw": "{{userServiceUrl}}/users"
+              "raw": "{{testBaseUrl}}/users"
             },
             "auth": {
               "type": "bearer",
@@ -1227,7 +1227,7 @@
               }
             ],
             "url": {
-              "raw": "{{userServiceUrl}}/users/999999999"
+              "raw": "{{testBaseUrl}}/users/999999999"
             },
             "auth": {
               "type": "bearer",
@@ -1277,7 +1277,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants",
+            "url": "{{testBaseUrl}}/restaurants",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"Postman Restaurant {{$timestamp}}\",\n  \"phoneNumber\": \"9123456789\",\n  \"rating\": 4.2,\n  \"addressRequestDto\": {\n    \"landmark\": \"Near Metro\",\n    \"city\": \"Hyderabad\",\n    \"state\": \"Telangana\",\n    \"pincode\": \"500081\"\n  },\n  \"itemRequestDto\": [\n    {\n      \"itemName\": \"Paneer Bowl\",\n      \"itemPrice\": 180,\n      \"itemCategory\": \"Main\",\n      \"itemType\": \"Veg\",\n      \"itemRating\": 4\n    }\n  ]\n}",
@@ -1326,7 +1326,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants",
+            "url": "{{testBaseUrl}}/restaurants",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\",\n  \"rating\": 6,\n  \"addressRequestDto\": null,\n  \"itemRequestDto\": []\n}",
@@ -1371,7 +1371,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants",
+            "url": "{{testBaseUrl}}/restaurants",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1406,7 +1406,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1441,7 +1441,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "url": "{{testBaseUrl}}/restaurants/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1477,7 +1477,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/name",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/name",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1512,7 +1512,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/name",
+            "url": "{{testBaseUrl}}/restaurants/999999999/name",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1552,7 +1552,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"Updated Postman Restaurant\"\n}",
@@ -1600,7 +1600,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"X\",\n  \"phoneNumber\": \"123\"\n}",
@@ -1649,7 +1649,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "url": "{{testBaseUrl}}/restaurants/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"restaurantName\": \"Updated\"\n}",
@@ -1698,7 +1698,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/rating",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 4.5\n}",
@@ -1746,7 +1746,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/rating",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/rating",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 6\n}",
@@ -1795,7 +1795,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/rating",
+            "url": "{{testBaseUrl}}/restaurants/999999999/rating",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 4\n}",
@@ -1840,7 +1840,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999",
+            "url": "{{testBaseUrl}}/restaurants/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1875,7 +1875,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -1914,7 +1914,7 @@
               }
             ],
             "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants"
+              "raw": "{{testBaseUrl}}/restaurants"
             }
           },
           "event": [
@@ -1946,7 +1946,7 @@
               }
             ],
             "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants"
+              "raw": "{{testBaseUrl}}/restaurants"
             },
             "body": {
               "mode": "raw",
@@ -1997,7 +1997,7 @@
               }
             ],
             "url": {
-              "raw": "{{restaurantServiceUrl}}/restaurants/999999999"
+              "raw": "{{testBaseUrl}}/restaurants/999999999"
             },
             "auth": {
               "type": "bearer",
@@ -2043,7 +2043,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -2078,7 +2078,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -2118,7 +2118,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"Postman Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\",\n  \"itemRating\": 4\n}",
@@ -2167,7 +2167,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"\",\n  \"itemPrice\": -10,\n  \"itemCategory\": \"\",\n  \"itemType\": \"\"\n}",
@@ -2216,7 +2216,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemName\": \"Item\",\n  \"itemPrice\": 100,\n  \"itemCategory\": \"Snack\",\n  \"itemType\": \"Veg\"\n}",
@@ -2265,7 +2265,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/bulk",
             "body": {
               "mode": "raw",
               "raw": "[\n  {\n    \"itemName\": \"Bulk A\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  },\n  {\n    \"itemName\": \"Bulk B\",\n    \"itemPrice\": 75,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"NonVeg\"\n  }\n]",
@@ -2313,7 +2313,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/bulk",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/bulk",
             "body": {
               "mode": "raw",
               "raw": "[]",
@@ -2362,7 +2362,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/bulk",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items/bulk",
             "body": {
               "mode": "raw",
               "raw": "[\n  {\n    \"itemName\": \"Bulk\",\n    \"itemPrice\": 50,\n    \"itemCategory\": \"Snack\",\n    \"itemType\": \"Veg\"\n  }\n]",
@@ -2407,7 +2407,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -2442,7 +2442,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -2478,7 +2478,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items/{{itemId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -2518,7 +2518,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -2566,7 +2566,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": -1\n}",
@@ -2615,7 +2615,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -2664,7 +2664,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/999999999/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/999999999/items/{{itemId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"itemPrice\": 125\n}",
@@ -2709,7 +2709,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/999999999",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -2744,7 +2744,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{restaurantServiceUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
+            "url": "{{testBaseUrl}}/restaurants/{{restaurantId}}/items/{{itemId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -2788,7 +2788,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": \"{{itemId}}\"\n    }\n  ]\n}",
@@ -2837,7 +2837,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 0,\n  \"restaurantId\": 0,\n  \"OrderingItems\": []\n}",
@@ -2886,7 +2886,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": 999999999,\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 1\n    }\n  ]\n}",
@@ -2935,7 +2935,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 999999999\n    }\n  ]\n}",
@@ -2980,7 +2980,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3015,7 +3015,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/999999999",
+            "url": "{{testBaseUrl}}/orders/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3051,7 +3051,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders",
+            "url": "{{testBaseUrl}}/orders",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3086,7 +3086,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/user/1",
+            "url": "{{testBaseUrl}}/orders/user/1",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3121,7 +3121,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/user/999999999",
+            "url": "{{testBaseUrl}}/orders/user/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3156,7 +3156,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/restaurant/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/orders/restaurant/{{restaurantId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3191,7 +3191,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/restaurant/999999999",
+            "url": "{{testBaseUrl}}/orders/restaurant/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3226,7 +3226,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/status?orderStatus=Ordered",
+            "url": "{{testBaseUrl}}/orders/status?orderStatus=Ordered",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3261,7 +3261,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/status?orderStatus=INVALID",
+            "url": "{{testBaseUrl}}/orders/status?orderStatus=INVALID",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3301,7 +3301,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
@@ -3349,7 +3349,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{}",
@@ -3398,7 +3398,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"OrderStatus\": \"Delivered\"\n}",
@@ -3447,7 +3447,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/999999999/status",
+            "url": "{{testBaseUrl}}/orders/999999999/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
@@ -3496,7 +3496,7 @@
               }
             ],
             "url": {
-              "raw": "{{orderServiceUrl}}/orders"
+              "raw": "{{testBaseUrl}}/orders"
             }
           },
           "event": [
@@ -3524,7 +3524,7 @@
               }
             ],
             "url": {
-              "raw": "{{orderServiceUrl}}/orders"
+              "raw": "{{testBaseUrl}}/orders"
             },
             "auth": {
               "type": "bearer",
@@ -3566,7 +3566,7 @@
               }
             ],
             "url": {
-              "raw": "{{orderServiceUrl}}/orders/status?orderStatus=PLACED"
+              "raw": "{{testBaseUrl}}/orders/status?orderStatus=PLACED"
             },
             "auth": {
               "type": "bearer",
@@ -3616,7 +3616,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/addperson",
+            "url": "{{testBaseUrl}}/delivery-person/addperson",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryAgentName\": \"Postman Agent {{$timestamp}}\",\n  \"deliveryAgentAadhar\": \"234567890123\",\n  \"deliveryAgentPhone\": \"9876543211\",\n  \"deliveryAgentEmail\": \"agent{{$timestamp}}@example.com\"\n}",
@@ -3665,7 +3665,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/addperson",
+            "url": "{{testBaseUrl}}/delivery-person/addperson",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryAgentName\": \"A\",\n  \"deliveryAgentAadhar\": \"123\",\n  \"deliveryAgentPhone\": \"123\",\n  \"deliveryAgentEmail\": \"bad\"\n}",
@@ -3710,7 +3710,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person",
+            "url": "{{testBaseUrl}}/delivery-person",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3745,7 +3745,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}",
+            "url": "{{testBaseUrl}}/delivery-person/{{deliveryAgentId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3780,7 +3780,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/999999999",
+            "url": "{{testBaseUrl}}/delivery-person/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -3820,7 +3820,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/update/{{deliveryAgentId}}",
+            "url": "{{testBaseUrl}}/delivery-person/update/{{deliveryAgentId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryAgentName\": \"Updated Agent\"\n}",
@@ -3868,7 +3868,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/update/999999999",
+            "url": "{{testBaseUrl}}/delivery-person/update/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryAgentName\": \"Updated\"\n}",
@@ -3917,7 +3917,7 @@
               }
             ],
             "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person"
+              "raw": "{{testBaseUrl}}/delivery-person"
             }
           },
           "event": [
@@ -3945,7 +3945,7 @@
               }
             ],
             "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-person"
+              "raw": "{{testBaseUrl}}/delivery-person"
             },
             "auth": {
               "type": "bearer",
@@ -3995,7 +3995,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "url": "{{testBaseUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
@@ -4044,7 +4044,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "url": "{{testBaseUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"orderId\": 0,\n  \"deliveryAgentId\": 0\n}",
@@ -4093,7 +4093,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "url": "{{testBaseUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"orderId\": 999998,\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
@@ -4142,7 +4142,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments",
+            "url": "{{testBaseUrl}}/delivery-assignments",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryAgentId\": \"{{deliveryAgentId}}\"\n}",
@@ -4187,7 +4187,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}",
+            "url": "{{testBaseUrl}}/delivery-assignments/{{deliveryAssignmentId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -4222,7 +4222,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999",
+            "url": "{{testBaseUrl}}/delivery-assignments/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -4258,7 +4258,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/all",
+            "url": "{{testBaseUrl}}/delivery-assignments/all",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -4293,7 +4293,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/delivery-person/{{deliveryAgentId}}/assignments",
+            "url": "{{testBaseUrl}}/delivery-assignments/delivery-person/{{deliveryAgentId}}/assignments",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -4332,7 +4332,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "url": "{{testBaseUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryStatus\": \"ACCEPTED\"\n}",
@@ -4380,7 +4380,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "url": "{{testBaseUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryStatus\": \"COLLECTED\"\n}",
@@ -4428,7 +4428,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "url": "{{testBaseUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryStatus\": \"IN_TRANSIT\"\n}",
@@ -4476,7 +4476,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "url": "{{testBaseUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryStatus\": \"DELIVERED\"\n}",
@@ -4520,7 +4520,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-person/{{deliveryAgentId}}",
+            "url": "{{testBaseUrl}}/delivery-person/{{deliveryAgentId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -4559,7 +4559,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "url": "{{testBaseUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{}",
@@ -4608,7 +4608,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
+            "url": "{{testBaseUrl}}/delivery-assignments/{{deliveryAssignmentId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryStatus\": \"DELIVERED\"\n}",
@@ -4657,7 +4657,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{deliveryServiceUrl}}/delivery-assignments/999999999/status",
+            "url": "{{testBaseUrl}}/delivery-assignments/999999999/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"deliveryStatus\": \"ACCEPTED\"\n}",
@@ -4703,7 +4703,7 @@
               }
             ],
             "url": {
-              "raw": "{{deliveryServiceUrl}}/delivery-assignments/all"
+              "raw": "{{testBaseUrl}}/delivery-assignments/all"
             },
             "auth": {
               "type": "bearer",
@@ -4735,6 +4735,12 @@
           "response": []
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "testBaseUrl",
+      "value": "{{testBaseUrl}"
     }
   ]
 }
