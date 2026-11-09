@@ -45,6 +45,7 @@ OpenAPI specification:
 | GET | \`/users/{userId}\` | Get user by ID |
 | PATCH | \`/users/{userId}\` | Update user |
 | DELETE | \`/users/{userId}\` | Delete user |
+| PATCH | \`/users/{userId}/role\` | ADMIN-only role management |
 
 ## Authentication
 
@@ -250,7 +251,17 @@ Set:
 - `FoodManagement-USER` for USER tests
 - `FoodManagement-ADMIN` for ADMIN tests
 
-Validation status: **Implementation ready; runtime/Postman validation pending.**
+Validation status: **Complete — direct-service, Gateway, and Postman security regression scenarios passed.**
+
+Validated:
+- Public registration always creates USER
+- USER cannot update another user's profile
+- ADMIN can update another user's profile
+- USER cannot change another user's role
+- ADMIN can promote a USER
+- ADMIN can demote another ADMIN
+- Last-ADMIN protection works
+- Gateway routing preserves the same USER / ADMIN authorization behavior
 
 ## API testing with sample data
 
