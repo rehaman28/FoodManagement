@@ -1236,3 +1236,26 @@ Validation status:
 - Implementation: COMPLETE
 - Runtime/Postman validation: PENDING
 - Resilience work after validation: continue with the remaining planned approaches after the timeout slice.
+
+
+LATEST API TESTING / POSTMAN STANDARDIZATION — 2026-11-09
+
+Testing endpoint:
+- All canonical Postman collections now use {{testBaseUrl}} with the default value http://localhost:8080.
+- The API Gateway is the single canonical testing entry point.
+- Direct service URLs remain in environments only for troubleshooting.
+
+Collections synchronized:
+- FoodManagement-Login.postman_collection.json
+- FoodManagement-UserManagement.postman_collection.json
+- FoodManagement-RestaurantManagement.postman_collection.json
+- FoodManagement-OrderManagement.postman_collection.json
+- FoodManagement-DeliveryManagement.postman_collection.json
+- FoodManagement-Overall.postman_collection.json
+- FoodManagement-API-Gateway.postman_collection.json
+- usermanagement/src/IntegrationTest/FoodManagement-UserManagement.postman_collection.json
+
+README synchronization:
+- Root README now contains sample request/response bodies for login, users, role management, restaurants, items, orders, and delivery flows.
+- User, Restaurant, Order, Delivery, and API Gateway READMEs now contain canonical API-testing examples with sample request/response bodies.
+- Direct-service testing remains documented as troubleshooting only.
