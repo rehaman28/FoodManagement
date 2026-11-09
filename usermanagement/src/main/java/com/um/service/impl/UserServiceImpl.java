@@ -2,6 +2,8 @@ package com.um.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,8 @@ import com.um.service.UserService;
 
 @Service 
 public class UserServiceImpl implements UserService{
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder  passwordEncoder;
@@ -80,6 +84,9 @@ public class UserServiceImpl implements UserService{
 
         boolean isAdmin = currentUser.getRole() == Role.ADMIN;
         boolean isSelf = currentUser.getUserId() == userId;
+
+        log.debug("Profile update authorization: actorUserId={}, actorRole={}, targetUserId={}, isAdmin={}, isSelf={}",
+                currentUser.getUserId(), currentUser.getRole(), userId, isAdmin, isSelf);
 
         if (!isAdmin && !isSelf) {
         throw new AccessDeniedException(
@@ -195,12 +202,17 @@ public class UserServiceImpl implements UserService{
         Role oldRole = targetUser.getRole();
         Role newRole = userRoleRequestDto.getRole();
 
+        log.info("Processing role change: targetUserId={}, oldRole={}, newRole={}",
+                userId, oldRole, newRole);
+
         validateRoleChange(targetUser, oldRole, newRole);
 
         if (userRoleRequestDto.getRole() != null) {
             targetUser.setRole(newRole);
         }
         User savedUser = userRepository.save(targetUser);
+        log.info("Role change persisted: targetUserId={}, role={}",
+                savedUser.getUserId(), savedUser.getRole());
         return buildUserResponseEntity(savedUser);
     }  
     
@@ -212,6 +224,9 @@ public class UserServiceImpl implements UserService{
     if (oldRole == Role.ADMIN
             && newRole != Role.ADMIN
             && userRepository.countByRole(Role.ADMIN) <= 1) {
+
+        log.warn("Last ADMIN protection triggered: targetUserId={}, oldRole={}, requestedRole={}",
+                targetUser.getUserId(), oldRole, newRole);
 
         throw new InvalidUserRequestException(
                 "At least one ADMIN user must remain");
