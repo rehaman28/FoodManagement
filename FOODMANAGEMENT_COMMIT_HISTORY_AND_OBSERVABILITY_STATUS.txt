@@ -210,6 +210,39 @@ The project-level roadmap document also contains a GitHub-renderable Mermaid arc
 FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
 
 ============================================================
+LATEST SECURITY / API VALIDATION DELTA — 2026-11-09
+============================================================
+
+User Administration Hardening:
+- Runtime and Postman validation completed successfully.
+- Public POST /users role-injection protection -> passed.
+- USER own-profile update -> passed.
+- USER update of another user -> 403 -> passed.
+- ADMIN update of another user -> passed.
+- USER promotion attempt -> 403 -> passed.
+- ADMIN promotion of USER -> passed.
+- ADMIN demotion of another ADMIN -> passed.
+- Last-ADMIN protection -> passed.
+- API Gateway user-administration regression -> passed.
+
+Role endpoint mapping fix:
+- Corrected User Management role endpoint mapping so the class-level /users mapping combines with a subpath of /{userId}/role.
+- Security continues to protect the full /users/{userId}/role path.
+- Removed the temporary /error permitAll matcher after the underlying mapping issue was fixed.
+
+Diagnostic logging:
+- Added targeted User Management logging for JWT authentication, login, role authorization, profile ownership, role changes, last-ADMIN protection, and handled application exceptions.
+- Logging intentionally excludes passwords, JWT contents, and signing secrets.
+
+Current execution gate:
+- Phase 7A User Administration Hardening: COMPLETE and validated.
+- Phase 11 / 11A synchronous communication + API Gateway: COMPLETE and validated.
+- Phase 18A Observability Foundation: COMPLETE and validated.
+- Phase 12 Fault Tolerance: IN PROGRESS, beginning with Timeouts.
+- Failure-path testing and Phase 18B/18C observability expansion: PENDING after resilience controls.
+- Phase 11B Kafka / Event-Driven Architecture: DEFERRED until resilience and observability gates pass.
+
+============================================================
 2. CUMULATIVE COMMIT HISTORY
 ============================================================
 
