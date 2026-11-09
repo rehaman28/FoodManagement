@@ -252,6 +252,87 @@ Set:
 
 Validation status: **Implementation ready; runtime/Postman validation pending.**
 
+## API testing with sample data
+
+Canonical endpoint:
+
+    http://localhost:8080
+
+Postman uses testBaseUrl for all requests. Direct User Management port 8002 remains available for troubleshooting.
+
+### Create USER
+
+    POST {{testBaseUrl}}/users
+
+Request:
+
+    {
+      "userName": "Jacob",
+      "userPhone": "9876543210",
+      "email": "jacob@example.com",
+      "password": "Password@123",
+      "userAddresses": [
+        {
+          "doorNumber": "12-3",
+          "street": "MG Road",
+          "city": "Hyderabad",
+          "district": "Hyderabad",
+          "country": "India",
+          "pincode": "500001"
+        }
+      ]
+    }
+
+Response:
+
+    {
+      "userId": 101,
+      "userName": "Jacob",
+      "userPhone": "9876543210",
+      "userRoles": "USER"
+    }
+
+### Update own profile
+
+    PATCH {{testBaseUrl}}/users/{{currentUserId}}
+
+Request:
+
+    {
+      "userName": "Jacob Updated"
+    }
+
+Response:
+
+    {
+      "userId": 101,
+      "userName": "Jacob Updated",
+      "userPhone": "9876543210",
+      "userRoles": "USER"
+    }
+
+### ADMIN role management
+
+    PATCH {{testBaseUrl}}/users/{{otherUserId}}/role
+
+Request:
+
+    {
+      "role": "ADMIN"
+    }
+
+Response:
+
+    {
+      "userId": 102,
+      "userName": "Admin Candidate",
+      "userPhone": "9876543211",
+      "userRoles": "ADMIN"
+    }
+
+Only ADMIN may change roles. The final ADMIN cannot be demoted.
+
+
 ## Basic testing flow
 
     Start User Management :8002
