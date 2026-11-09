@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FoodManagement - User Management",
-    "description": "FoodManagement User Management regression suite including public USER-only registration, self-vs-admin profile authorization, ADMIN-only role management, and last-ADMIN protection.",
+    "description": "User Management regression. All requests use {{testBaseUrl}} (API Gateway) by default. Direct User Management URLs remain available for troubleshooting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -22,7 +22,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Postman User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"postman{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
@@ -64,7 +64,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"P\",\n  \"userPhone\": \"123\",\n  \"email\": \"bad-email\",\n  \"password\": \"short\",\n  \"userAddresses\": []\n}",
@@ -102,7 +102,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -137,7 +137,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -172,7 +172,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999",
+            "url": "{{testBaseUrl}}/users/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -212,7 +212,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Updated Postman User\"\n}",
@@ -260,7 +260,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userPhone\": \"123\"\n}",
@@ -309,7 +309,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999",
+            "url": "{{testBaseUrl}}/users/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Updated\"\n}",
@@ -354,7 +354,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999",
+            "url": "{{testBaseUrl}}/users/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -390,7 +390,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -429,7 +429,7 @@
               }
             ],
             "url": {
-              "raw": "{{userServiceUrl}}/users"
+              "raw": "{{testBaseUrl}}/users"
             }
           },
           "event": [
@@ -457,7 +457,7 @@
               }
             ],
             "url": {
-              "raw": "{{userServiceUrl}}/users"
+              "raw": "{{testBaseUrl}}/users"
             },
             "auth": {
               "type": "bearer",
@@ -499,7 +499,7 @@
               }
             ],
             "url": {
-              "raw": "{{userServiceUrl}}/users/999999999"
+              "raw": "{{testBaseUrl}}/users/999999999"
             },
             "auth": {
               "type": "bearer",
@@ -552,7 +552,7 @@
             "auth": {
               "type": "noauth"
             },
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Postman Security User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"postmansecurity{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"role\": \"ADMIN\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
@@ -605,7 +605,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{currentUserId}}",
+            "url": "{{testBaseUrl}}/users/{{currentUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Self Updated {{$timestamp}}\"\n}",
@@ -655,7 +655,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Cross User Update {{$timestamp}}\"\n}",
@@ -705,7 +705,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"ADMIN\"\n}",
@@ -757,7 +757,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"USER\"\n}",
@@ -809,7 +809,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{currentUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{currentUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"USER\"\n}",
@@ -847,5 +847,11 @@
         "value": "{{TOKEN}}"
       }
     ]
-  }
+  },
+  "variable": [
+    {
+      "key": "testBaseUrl",
+      "value": "{{testBaseUrl}"
+    }
+  ]
 }
