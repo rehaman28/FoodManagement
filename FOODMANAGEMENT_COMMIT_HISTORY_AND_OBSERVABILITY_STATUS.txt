@@ -1213,3 +1213,26 @@ Documentation and roadmap:
 Current point:
 - The repository has just started the observability implementation with the `observability dependencies` commit.
 - The next implementation slice is Fault Tolerance, beginning with Timeouts; Kafka remains deferred behind the resilience and observability gates.
+
+
+LATEST USER ADMINISTRATION HARDENING — 2026-11-09
+
+Implementation reviewed against target model:
+- Public POST /users creates USER only.
+- USER can update only the authenticated user's own profile.
+- ADMIN can update any user profile.
+- PATCH /users/{userId}/role is ADMIN-only.
+- At least one ADMIN must remain.
+- Ownership denial is mapped to HTTP 403 in User Management.
+
+Validation assets synchronized:
+- FoodManagement-UserManagement.postman_collection.json
+- usermanagement/src/IntegrationTest/FoodManagement-UserManagement.postman_collection.json
+- FoodManagement-API-Gateway.postman_collection.json
+- FoodManagement-Overall.postman_collection.json
+- USER / ADMIN / generic Postman environments now include currentUserId and otherUserId.
+
+Validation status:
+- Implementation: COMPLETE
+- Runtime/Postman validation: PENDING
+- Resilience work after validation: continue with the remaining planned approaches after the timeout slice.
