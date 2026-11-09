@@ -245,6 +245,61 @@ Validated successfully:
 - Delivery Management remains ready for the planned Kafka event-driven Phase 11B work.
 
 
+## API testing with sample data
+
+Canonical endpoint:
+
+    http://localhost:8080
+
+Postman uses testBaseUrl for all requests. Direct Delivery Management port 8004 remains available for troubleshooting.
+
+### Create delivery agent
+
+    POST {{testBaseUrl}}/delivery-person/addperson
+
+Request:
+
+    {
+      "deliveryAgentName": "Rahul Kumar",
+      "deliveryAgentAadhar": "234567890123",
+      "deliveryAgentPhone": "9876543211",
+      "deliveryAgentEmail": "rahul@example.com"
+    }
+
+Response:
+
+    {
+      "deliveryAgentId": 601,
+      "deliveryAgentName": "Rahul Kumar",
+      "deliveryAgentAadhar": "234567890123",
+      "deliveryAgentPhone": "9876543211",
+      "deliveryAgentEmail": "rahul@example.com",
+      "isAgentAvailable": true
+    }
+
+### Create assignment
+
+    POST {{testBaseUrl}}/delivery-assignments
+
+Request:
+
+    {
+      "orderId": "{{orderId}}",
+      "deliveryAgentId": "{{deliveryAgentId}}"
+    }
+
+Response:
+
+    {
+      "deliveryAssignmentId": 701,
+      "deliveryStatus": "ASSIGNED",
+      "orderId": 401,
+      "assignmentDate": "2026-11-09T16:00:00",
+      "deliveryAgentId": 601,
+      "deliveryAgentName": "Rahul Kumar"
+    }
+
+
 ## Current roadmap status
 
 Project-level roadmap and architecture:
