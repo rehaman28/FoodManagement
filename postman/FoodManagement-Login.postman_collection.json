@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "b4a7f95f-2d4e-4fd4-ae4c-9dd8f31d8f4a",
     "name": "FoodManagement - Login",
-    "description": "Authentication collection for the existing API regression suites. Select FoodManagement-USER or FoodManagement-ADMIN, run Login - Current Environment, then use the same environment for the secured service suites.",
+    "description": "Authentication regression. All requests use {{testBaseUrl}} (API Gateway) by default; direct service URLs remain available in environments for troubleshooting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -33,9 +33,9 @@
           }
         },
         "url": {
-          "raw": "{{userServiceUrl}}/auth/login",
+          "raw": "{{testBaseUrl}}/auth/login",
           "host": [
-            "{{userServiceUrl}}"
+            "{{testBaseUrl}}"
           ],
           "path": [
             "auth",
@@ -96,9 +96,9 @@
           }
         },
         "url": {
-          "raw": "{{userServiceUrl}}/auth/login",
+          "raw": "{{testBaseUrl}}/auth/login",
           "host": [
-            "{{userServiceUrl}}"
+            "{{testBaseUrl}}"
           ],
           "path": [
             "auth",
@@ -147,9 +147,9 @@
           }
         },
         "url": {
-          "raw": "{{userServiceUrl}}/auth/login",
+          "raw": "{{testBaseUrl}}/auth/login",
           "host": [
-            "{{userServiceUrl}}"
+            "{{testBaseUrl}}"
           ],
           "path": [
             "auth",
@@ -170,6 +170,12 @@
         }
       ],
       "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "testBaseUrl",
+      "value": "{{testBaseUrl}"
     }
   ]
 }
