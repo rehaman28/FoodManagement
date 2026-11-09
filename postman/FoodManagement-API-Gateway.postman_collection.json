@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "d0bb1c0a-9f4c-4f27-8c40-11a2e8b4d901",
     "name": "FoodManagement - API Gateway Regression",
-    "description": "Phase 11A Gateway regression suite. Use FoodManagement-USER or FoodManagement-ADMIN environment. Login through the Gateway first, then validate edge JWT enforcement, Eureka-based routing, and downstream USER/ADMIN RBAC. Existing direct-service collections remain unchanged for troubleshooting.",
+    "description": "API Gateway regression. Requests use {{testBaseUrl}} so the same canonical test endpoint is used across all Postman collections.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -13,6 +13,10 @@
     {
       "key": "TOKEN",
       "value": ""
+    },
+    {
+      "key": "testBaseUrl",
+      "value": "{{testBaseUrl}"
     }
   ],
   "item": [
@@ -46,9 +50,9 @@
               }
             },
             "url": {
-              "raw": "{{gatewayBaseUrl}}/auth/login",
+              "raw": "{{testBaseUrl}}/auth/login",
               "host": [
-                "{{gatewayBaseUrl}}"
+                "{{testBaseUrl}}"
               ],
               "path": [
                 "auth",
@@ -86,7 +90,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{gatewayBaseUrl}}/restaurants"
+            "url": "{{testBaseUrl}}/restaurants"
           },
           "event": [
             {
@@ -121,7 +125,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{gatewayBaseUrl}}/restaurants"
+            "url": "{{testBaseUrl}}/restaurants"
           },
           "event": [
             {
@@ -151,7 +155,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{gatewayBaseUrl}}/restaurants",
+            "url": "{{testBaseUrl}}/restaurants",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -186,7 +190,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{gatewayBaseUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -222,7 +226,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{gatewayBaseUrl}}/orders",
+            "url": "{{testBaseUrl}}/orders",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -258,7 +262,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{gatewayBaseUrl}}/delivery-person",
+            "url": "{{testBaseUrl}}/delivery-person",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -297,7 +301,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{gatewayBaseUrl}}/not-a-real-gateway-route"
+            "url": "{{testBaseUrl}}/not-a-real-gateway-route"
           },
           "event": [
             {
@@ -334,7 +338,7 @@
             "auth": {
               "type": "noauth"
             },
-            "url": "{{gatewayBaseUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Gateway Security User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"gateways{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"role\": \"ADMIN\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
@@ -385,7 +389,7 @@
                 }
               ]
             },
-            "url": "{{gatewayBaseUrl}}/users/{{currentUserId}}",
+            "url": "{{testBaseUrl}}/users/{{currentUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Gateway Self Update {{$timestamp}}\"\n}",
@@ -433,7 +437,7 @@
                 }
               ]
             },
-            "url": "{{gatewayBaseUrl}}/users/{{otherUserId}}",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Gateway Cross User Update {{$timestamp}}\"\n}",
@@ -481,7 +485,7 @@
                 }
               ]
             },
-            "url": "{{gatewayBaseUrl}}/users/{{otherUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"ADMIN\"\n}",
