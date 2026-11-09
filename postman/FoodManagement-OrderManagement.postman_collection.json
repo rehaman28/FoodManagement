@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FoodManagement - Order Management",
-    "description": "FoodManagement Phase 5 — Postman-only API regression baseline. JWT/RBAC regression uses FoodManagement-USER or FoodManagement-ADMIN with {{TOKEN}}.",
+    "description": "Order Management regression. All requests use {{testBaseUrl}} (API Gateway) by default. Direct Order Management URLs remain available for troubleshooting.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -22,7 +22,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": \"{{itemId}}\"\n    }\n  ]\n}",
@@ -71,7 +71,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 0,\n  \"restaurantId\": 0,\n  \"OrderingItems\": []\n}",
@@ -120,7 +120,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": 999999999,\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 1\n    }\n  ]\n}",
@@ -169,7 +169,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/placeorder",
+            "url": "{{testBaseUrl}}/orders/placeorder",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": 999999999\n    }\n  ]\n}",
@@ -214,7 +214,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -249,7 +249,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/999999999",
+            "url": "{{testBaseUrl}}/orders/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -285,7 +285,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders",
+            "url": "{{testBaseUrl}}/orders",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -320,7 +320,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/user/1",
+            "url": "{{testBaseUrl}}/orders/user/1",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -355,7 +355,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/user/999999999",
+            "url": "{{testBaseUrl}}/orders/user/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -390,7 +390,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/restaurant/{{restaurantId}}",
+            "url": "{{testBaseUrl}}/orders/restaurant/{{restaurantId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -425,7 +425,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/restaurant/999999999",
+            "url": "{{testBaseUrl}}/orders/restaurant/999999999",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -460,7 +460,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/status?orderStatus=Ordered",
+            "url": "{{testBaseUrl}}/orders/status?orderStatus=Ordered",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -495,7 +495,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/status?orderStatus=INVALID",
+            "url": "{{testBaseUrl}}/orders/status?orderStatus=INVALID",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -535,7 +535,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
@@ -583,7 +583,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{}",
@@ -632,7 +632,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/{{orderId}}/status",
+            "url": "{{testBaseUrl}}/orders/{{orderId}}/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"OrderStatus\": \"Delivered\"\n}",
@@ -681,7 +681,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{orderServiceUrl}}/orders/999999999/status",
+            "url": "{{testBaseUrl}}/orders/999999999/status",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"OrderStatus\": \"Accepted\"\n}",
@@ -730,7 +730,7 @@
               }
             ],
             "url": {
-              "raw": "{{orderServiceUrl}}/orders"
+              "raw": "{{testBaseUrl}}/orders"
             }
           },
           "event": [
@@ -758,7 +758,7 @@
               }
             ],
             "url": {
-              "raw": "{{orderServiceUrl}}/orders"
+              "raw": "{{testBaseUrl}}/orders"
             },
             "auth": {
               "type": "bearer",
@@ -800,7 +800,7 @@
               }
             ],
             "url": {
-              "raw": "{{orderServiceUrl}}/orders/status?orderStatus=PLACED"
+              "raw": "{{testBaseUrl}}/orders/status?orderStatus=PLACED"
             },
             "auth": {
               "type": "bearer",
@@ -843,5 +843,11 @@
         "value": "{{TOKEN}}"
       }
     ]
-  }
+  },
+  "variable": [
+    {
+      "key": "testBaseUrl",
+      "value": "{{testBaseUrl}"
+    }
+  ]
 }
