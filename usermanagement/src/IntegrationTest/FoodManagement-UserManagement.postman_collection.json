@@ -22,7 +22,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Postman User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"postman{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
@@ -61,7 +61,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"P\",\n  \"userPhone\": \"123\",\n  \"email\": \"bad-email\",\n  \"password\": \"short\",\n  \"userAddresses\": []\n}",
@@ -96,7 +96,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users"
+            "url": "{{testBaseUrl}}/users"
           },
           "event": [
             {
@@ -121,7 +121,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}"
+            "url": "{{testBaseUrl}}/users/{{userId}}"
           },
           "event": [
             {
@@ -146,7 +146,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999"
+            "url": "{{testBaseUrl}}/users/999999999"
           },
           "event": [
             {
@@ -176,7 +176,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Updated Postman User\"\n}",
@@ -214,7 +214,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}",
+            "url": "{{testBaseUrl}}/users/{{userId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userPhone\": \"123\"\n}",
@@ -253,7 +253,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999",
+            "url": "{{testBaseUrl}}/users/999999999",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Updated\"\n}",
@@ -288,7 +288,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/999999999"
+            "url": "{{testBaseUrl}}/users/999999999"
           },
           "event": [
             {
@@ -314,7 +314,7 @@
                 "value": "application/json"
               }
             ],
-            "url": "{{userServiceUrl}}/users/{{userId}}"
+            "url": "{{testBaseUrl}}/users/{{userId}}"
           },
           "event": [
             {
@@ -351,7 +351,7 @@
             "auth": {
               "type": "noauth"
             },
-            "url": "{{userServiceUrl}}/users",
+            "url": "{{testBaseUrl}}/users",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Integration Security User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"integrationsecurity{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"role\": \"ADMIN\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
@@ -402,7 +402,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{currentUserId}}",
+            "url": "{{testBaseUrl}}/users/{{currentUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Integration Self Update {{$timestamp}}\"\n}",
@@ -450,7 +450,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userName\": \"Integration Cross User Update {{$timestamp}}\"\n}",
@@ -498,7 +498,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"ADMIN\"\n}",
@@ -546,7 +546,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{otherUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"USER\"\n}",
@@ -594,7 +594,7 @@
                 }
               ]
             },
-            "url": "{{userServiceUrl}}/users/{{currentUserId}}/role",
+            "url": "{{testBaseUrl}}/users/{{currentUserId}}/role",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"USER\"\n}",
@@ -619,6 +619,13 @@
           ]
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "testBaseUrl",
+      "value": "http://localhost:8080",
+      "description": "Canonical API testing endpoint. Use API Gateway by default; direct service URLs remain available for troubleshooting."
     }
   ]
 }
