@@ -47,6 +47,59 @@ Routes use Eureka service IDs:
     lb://ordermanagement
     lb://deliverymanagement
 
+## API testing with sample data
+
+Canonical endpoint:
+
+    http://localhost:8080
+
+All Postman collections use this endpoint through testBaseUrl.
+
+### Login through Gateway
+
+    POST {{testBaseUrl}}/auth/login
+
+Request:
+
+    {
+      "email": "<valid-user-or-admin-email>",
+      "password": "<valid-password>"
+    }
+
+Response:
+
+    {
+      "token": "<JWT>"
+    }
+
+### Protected route without JWT
+
+    GET {{testBaseUrl}}/restaurants
+
+Response:
+
+    HTTP 401 Unauthorized
+
+### User route through Gateway
+
+    GET {{testBaseUrl}}/users/{{currentUserId}}
+
+Header:
+
+    Authorization: Bearer <JWT>
+
+Response:
+
+    {
+      "userId": 101,
+      "userName": "Jacob",
+      "userPhone": "9876543210",
+      "userRoles": "USER"
+    }
+
+Direct service URLs remain available in Postman environments for troubleshooting.
+
+
 ## JWT edge validation
 
 The Gateway validates the incoming JWT before forwarding protected requests.
