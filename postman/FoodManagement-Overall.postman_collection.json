@@ -4740,7 +4740,7 @@
   "variable": [
     {
       "key": "testBaseUrl",
-      "value": "{{testBaseUrl}"
+      "value": "http://localhost:8080"
     }
   ]
 }
