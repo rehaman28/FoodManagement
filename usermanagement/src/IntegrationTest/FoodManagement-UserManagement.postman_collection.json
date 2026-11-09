@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "FoodManagement - User Management",
-    "description": "FoodManagement Phase 5 — Postman-only API regression baseline.",
+    "description": "User Management integration regression including registration privilege protection, profile ownership authorization, role management, and last-ADMIN protection.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -324,6 +324,295 @@
                 "exec": [
                   "pm.test(\"HTTP status is 204\",()=>pm.response.to.have.status(204));",
                   "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - User Administration Security",
+      "item": [
+        {
+          "name": "Create User - Role Injection Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": "{{userServiceUrl}}/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Integration Security User {{$timestamp}}\",\n  \"userPhone\": \"9876543210\",\n  \"email\": \"integrationsecurity{{$timestamp}}@example.com\",\n  \"password\": \"Postman@123\",\n  \"role\": \"ADMIN\",\n  \"userAddresses\": [\n    {\n      \"doorNumber\": \"12-3\",\n      \"street\": \"MG Road\",\n      \"city\": \"Hyderabad\",\n      \"district\": \"Hyderabad\",\n      \"country\": \"India\",\n      \"pincode\": \"500001\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 201\",()=>pm.response.to.have.status(201));",
+                  "const body=pm.response.json();",
+                  "pm.test(\"Public registration creates USER only\",()=>pm.expect(body.userRoles).to.eql(\"USER\"));",
+                  "if(body.userId!==undefined) pm.environment.set(\"otherUserId\",body.userId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Own Profile - 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{userServiceUrl}}/users/{{currentUserId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Integration Self Update {{$timestamp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Own profile update returns 200\",()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[RBAC] Update Other User - USER 403 / ADMIN 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{userServiceUrl}}/users/{{otherUserId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Integration Cross User Update {{$timestamp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\"); const expected=role===\"USER\"?403:200; pm.test(\"Status matches active role\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[RBAC] Promote Other User - USER 403 / ADMIN 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\"); const expected=role===\"USER\"?403:200; pm.test(\"Role promotion authorization\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[RBAC] Demote Other User - USER 403 / ADMIN 200",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{userServiceUrl}}/users/{{otherUserId}}/role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"USER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const role=pm.environment.get(\"role\"); const expected=role===\"USER\"?403:200; pm.test(\"Role demotion authorization\",()=>pm.expect(pm.response.code).to.eql(expected));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[MANUAL] Last ADMIN Protection",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{userServiceUrl}}/users/{{currentUserId}}/role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"USER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Last ADMIN cannot be demoted\",()=>pm.expect(pm.response.code).to.be.oneOf([400,409]));"
                 ]
               }
             }
