@@ -138,7 +138,7 @@ Implementation:
 - USER-accessible operations
 
 ### Phase 7A — User Administration Hardening
-Status: Implementation complete — runtime/Postman validation pending
+Status: Complete — implementation, direct-service validation, Gateway validation, and Postman regression passed
 
 Security model:
 - Public `POST /users` always creates `USER`
@@ -154,7 +154,16 @@ Validation assets:
 - `postman/FoodManagement-API-Gateway.postman_collection.json`
 - `postman/FoodManagement-Overall.postman_collection.json`
 
-Do not mark this hardening slice complete until the direct-service and Gateway Postman scenarios have passed.
+Validation completed successfully:
+- Public registration role-injection protection — passed
+- USER own-profile update — passed
+- USER update of another user -> 403 — passed
+- ADMIN update of another user — passed
+- USER role promotion attempt -> 403 — passed
+- ADMIN promotion of USER — passed
+- ADMIN demotion of another ADMIN — passed
+- Last-ADMIN protection — passed
+- Gateway user-administration regression — passed
 
 ### Phase 8 — Security Postman Regression
 Status: Complete
@@ -319,7 +328,7 @@ Candidate events:
 - OrderCancelled
 
 ### Phase 12 — Resilience and Fault Tolerance
-Status: Planned — executed between the observability foundation and the final observability expansion
+Status: In progress — timeout implementation started; retries, circuit breakers, fallbacks, bulkheads, rate limiting, and failure-path validation remain pending
 
 Purpose:
 - Protect synchronous service calls from latency spikes and dependency failures
@@ -783,6 +792,22 @@ AWS deployment is blocked until all of the following are complete and validated:
 - Phase 18C — Observability Expansion
 - Kafka / event-driven design remains deferred until those gates are complete.
 
+
+## Current project phase status
+
+| Phase | Status | Pending items |
+|---|---|---|
+| 1–2 | Complete | None |
+| 3–4 | Core complete | Hardening items remain |
+| 5–9 | Complete | None |
+| 10 | Complete & validated | Cleanup of unused legacy artifacts is deferred |
+| 11A | Complete & validated | None |
+| 11B | Pending / deferred | Kafka implementation after resilience and observability gates |
+| 12 | In progress | Timeouts started; retries, circuit breakers, fallbacks, bulkheads, rate limiting, failure-path tests |
+| 13–17 | Pending | Data hardening, testing, Docker, Kubernetes, CI/CD |
+| 18A | Complete & validated | None |
+| 18B–18C | Pending | Resilience visibility, logging, tracing, dashboards, alerts |
+| 19 | Planned / gated | Starts only after Phases 12–18C and platform gates are complete |
 
 ## API testing with sample data
 
