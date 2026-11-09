@@ -3,6 +3,8 @@ package com.um.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,6 +34,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Authentication Resource", description = "Authentication resource controller")
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
@@ -60,6 +64,8 @@ public class AuthController {
     public LoginResponseDto login(
             @Valid @RequestBody LoginRequestDto request) {
 
+        log.info("Login attempt: email={}", request.getEmail());
+
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -81,6 +87,7 @@ public class AuthController {
         extraClaims.put(ApplicationConstants.ROLE_CLAIM, role);
         String token = jwtService.generateToken(extraClaims, authentication.getName());
 
+        log.info("Login successful: email={}, role={}", authentication.getName(), role);
         return new LoginResponseDto(token);
     }   
 }
