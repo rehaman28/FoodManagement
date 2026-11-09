@@ -76,9 +76,6 @@ public class SecurityConfig {
                     .requestMatchers("/actuator/**")
                     .permitAll()
 
-                    .requestMatchers("/error")
-                    .permitAll()
-
                     //Any Other Request need to authenticated
                     .anyRequest()
                     .authenticated())
