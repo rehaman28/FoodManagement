@@ -319,6 +319,74 @@ For a complete end-to-end sequence, use:
 
     /postman/FoodManagement-Overall.postman_collection.json
 
+## API testing with sample data
+
+Canonical endpoint:
+
+    http://localhost:8080
+
+Postman uses testBaseUrl for all requests. Direct Order Management port 8003 remains available for troubleshooting.
+
+### Place order
+
+    POST {{testBaseUrl}}/orders/placeorder
+
+Request:
+
+    {
+      "userId": 101,
+      "restaurantId": "{{restaurantId}}",
+      "OrderingItems": [
+        {
+          "quantity": 2,
+          "itemId": "{{itemId}}"
+        }
+      ]
+    }
+
+Response:
+
+    {
+      "orderId": 401,
+      "restaurantName": "Hyderabad Food Hub",
+      "orderPrice": 240.0,
+      "orderStatus": "Ordered",
+      "orderItems": [
+        {
+          "orderItemId": 501,
+          "quantity": 2,
+          "itemId": 301
+        }
+      ]
+    }
+
+### Update order status
+
+    PATCH {{testBaseUrl}}/orders/{{orderId}}/status
+
+Request:
+
+    {
+      "OrderStatus": "Accepted"
+    }
+
+Response:
+
+    {
+      "orderId": 401,
+      "restaurantName": "Hyderabad Food Hub",
+      "orderPrice": 240.0,
+      "orderStatus": "Accepted",
+      "orderItems": [
+        {
+          "orderItemId": 501,
+          "quantity": 2,
+          "itemId": 301
+        }
+      ]
+    }
+
+
 ## Phase 11 validation status
 
 Status: Complete — synchronous communication and API Gateway edge validation successful
