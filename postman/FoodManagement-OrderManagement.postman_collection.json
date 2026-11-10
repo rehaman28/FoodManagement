@@ -205,6 +205,106 @@
           ]
         },
         {
+          "name": "Place Order - Restaurant Service Unavailable [503]",
+          "description": "Prerequisite: keep User Management and Eureka running, but stop Restaurant Management so no restaurantmanagement instance is available.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{testBaseUrl}}/orders/placeorder",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": \"{{itemId}}\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 503\",()=>pm.response.to.have.status(503));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(503));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(503));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Place Order - Restaurant Service Timeout [504]",
+          "description": "Prerequisite: keep User Management and Eureka running and make Restaurant Management exceed the configured Feign timeout while processing the restaurant request.",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{TOKEN}}"
+                }
+              ]
+            },
+            "url": "{{testBaseUrl}}/orders/placeorder",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"restaurantId\": \"{{restaurantId}}\",\n  \"OrderingItems\": [\n    {\n      \"quantity\": 1,\n      \"itemId\": \"{{itemId}}\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is 504\",()=>pm.response.to.have.status(504));",
+                  "pm.test(\"Response status matches expected\",()=>pm.expect(pm.response.code).to.eql(504));",
+                  "pm.test(\"Error response contains status\",()=>pm.expect(pm.response.json().status).to.eql(504));"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Get Order - Happy",
           "request": {
             "method": "GET",
@@ -831,7 +931,8 @@
           ],
           "response": []
         }
-      ]
+      ],
+      "description": "Order Management API regression including successful, validation, domain-not-found, and downstream resilience scenarios."
     }
   ],
   "auth": {
