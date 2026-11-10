@@ -238,8 +238,9 @@ Current execution gate:
 - Phase 7A User Administration Hardening: COMPLETE and validated.
 - Phase 11 / 11A synchronous communication + API Gateway: COMPLETE and validated.
 - Phase 18A Observability Foundation: COMPLETE and validated.
-- Phase 12 Fault Tolerance: IN PROGRESS, beginning with Timeouts.
-- Failure-path testing and Phase 18B/18C observability expansion: PENDING after resilience controls.
+- Phase 12 Fault Tolerance: IN PROGRESS; downstream service-unavailable (503) and timeout (504) failure paths are implemented and validated.
+- Remaining Phase 12 work: retries, circuit breakers, fallbacks, bulkhead isolation, rate limiting, and broader failure-path validation.
+- Phase 18B/18C observability expansion: PENDING after the remaining resilience controls and failure-path gates.
 - Phase 11B Kafka / Event-Driven Architecture: DEFERRED until resilience and observability gates pass.
 
 ============================================================
@@ -1292,3 +1293,33 @@ README synchronization:
 - Root README now contains sample request/response bodies for login, users, role management, restaurants, items, orders, and delivery flows.
 - User, Restaurant, Order, Delivery, and API Gateway READMEs now contain canonical API-testing examples with sample request/response bodies.
 - Direct-service testing remains documented as troubleshooting only.
+
+============================================================
+LATEST PHASE 12 / POSTMAN FAILURE-PATH DELTA — 2026-11-10
+============================================================
+
+Order Management failure-path validation:
+- Restaurant Management unavailable / no Eureka instance -> HTTP 503 -> PASS.
+- Restaurant Management downstream timeout -> HTTP 504 -> PASS.
+
+Postman synchronization:
+- Added `Place Order - Restaurant Service Unavailable [503]` to the canonical Order Management collection.
+- Added `Place Order - Restaurant Service Timeout [504]` to the canonical Order Management collection.
+- The same two scenarios are synchronized in `ordermanagement/src/IntegrationTest/FoodManagement-OrderManagement.postman_collection.json`.
+- Both requests use {{testBaseUrl}} and the existing Bearer-token collection authentication.
+- No other Order Management failure-path scenarios were added in this update.
+
+Current Phase 12 gate:
+- Downstream service-unavailable handling -> VALIDATED.
+- Downstream timeout handling -> VALIDATED.
+- Retry policies -> PENDING.
+- Circuit breakers -> PENDING.
+- Fallbacks -> PENDING.
+- Bulkhead isolation -> PENDING.
+- Rate limiting -> PENDING.
+- Broader resilience/failure-path validation -> PENDING.
+
+Postman update commits:
+- 08e0a7c823d50de4f543ec628c75e4b1e83c7be0 — canonical Order Management Postman failure-path cases.
+- 6dc090d9ef77ae5620aa2bc086ca731ad91f3a76 — synchronized Order Management integration Postman collection.
+
