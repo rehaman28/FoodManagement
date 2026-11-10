@@ -387,6 +387,45 @@ Response:
     }
 
 
+### Downstream failure-path validation
+
+The Order Management Postman regression includes two controlled downstream failure cases.
+
+#### Restaurant Service Unavailable — 503
+
+    POST {{testBaseUrl}}/orders/placeorder
+
+Validation setup:
+
+- Keep Eureka, User Management, and Order Management running.
+- Stop Restaurant Management so no `restaurantmanagement` instance is available through service discovery.
+- Execute `Place Order - Restaurant Service Unavailable [503]`.
+
+Expected result:
+
+    HTTP 503 Service Unavailable
+
+#### Restaurant Service Timeout — 504
+
+    POST {{testBaseUrl}}/orders/placeorder
+
+Validation setup:
+
+- Keep Eureka, User Management, Order Management, and Restaurant Management available.
+- Use the controlled timeout validation setup that causes the Restaurant Management request to exceed the configured Feign timeout.
+- Execute `Place Order - Restaurant Service Timeout [504]`.
+
+Expected result:
+
+    HTTP 504 Gateway Timeout
+
+Validation status:
+
+- Restaurant Service Unavailable [503] -> PASS
+- Restaurant Service Timeout [504] -> PASS
+
+These are the only downstream failure-path cases added in this update. Retry, circuit-breaker, fallback, bulkhead, and rate-limiting behavior remain separate Phase 12 work.
+
 ## Phase 11 validation status
 
 Status: Complete — synchronous communication and API Gateway edge validation successful
