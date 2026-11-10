@@ -115,6 +115,12 @@ public class RestaurantController {
                             schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<String> getRestaurantName(@PathVariable(name = "restaurantId") Long id) {
+        //     try {
+        //             Thread.sleep(5_000);
+        //     } catch (InterruptedException ex) {
+        //             Thread.currentThread().interrupt();
+        //             throw new RuntimeException(ex);
+        //     }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(restaurantService.getRestaurant(id).getRestaurantName());
     }

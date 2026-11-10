@@ -15,11 +15,11 @@ spring:
       client:
         config:
           default:
-            connect-timeout:  2000
+            connectTimeout: 2000
             readTimeout: 3000
           usermanagement:
-              connect-timeout:  2000
-              readTimeout: 3000
+            connectTimeout: 2000
+            readTimeout: 3000
           restaurantmanagement:
             connectTimeout: 2000
             readTimeout: 3000
@@ -56,4 +56,3 @@ management:
           server:
             requests: true
   
-

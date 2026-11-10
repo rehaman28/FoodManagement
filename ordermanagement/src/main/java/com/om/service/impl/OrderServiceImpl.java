@@ -8,6 +8,7 @@ import org.springframework.web.client.HttpClientErrorException;
 // import org.springframework.web.client.RestTemplate;
 
 import com.om.exception.DownstreamServiceTimeoutException;
+import com.om.exception.DownstreamServiceUnavailableException;
 import com.om.exception.InvalidOrderStatusTransitionException;
 import com.om.exception.ItemNotFoundException;
 import com.om.exception.OrderNotFoundException;
@@ -197,7 +198,12 @@ public class OrderServiceImpl implements OrderService {
             throw new RestaurantNotFoundException(
                     "Restaurant was not found with Id: "
                             + restaurantId);
+        } catch (FeignException.ServiceUnavailable ex) {
+            throw downstreamUnavailable("Restaurant Management", ex);
         } catch (RetryableException ex) {
+            if (isServiceUnavailable(ex)) {
+                throw downstreamUnavailable("Restaurant Management", ex);
+            }
             throw new DownstreamServiceTimeoutException(
                     "Restaurant Management service did not respond within the configured timeout",
                     ex);
@@ -233,7 +239,12 @@ public class OrderServiceImpl implements OrderService {
                     "Item id " + itemId
                             + " not found in Restaurant "
                             + restaurantId);
+        } catch (FeignException.ServiceUnavailable ex) {
+            throw downstreamUnavailable("Restaurant Management", ex);
         } catch (RetryableException ex) {
+            if (isServiceUnavailable(ex)) {
+                throw downstreamUnavailable("Restaurant Management", ex);
+            }
             throw new DownstreamServiceTimeoutException(
                     "Restaurant Management service did not respond within the configured timeout",
                     ex);
@@ -273,11 +284,32 @@ public class OrderServiceImpl implements OrderService {
             throw new UserNotFoundException(
                     "User was not found with Id: "
                             + userId);
+        } catch (FeignException.ServiceUnavailable ex) {
+            throw downstreamUnavailable("User Management", ex);
         } catch (RetryableException ex) {
+            if (isServiceUnavailable(ex)) {
+                throw downstreamUnavailable("User Management", ex);
+            }
             throw new DownstreamServiceTimeoutException(
                     "User Management service did not respond within the configured timeout",
                     ex);
         }
+    }
+
+    private DownstreamServiceUnavailableException downstreamUnavailable(String serviceName, Throwable cause) {
+        return new DownstreamServiceUnavailableException(serviceName + " service is unavailable", cause);
+    }
+
+    private boolean isServiceUnavailable(RetryableException exception) {
+        if (exception.status() == 503) {
+            return true;
+        }
+        for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
+            if (cause instanceof FeignException.ServiceUnavailable) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

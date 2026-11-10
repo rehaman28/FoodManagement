@@ -134,7 +134,20 @@ public class GlobalExceptionHandler {
                                 ex.getMessage(),
                                 httpServletRequest.getRequestURI());
 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(response);
+        }
+        @ExceptionHandler(DownstreamServiceUnavailableException.class)
+        public ResponseEntity<ErrorResponseDto> handleDownstreamServiceUnavailableException(
+                        DownstreamServiceUnavailableException ex,
+                        HttpServletRequest httpServletRequest) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.SERVICE_UNAVAILABLE,
+                                 "Downstream Service Not Available",
+                                ex.getMessage(),
+                                httpServletRequest.getRequestURI());
+
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
         }
 
         private ErrorResponseDto buildErrorResponse(
