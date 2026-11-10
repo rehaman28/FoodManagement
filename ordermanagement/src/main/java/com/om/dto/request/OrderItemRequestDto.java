@@ -2,6 +2,7 @@ package com.om.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,10 +14,12 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Request data for an item and quantity in an order.")
 public class OrderItemRequestDto {
 
-    @Positive 
+    @NotNull(message = "Quantity is required")
+    @Positive(message = "Quantity must be greater than zero")
     @Schema(description = "Number of units ordered.")
-    private long quantity;
-    @Positive 
+    private Long quantity;
+    @NotNull(message = "Item ID is required")
+    @Positive(message = "Item ID must be greater than zero")
     @Schema(description = "Identifier of the menu item.")
-    private long itemId;
+    private Long itemId;
 }

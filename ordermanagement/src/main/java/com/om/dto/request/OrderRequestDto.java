@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,12 +22,14 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Request data for placing an order.")
 public class OrderRequestDto {
 
-    @Positive 
+    @NotNull(message = "User ID is required")
+    @Positive(message = "User ID must be greater than zero")
     @Schema(description = "Identifier of the user placing the order.")
-    private long userId;
-    @Positive 
+    private Long userId;
+    @NotNull(message = "Restaurant ID is required")
+    @Positive(message = "Restaurant ID must be greater than zero")
     @Schema(description = "Identifier of the restaurant.")
-    private long restaurantId;
+    private Long restaurantId;
     
     @JsonProperty("OrderingItems")
     @NotEmpty 
