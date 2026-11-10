@@ -328,7 +328,7 @@ Candidate events:
 - OrderCancelled
 
 ### Phase 12 — Resilience and Fault Tolerance
-Status: In progress — timeout implementation started; retries, circuit breakers, fallbacks, bulkheads, rate limiting, and failure-path validation remain pending
+Status: In progress — downstream timeout and service-unavailable failure paths validated; retries, circuit breakers, fallbacks, bulkheads, rate limiting, and broader failure-path validation remain pending
 
 Purpose:
 - Protect synchronous service calls from latency spikes and dependency failures
@@ -344,13 +344,15 @@ Execution order:
    - Optional early Correlation ID filter for readable failure-path logs
 2. Fault-tolerance implementation:
    - Timeouts
+   - Downstream service-unavailable handling
    - Retry policies
    - Circuit breakers
    - Fallbacks
    - Bulkhead isolation
    - Rate limiting
 3. Failure-path testing:
-   - Deliberately trigger dependency failures, slow responses, retry conditions, breaker-open conditions, and rate-limit conditions
+   - Validate dependency-unavailable and timeout failure paths
+   - Deliberately trigger retry conditions, breaker-open conditions, and rate-limit conditions
    - Observe the resulting metrics and service behavior
 4. Finish observability:
    - Centralized logging
@@ -803,11 +805,20 @@ AWS deployment is blocked until all of the following are complete and validated:
 | 10 | Complete & validated | Cleanup of unused legacy artifacts is deferred |
 | 11A | Complete & validated | None |
 | 11B | Pending / deferred | Kafka implementation after resilience and observability gates |
-| 12 | In progress | Timeouts started; retries, circuit breakers, fallbacks, bulkheads, rate limiting, failure-path tests |
+| 12 | In progress | 503/504 downstream failure paths validated; retries, circuit breakers, fallbacks, bulkheads, rate limiting, broader failure-path tests |
 | 13–17 | Pending | Data hardening, testing, Docker, Kubernetes, CI/CD |
 | 18A | Complete & validated | None |
 | 18B–18C | Pending | Resilience visibility, logging, tracing, dashboards, alerts |
 | 19 | Planned / gated | Starts only after Phases 12–18C and platform gates are complete |
+
+### Phase 12 failure-path validation
+
+The canonical Order Management Postman regression now contains only these two downstream failure-path scenarios:
+
+- `Place Order - Restaurant Service Unavailable [503]` — validates the behavior when Restaurant Management has no available Eureka instance.
+- `Place Order - Restaurant Service Timeout [504]` — validates the configured downstream timeout behavior.
+
+Both scenarios passed validation. Retry policies, circuit breakers, fallbacks, bulkhead isolation, rate limiting, and broader resilience testing remain separate Phase 12 work items.
 
 ## API testing with sample data
 
