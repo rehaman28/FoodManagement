@@ -426,6 +426,29 @@ Validation status:
 
 These are the only downstream failure-path cases added in this update. Retry, circuit-breaker, fallback, bulkhead, and rate-limiting behavior remain separate Phase 12 work.
 
+### Retry policy validation
+
+Retry policy is implemented at the Spring Cloud LoadBalancer layer for the `restaurantmanagement` and `usermanagement` Feign clients.
+
+Current retry configuration:
+
+- Retry enabled per downstream LoadBalancer client
+- One retry allowed on the same service instance
+- No retry on a next service instance in the current local configuration
+- Retry is not enabled for all exceptions
+- Retry is not enabled for all HTTP operations
+- Existing 503 service-unavailable mapping is preserved
+- Existing 504 timeout mapping is preserved
+
+Validation status:
+
+- Retry policy -> PASS
+- Restaurant Service Unavailable [503] -> PASS
+- Restaurant Service Timeout [504] -> PASS
+- Permanent not-found behavior -> PASS
+
+The next Phase 12 resilience control is Circuit Breaker.
+
 ## Phase 11 validation status
 
 Status: Complete — synchronous communication and API Gateway edge validation successful
@@ -477,10 +500,11 @@ Current execution gate:
 1. Phase 7A — User Administration Hardening: Complete and validated
 2. Phase 11 / 11A — Synchronous communication + API Gateway: Complete and validated
 3. Phase 18A — Observability Foundation: Complete and validated
-4. Phase 12 — Fault Tolerance: In progress, beginning with Timeouts
-5. Failure-Path Testing: pending after resilience controls
-6. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
-7. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+4. Phase 12 — Fault Tolerance: In progress; timeouts, service-unavailable handling, and retry policies validated
+5. Next resilience control: Circuit Breaker
+6. Failure-Path Testing: pending after the remaining resilience controls
+7. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
+8. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
 
 Later platform phases:
 
