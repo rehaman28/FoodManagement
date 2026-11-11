@@ -112,25 +112,23 @@ Observability Foundation
 [COMPLETE]
         |
         v
-Phase 12
+Phase 12 Core
 Fault Tolerance
-[next: Timeouts]
+[COMPLETE + VALIDATED]
         |
         v
-Failure-Path Testing
-        |
-        v
-Phase 18C
-Observability Expansion
-[Logging / Correlation / Tracing / Alerts]
+Later resilience / observability hardening
+[Bulkhead / Rate Limiting / Correlation / Tracing / Alerts]
         |
         v
 Phase 11B
 Kafka / Event-Driven Architecture
-[deferred until gates above pass]
+[deferred until the later gates are intentionally completed]
 ```
 
 ## 4. Fault-tolerance implementation sequence
+
+Current Phase 12 core scope:
 
 ```
 Timeouts
@@ -145,16 +143,23 @@ Circuit Breakers
 Fallbacks
    |
    v
-Bulkhead Isolation
-   |
-   v
-Rate Limiting
-   |
-   v
 Failure-Path Validation
+   |
+   v
+PHASE 12 CORE COMPLETE
 ```
 
-The observability dashboard remains active throughout this work so resilience changes can be compared against the pre-resilience baseline.
+Deferred later work:
+
+```
+Bulkhead Isolation
+Rate Limiting
+Correlation IDs
+Distributed Tracing
+Alerts
+```
+
+The observability dashboard remains the baseline for future resilience and observability hardening. The deferred controls are intentionally outside the current Phase 12 core completion gate.
 
 ## 5. Platform engineering roadmap
 
@@ -224,7 +229,12 @@ An image is the packaged template. A container is a running instance. Pushing an
 | Observability Foundation | Complete |
 | Prometheus | Validated |
 | Grafana | Validated |
-| Fault Tolerance | Next |
+| Phase 12 Core Fault Tolerance | Complete and validated |
+| Bulkhead isolation | Deferred |
+| Rate limiting | Deferred |
+| Correlation IDs | Deferred |
+| Distributed tracing | Deferred |
+| Alerts | Deferred |
 | Kafka | Deferred |
 | Full Dockerization | Later phase |
 | Kubernetes | Later phase |
@@ -233,21 +243,23 @@ An image is the packaged template. A container is a running instance. Pushing an
 
 ## 8. Definition of done before Kafka
 
-Kafka is not the next implementation step.
+Kafka remains deferred.
 
 Before Kafka starts, the project should have:
 
-- Timeout behavior implemented and validated
-- Retry behavior implemented and validated
-- Circuit breakers implemented and validated
-- Fallback behavior implemented and validated
-- Bulkhead isolation implemented and validated
-- Rate limiting implemented and validated
-- Failure-path tests completed
-- Resilience metrics visible in Grafana
-- Logging/correlation/tracing/alerts completed for the current local architecture
+- Phase 12 core timeout, retry, circuit-breaker, and fallback behavior implemented and validated
+- Core failure-path validation completed
+- Baseline and core resilience metrics visible
+- Later resilience/observability hardening completed according to the project's next execution gate
 
-This is the project-level architectural gate for moving into event-driven communication.
+The following are intentionally deferred from the current Phase 12 core scope:
+- Bulkhead isolation
+- Rate limiting
+- Correlation IDs
+- Distributed tracing
+- Alerts
+
+These deferred controls are tracked as later resilience/observability work and do not invalidate the current Phase 12 core completion.
 
 
 ## 9. AWS deployment target — gated roadmap
