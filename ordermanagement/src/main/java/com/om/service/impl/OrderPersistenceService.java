@@ -40,12 +40,14 @@ public class OrderPersistenceService {
                             + requestedOrderStatus);
 
         }
-        order.setOrderStatus(requestedOrderStatus);
+        return saveOrder(order);
+
+    }
+    
+    @Transactional
+    public OrderResponseDto saveOrder(Order order) {
         Order savedOrder = orderRepository.save(order);
-
-        return OrderResponseBuilder
-                .buildOrderResponseDtoFromOrder(savedOrder);
-
+        return OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder);
     }
 
     // Helper Method to validate if the transition was valid & allowed

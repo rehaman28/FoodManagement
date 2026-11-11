@@ -52,9 +52,8 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = OrderRequestBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
         BigDecimal totalPrice = calculateOrderPrice(order);
-        order.setOrderPrice(totalPrice);        
-        Order savedOrder = orderRepository.save(order);
-        OrderResponseDto orderResponseDto = OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder, totalPrice);
+        order.setOrderPrice(totalPrice); 
+        OrderResponseDto orderResponseDto = orderPersistenceService.saveOrder(order);       
         if (!restaurantName.isBlank()) {
             orderResponseDto.setRestaurantName(restaurantName);
         }
