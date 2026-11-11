@@ -328,57 +328,68 @@ Candidate events:
 - OrderCancelled
 
 ### Phase 12 — Resilience and Fault Tolerance
-Status: In progress — downstream timeout, service-unavailable, and retry policies validated; circuit breakers, fallbacks, bulkheads, rate limiting, and broader failure-path validation remain pending
+Status: Complete — core resilience controls implemented, runtime validated, and failure-path validation completed. Bulkhead isolation, rate limiting, correlation IDs, distributed tracing, and alerts are explicitly deferred as later hardening / observability work.
 
 Purpose:
 - Protect synchronous service calls from latency spikes and dependency failures
-- Make retries, circuit breakers, fallbacks, isolation, and rate limits visible through metrics
-- Validate failure behavior deliberately before Kafka is introduced
+- Validate retries, circuit breakers, fallbacks, and existing 503/504 behavior before Kafka is introduced
+- Keep the current resilience scope measurable and regression-tested
 
-Execution order:
-1. Observability Foundation first:
+Completed implementation and validation:
+1. Observability Foundation:
    - Spring Boot Actuator
    - Micrometer metrics
    - Prometheus-format metrics endpoint
    - Basic Grafana dashboard for request rate, latency, and error rate
-   - Optional early Correlation ID filter for readable failure-path logs
-2. Fault-tolerance implementation:
-   - Timeouts
+2. Fault-tolerance controls:
+   - Downstream timeouts
    - Downstream service-unavailable handling
-   - Retry policies — validated
-   - Circuit breakers
+   - Spring Cloud LoadBalancer retry policies for User Management and Restaurant Management
+   - Circuit breakers for User Management and Restaurant Management
+   - Fallbacks for User Management and Restaurant Management calls
+3. Failure-path validation:
+   - HTTP 503 downstream service-unavailable behavior — validated
+   - HTTP 504 downstream timeout behavior — validated
+   - Retry behavior — validated
+   - Circuit Breaker CLOSED state — validated
+   - Fallback invocation — validated
+   - Circuit Breaker OPEN transition — validated
+   - OPEN-state rejection without another downstream call — validated
+   - OPEN -> HALF_OPEN -> CLOSED recovery — validated
+   - HALF_OPEN failure returns to OPEN — validated
+   - 404 business errors remain non-breaker failures — validated
 
-     | Property | Purpose |
-     | --- | --- |
-     | `slidingWindowSize` | Number of calls in the sliding window used to calculate failure rate |
-     | `minimumNumberOfCalls` | Minimum number of calls required before the failure rate is evaluated |
-     | `failureRateThreshold` | Failure-rate percentage that causes the circuit breaker to open |
-     | `waitDurationInOpenState` | How long the circuit breaker remains OPEN before transitioning to HALF_OPEN |
-     | `permittedNumberOfCallsInHalfOpenState` | Number of test calls allowed while HALF_OPEN |
-     | `automaticTransitionFromOpenToHalfOpenEnabled` | Automatically transitions from OPEN to HALF_OPEN after the wait duration |
-     | `ignoreExceptions` | Exceptions that need to be ignored(404) |
+Circuit Breaker configuration currently uses:
+| Property | Purpose |
+| --- | --- |
+| `slidingWindowSize` | Number of calls in the sliding window used to calculate failure rate |
+| `minimumNumberOfCalls` | Minimum number of calls required before the failure rate is evaluated |
+| `failureRateThreshold` | Failure-rate percentage that causes the circuit breaker to open |
+| `waitDurationInOpenState` | How long the circuit breaker remains OPEN before transitioning to HALF_OPEN |
+| `permittedNumberOfCallsInHalfOpenState` | Number of test calls allowed while HALF_OPEN |
+| `automaticTransitionFromOpenToHalfOpenEnabled` | Automatically transitions from OPEN to HALF_OPEN after the wait duration |
+| `ignoreExceptions` | Business exceptions such as 404 that must not open the circuit |
 
-   - Fallbacks
-   - Bulkhead isolation
-   - Rate limiting
-3. Failure-path testing:
-   - Validate dependency-unavailable and timeout failure paths
-   - Deliberately trigger retry conditions, breaker-open conditions, and rate-limit conditions
-   - Observe the resulting metrics and service behavior
-4. Finish observability:
-   - Centralized logging
-   - Correlation IDs if not added during the foundation slice
-   - Distributed tracing
-   - Alerts
+### Deferred later work
+The following items are intentionally moved out of the current Phase 12 core scope:
+- Bulkhead isolation
+- Rate limiting
+- Correlation IDs if not introduced in a future logging slice
+- Distributed tracing
+- Alerts
 
-The sequence intentionally does not finish all observability work before resilience. The foundation gives a baseline first, resilience is then added against that baseline, and the remaining observability capabilities are completed after the failure-path validation.
+These items remain part of the later resilience/observability roadmap and do not block the current Phase 12 completion.
 
-Definition of done before Kafka:
-- Fault-tolerance patterns implemented and validated
-- Failure-path tests completed
-- Baseline and resilience metrics visible
-- Logging, correlation, tracing, and alerts completed for the current local architecture
+### Definition of done for the current Phase 12 scope
+- Timeout behavior implemented and validated
+- Downstream service-unavailable behavior implemented and validated
+- Retry policies implemented and validated
+- Circuit breakers implemented and validated
+- Fallbacks implemented and validated
+- Failure-path validation completed for the above controls
+- Existing 503/504 response contracts preserved
 
+Kafka remains gated by the later observability and architecture milestones.
 ### Phase 13 — Data and Transaction Hardening
 Plan:
 1. BigDecimal for money
@@ -457,14 +468,16 @@ Delivered through Phase 12:
 4. Execute failure-path testing while monitoring the dashboard
 
 ### Phase 18C — Observability Expansion
-Plan after Phase 12 failure-path testing:
+Status: Deferred — this is later work after the current Phase 12 core resilience scope.
+
+Plan:
 1. Centralized logging
 2. Correlation IDs if not already introduced
 3. Distributed tracing
 4. Grafana dashboards for resilience and dependency behavior
 5. Alerts
 
-Kafka is intentionally deferred until Phase 18A, Phase 12, Phase 18B, and Phase 18C are complete.
+These observability items are intentionally not part of the current Phase 12 completion gate. Kafka remains deferred until the required resilience/observability expansion is completed.
 
 ### Phase 19 — AWS Cloud + Certification-Aligned Deployment
 Status: Planned — starts only after Phases 12–18C are implemented and validated
@@ -816,34 +829,44 @@ AWS deployment is blocked until all of the following are complete and validated:
 | 10 | Complete & validated | Cleanup of unused legacy artifacts is deferred |
 | 11A | Complete & validated | None |
 | 11B | Pending / deferred | Kafka implementation after resilience and observability gates |
-| 12 | In progress | 503/504 + retry policies validated; circuit breakers, fallbacks, bulkheads, rate limiting, broader failure-path tests |
+| 12 | Complete & validated | Core resilience scope complete; Bulkhead, rate limiting, correlation IDs, tracing, and alerts deferred |
 | 13–17 | Pending | Data hardening, testing, Docker, Kubernetes, CI/CD |
 | 18A | Complete & validated | None |
-| 18B–18C | Pending | Resilience visibility, logging, tracing, dashboards, alerts |
+| 18B–18C | Deferred / staged | Later resilience visibility, correlation, tracing, dashboards, and alerts |
 | 19 | Planned / gated | Starts only after Phases 12–18C and platform gates are complete |
 
-### Phase 12 failure-path validation
+### Phase 12 validation and closure
 
-The canonical Order Management Postman regression now contains only these two downstream failure-path scenarios:
+The current Phase 12 core resilience scope has been validated successfully.
 
-- `Place Order - Restaurant Service Unavailable [503]` — validates the behavior when Restaurant Management has no available Eureka instance.
-- `Place Order - Restaurant Service Timeout [504]` — validates the configured downstream timeout behavior.
+Validated:
+- Restaurant Management unavailable -> HTTP 503
+- Restaurant Management timeout -> HTTP 504
+- Retry policy behavior -> PASS
+- Circuit Breaker normal CLOSED state -> PASS
+- Fallback invocation -> PASS
+- Circuit Breaker OPEN transition -> PASS
+- OPEN circuit rejects calls without invoking the downstream service -> PASS
+- OPEN -> HALF_OPEN recovery -> PASS
+- HALF_OPEN successful recovery -> CLOSED -> PASS
+- HALF_OPEN failure -> OPEN -> PASS
+- 404 business errors remain non-breaker failures -> PASS
 
-Both scenarios passed validation. Retry policies, circuit breakers, fallbacks, bulkhead isolation, rate limiting, and broader resilience testing remain separate Phase 12 work items.
+Phase 12 core status:
+- Timeouts -> VALIDATED
+- Downstream service-unavailable handling -> VALIDATED
+- Retry policies -> VALIDATED
+- Circuit breakers -> VALIDATED
+- Fallbacks -> VALIDATED
 
-### Phase 12 retry-policy validation
+Deferred later work:
+- Bulkhead isolation
+- Rate limiting
+- Correlation IDs if not introduced in a future logging slice
+- Distributed tracing
+- Alerts
 
-The latest Order Management implementation commit `b8a8cb7394fa6f72e4b585bcfa7758b7d3720147` adds client-specific Spring Cloud LoadBalancer retry configuration for `restaurantmanagement` and `usermanagement`, with retry diagnostics enabled for local validation.
-
-Validation status:
-
-- Retry policy configuration -> PASS
-- Existing downstream service-unavailable handling -> PASS (HTTP 503)
-- Existing downstream timeout handling -> PASS (HTTP 504)
-- Permanent not-found behavior remains non-retryable -> PASS
-
-Phase 12 retry work is now marked validated. The next resilience control is Circuit Breaker.
-
+These deferred items are tracked in the later resilience/observability roadmap and do not block the current Phase 12 core completion.
 ## API testing with sample data
 
 ### Canonical test endpoint
