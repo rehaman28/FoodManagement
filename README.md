@@ -328,7 +328,7 @@ Candidate events:
 - OrderCancelled
 
 ### Phase 12 — Resilience and Fault Tolerance
-Status: In progress — downstream timeout and service-unavailable failure paths validated; retries, circuit breakers, fallbacks, bulkheads, rate limiting, and broader failure-path validation remain pending
+Status: In progress — downstream timeout, service-unavailable, and retry policies validated; circuit breakers, fallbacks, bulkheads, rate limiting, and broader failure-path validation remain pending
 
 Purpose:
 - Protect synchronous service calls from latency spikes and dependency failures
@@ -345,7 +345,7 @@ Execution order:
 2. Fault-tolerance implementation:
    - Timeouts
    - Downstream service-unavailable handling
-   - Retry policies
+   - Retry policies — validated
    - Circuit breakers
    - Fallbacks
    - Bulkhead isolation
@@ -805,7 +805,7 @@ AWS deployment is blocked until all of the following are complete and validated:
 | 10 | Complete & validated | Cleanup of unused legacy artifacts is deferred |
 | 11A | Complete & validated | None |
 | 11B | Pending / deferred | Kafka implementation after resilience and observability gates |
-| 12 | In progress | 503/504 downstream failure paths validated; retries, circuit breakers, fallbacks, bulkheads, rate limiting, broader failure-path tests |
+| 12 | In progress | 503/504 + retry policies validated; circuit breakers, fallbacks, bulkheads, rate limiting, broader failure-path tests |
 | 13–17 | Pending | Data hardening, testing, Docker, Kubernetes, CI/CD |
 | 18A | Complete & validated | None |
 | 18B–18C | Pending | Resilience visibility, logging, tracing, dashboards, alerts |
@@ -819,6 +819,19 @@ The canonical Order Management Postman regression now contains only these two do
 - `Place Order - Restaurant Service Timeout [504]` — validates the configured downstream timeout behavior.
 
 Both scenarios passed validation. Retry policies, circuit breakers, fallbacks, bulkhead isolation, rate limiting, and broader resilience testing remain separate Phase 12 work items.
+
+### Phase 12 retry-policy validation
+
+The latest Order Management implementation commit `b8a8cb7394fa6f72e4b585bcfa7758b7d3720147` adds client-specific Spring Cloud LoadBalancer retry configuration for `restaurantmanagement` and `usermanagement`, with retry diagnostics enabled for local validation.
+
+Validation status:
+
+- Retry policy configuration -> PASS
+- Existing downstream service-unavailable handling -> PASS (HTTP 503)
+- Existing downstream timeout handling -> PASS (HTTP 504)
+- Permanent not-found behavior remains non-retryable -> PASS
+
+Phase 12 retry work is now marked validated. The next resilience control is Circuit Breaker.
 
 ## API testing with sample data
 
