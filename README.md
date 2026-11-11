@@ -347,6 +347,17 @@ Execution order:
    - Downstream service-unavailable handling
    - Retry policies — validated
    - Circuit breakers
+
+     | Property | Purpose |
+     | --- | --- |
+     | `slidingWindowSize` | Number of calls in the sliding window used to calculate failure rate |
+     | `minimumNumberOfCalls` | Minimum number of calls required before the failure rate is evaluated |
+     | `failureRateThreshold` | Failure-rate percentage that causes the circuit breaker to open |
+     | `waitDurationInOpenState` | How long the circuit breaker remains OPEN before transitioning to HALF_OPEN |
+     | `permittedNumberOfCallsInHalfOpenState` | Number of test calls allowed while HALF_OPEN |
+     | `automaticTransitionFromOpenToHalfOpenEnabled` | Automatically transitions from OPEN to HALF_OPEN after the wait duration |
+     | `ignoreExceptions` | Exceptions that need to be ignored(404) |
+
    - Fallbacks
    - Bulkhead isolation
    - Rate limiting

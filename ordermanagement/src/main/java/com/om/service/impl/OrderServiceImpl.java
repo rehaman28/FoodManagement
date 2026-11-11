@@ -2,49 +2,33 @@ package com.om.service.impl;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 // import org.springframework.web.client.RestTemplate;
 
-import com.om.exception.DownstreamServiceTimeoutException;
-import com.om.exception.DownstreamServiceUnavailableException;
 import com.om.exception.InvalidOrderStatusTransitionException;
-import com.om.exception.ItemNotFoundException;
 import com.om.exception.OrderNotFoundException;
-import com.om.exception.RestaurantNotFoundException;
-import com.om.exception.UserNotFoundException;
 import com.om.builder.OrderRequestBuilder;
 import com.om.builder.OrderResponseBuilder;
-import com.om.client.RestaurantClient;
-import com.om.client.UserClient;
 import com.om.dao.OrderRepository;
 import com.om.dto.response.ItemResponseDto;
 import com.om.dto.request.OrderItemRequestDto;
 import com.om.dto.request.OrderRequestDto;
 import com.om.dto.response.OrderResponseDto;
 import com.om.dto.request.OrderStatusRequestDto;
-import com.om.dto.response.UserResponseDto;
 import com.om.model.Order;
 import com.om.model.OrderStatus;
 import com.om.service.OrderService;
-
-import feign.FeignException;
-import feign.RetryableException;
 
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
-
     private final OrderRepository orderRepository;
-    // private final RestTemplate restTemplate;
-    private final RestaurantClient restaurantClient;
-    private final UserClient userClient;
+    private final RestaurantValidationService restaurantValidationService;
+    private final UserValidationService userValidationService;
 
+    // private final RestTemplate restTemplate;
     // public OrderServiceImpl(OrderRepository orderRepository, RestTemplate
     // restTemplate) {
     // this.orderRepository = orderRepository;
@@ -52,23 +36,17 @@ public class OrderServiceImpl implements OrderService {
     // }
 
     public OrderServiceImpl(OrderRepository orderRepository,
-            RestaurantClient restaurantClient,
-            UserClient userClient) {
+            RestaurantValidationService restaurantValidationService,
+            UserValidationService userValidationService) {
         this.orderRepository = orderRepository;
-        this.restaurantClient = restaurantClient;
-        this.userClient = userClient;
+        this.restaurantValidationService = restaurantValidationService;
+        this.userValidationService = userValidationService;
     }
 
     @Override
     public OrderResponseDto placeorder(OrderRequestDto orderRequest) {
-        String restaurantName;
-        try {
-            validateUser(orderRequest.getUserId());
-            restaurantName = fetchRestaurantNameFromId(orderRequest.getRestaurantId());
-        } catch (HttpClientErrorException.NotFound ex) {
-            throw new RestaurantNotFoundException("Restaurant was not found with Id: "
-                    + orderRequest.getRestaurantId());
-        }
+        userValidationService.validateUser(orderRequest.getUserId());
+        String restaurantName = restaurantValidationService.getRestaurantName(orderRequest.getRestaurantId());
 
         double totalPrice = calculateOrderPrice(orderRequest);
         Order order = OrderRequestBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
@@ -89,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order Not Found"));
         OrderResponseDto orderResponseDto = OrderResponseBuilder.buildOrderResponseDtoFromOrder(order);
-        orderResponseDto.setRestaurantName(fetchRestaurantNameFromId(order.getRestaurantId()));
+        orderResponseDto.setRestaurantName(restaurantValidationService.getRestaurantName(order.getRestaurantId()));
         return orderResponseDto;
     }
 
@@ -100,7 +78,8 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(order -> {
                     OrderResponseDto response = OrderResponseBuilder.buildOrderResponseDtoFromOrder(order);
-                    response.setRestaurantName(fetchRestaurantNameFromId(order.getRestaurantId()));
+                    response.setRestaurantName(
+                            restaurantValidationService.getRestaurantName(order.getRestaurantId()));
                     return response;
                 })
                 .toList();
@@ -113,7 +92,8 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(order -> {
                     OrderResponseDto response = OrderResponseBuilder.buildOrderResponseDtoFromOrder(order);
-                    response.setRestaurantName(fetchRestaurantNameFromId(order.getRestaurantId()));
+                    response.setRestaurantName(
+                            restaurantValidationService.getRestaurantName(order.getRestaurantId()));
                     return response;
                 })
                 .toList();
@@ -122,12 +102,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponseDto> getOrdersByRestaurantId(Long restaurantId) {
-        String restaurantName;
-        try {
-            restaurantName = fetchRestaurantNameFromId(restaurantId);
-        } catch (HttpClientErrorException.NotFound ex) {
-            throw new RestaurantNotFoundException("Restaurant was not found with Id: " + restaurantId);
-        }
+        String restaurantName = restaurantValidationService.getRestaurantName(restaurantId);
 
         List<Order> orders = orderRepository.findByRestaurantId(restaurantId);
         if (orders.isEmpty()) {
@@ -150,7 +125,8 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(order -> {
                     OrderResponseDto response = OrderResponseBuilder.buildOrderResponseDtoFromOrder(order);
-                    response.setRestaurantName(fetchRestaurantNameFromId(order.getRestaurantId()));
+                    response.setRestaurantName(
+                            restaurantValidationService.getRestaurantName(order.getRestaurantId()));
                     return response;
                 })
                 .toList();
@@ -193,94 +169,19 @@ public class OrderServiceImpl implements OrderService {
     // itemId);
     // }
 
-    // FeignClient ServiceDiscovery
-    private String fetchRestaurantNameFromId(long restaurantId) {
-        try {
-            return restaurantClient.getRestaurantName(restaurantId);
-        } catch (FeignException.NotFound ex) {
-
-            throw new RestaurantNotFoundException(
-                    "Restaurant was not found with Id: "
-                            + restaurantId);
-        } catch (FeignException.ServiceUnavailable ex) {
-            log.warn(
-                "Restaurant Management downstream call failed after retry processing. restaurantId={}",
-                restaurantId,
-                ex
-            );
-            throw downstreamUnavailable("Restaurant Management", ex);
-        } catch (RetryableException ex) {
-            if (isServiceUnavailable(ex)) {
-                log.warn(
-                    "Restaurant Management downstream call failed after retry processing. restaurantId={}",
-                    restaurantId,
-                    ex
-                );
-                throw downstreamUnavailable("Restaurant Management", ex);
-            }
-            log.warn("Restaurant Management downstream call timed out. restaurantId={}", restaurantId, ex);
-            throw new DownstreamServiceTimeoutException(
-                    "Restaurant Management service did not respond within the configured timeout",
-                    ex);
-        }
-    }
-
     // Helper Method to calculate the order price
     private double calculateOrderPrice(OrderRequestDto orderRequestDto) {
         double totalPrice = 0;
         for (OrderItemRequestDto orderItem : orderRequestDto.getOrderItemsRequest()) {
-            try {
-                ItemResponseDto itemResponseDto = fetchItemsFromRestaurantIdAndItemId(orderRequestDto.getRestaurantId(),
-                        orderItem.getItemId());
-                double itemPrice = itemResponseDto.getItemPrice();
-                long quantity = orderItem.getQuantity();
-                double itemTotal = itemPrice * quantity;
-                totalPrice = totalPrice + itemTotal;
-
-            } catch (HttpClientErrorException.NotFound ex) {
-                throw new ItemNotFoundException("Item id " + orderItem.getItemId() + " not found in Restaurant "
-                        + orderRequestDto.getRestaurantId());
-            }
+            ItemResponseDto itemResponseDto = restaurantValidationService.getItem(
+                    orderRequestDto.getRestaurantId(),
+                    orderItem.getItemId());
+            double itemPrice = itemResponseDto.getItemPrice();
+            long quantity = orderItem.getQuantity();
+            double itemTotal = itemPrice * quantity;
+            totalPrice = totalPrice + itemTotal;
         }
         return totalPrice;
-    }
-
-    private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long restaurantId, long itemId) {
-        try {
-            return restaurantClient.getItem(restaurantId, itemId);
-        } catch (FeignException.NotFound ex) {
-
-            throw new ItemNotFoundException(
-                    "Item id " + itemId
-                            + " not found in Restaurant "
-                            + restaurantId);
-        } catch (FeignException.ServiceUnavailable ex) {
-            log.warn(
-                "Restaurant Management downstream call failed after retry processing. restaurantId={}, itemId={}",
-                restaurantId,
-                itemId,
-                ex
-            );
-            throw downstreamUnavailable("Restaurant Management", ex);
-        } catch (RetryableException ex) {
-            if (isServiceUnavailable(ex)) {
-                log.warn(
-                    "Restaurant Management downstream call failed after retry processing. restaurantId={}, itemId={}",
-                    restaurantId,
-                    itemId,
-                    ex
-                );
-                throw downstreamUnavailable("Restaurant Management", ex);
-            }
-            log.warn(
-                    "Restaurant Management downstream call timed out. restaurantId={}, itemId={}",
-                    restaurantId,
-                    itemId,
-                    ex);
-            throw new DownstreamServiceTimeoutException(
-                    "Restaurant Management service did not respond within the configured timeout",
-                    ex);
-        }
     }
 
     // Helper Method to validate if the transition was valid & allowed
@@ -306,42 +207,4 @@ public class OrderServiceImpl implements OrderService {
         };
 
     }
-
-    // Helper Methods to validate user Synchronously
-    private UserResponseDto validateUser(Long userId) {
-        try {
-            return userClient.getUserById(userId);
-        } catch (FeignException.NotFound e) {
-
-            throw new UserNotFoundException(
-                    "User was not found with Id: "
-                            + userId);
-        } catch (FeignException.ServiceUnavailable ex) {
-            throw downstreamUnavailable("User Management", ex);
-        } catch (RetryableException ex) {
-            if (isServiceUnavailable(ex)) {
-                throw downstreamUnavailable("User Management", ex);
-            }
-            throw new DownstreamServiceTimeoutException(
-                    "User Management service did not respond within the configured timeout",
-                    ex);
-        }
-    }
-
-    private DownstreamServiceUnavailableException downstreamUnavailable(String serviceName, Throwable cause) {
-        return new DownstreamServiceUnavailableException(serviceName + " service is unavailable", cause);
-    }
-
-    private boolean isServiceUnavailable(RetryableException exception) {
-        if (exception.status() == 503) {
-            return true;
-        }
-        for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
-            if (cause instanceof FeignException.ServiceUnavailable) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

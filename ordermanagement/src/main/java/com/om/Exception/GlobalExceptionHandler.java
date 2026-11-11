@@ -150,6 +150,20 @@ public class GlobalExceptionHandler {
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
         }
 
+        @ExceptionHandler(UserManagementUnavailableException.class)
+        public ResponseEntity<ErrorResponseDto> handleUserManagementUnavailableException(
+                        UserManagementUnavailableException ex,
+                        HttpServletRequest httpServletRequest) {
+
+                ErrorResponseDto response = buildErrorResponse(
+                                HttpStatus.SERVICE_UNAVAILABLE,
+                                 "Downstream User Service Not Available",
+                                ex.getMessage(),
+                                httpServletRequest.getRequestURI());
+
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+        }
+
         private ErrorResponseDto buildErrorResponse(
                         HttpStatus status,
                         String error,
