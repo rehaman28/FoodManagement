@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 // import org.springframework.web.client.RestTemplate;
 
-import com.om.exception.InvalidOrderStatusTransitionException;
 import com.om.exception.OrderNotFoundException;
 import com.om.builder.OrderRequestBuilder;
 import com.om.builder.OrderResponseBuilder;
@@ -22,12 +21,12 @@ import com.om.model.OrderStatus;
 import com.om.service.OrderService;
 
 @Service
-@Transactional
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final RestaurantValidationService restaurantValidationService;
     private final UserValidationService userValidationService;
+    private final OrderPersistenceService orderPersistenceService;
 
     // private final RestTemplate restTemplate;
     // public OrderServiceImpl(OrderRepository orderRepository, RestTemplate
@@ -38,10 +37,12 @@ public class OrderServiceImpl implements OrderService {
 
     public OrderServiceImpl(OrderRepository orderRepository,
             RestaurantValidationService restaurantValidationService,
-            UserValidationService userValidationService) {
+            UserValidationService userValidationService,
+        OrderPersistenceService orderPersistenceService) {
         this.orderRepository = orderRepository;
         this.restaurantValidationService = restaurantValidationService;
         this.userValidationService = userValidationService;
+        this.orderPersistenceService= orderPersistenceService;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = OrderRequestBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
         BigDecimal totalPrice = calculateOrderPrice(order);
-        order.setOrderPrice(totalPrice);
+        order.setOrderPrice(totalPrice);        
         Order savedOrder = orderRepository.save(order);
         OrderResponseDto orderResponseDto = OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder, totalPrice);
         if (!restaurantName.isBlank()) {
@@ -135,24 +136,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto updateOrderStatus(Long orderId, OrderStatusRequestDto orderStatusRequestDto) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order Not Found"));
-        OrderStatus currentOrderStatus = order.getOrderStatus();
-        OrderStatus requestedOrderStatus = orderStatusRequestDto.getOrderStatus();
-
-        if (!isValidTransition(currentOrderStatus, requestedOrderStatus)) {
-
-            throw new InvalidOrderStatusTransitionException(
-                    "Invalid order status transition from "
-                            + currentOrderStatus
-                            + " to "
-                            + requestedOrderStatus);
-
-        }
-
-        order.setOrderStatus(orderStatusRequestDto.getOrderStatus());
-        Order savedOrder = orderRepository.save(order);
-        return OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder);
+        return orderPersistenceService.updateOrderStatus(orderId, orderStatusRequestDto);
     }
 
     // RestTemplate for Inter-service Communications
@@ -184,28 +168,5 @@ public class OrderServiceImpl implements OrderService {
         }
         return totalPrice;
     }
-
-    // Helper Method to validate if the transition was valid & allowed
-    private boolean isValidTransition(OrderStatus currentStatus,
-            OrderStatus requestedStatus) {
-
-        if (currentStatus == requestedStatus) {
-            return true;
-        }
-        return switch (currentStatus) {
-            case Ordered -> requestedStatus == OrderStatus.Accepted
-                    || requestedStatus == OrderStatus.Cancelled;
-            case Accepted -> requestedStatus == OrderStatus.Preparing
-                    || requestedStatus == OrderStatus.Cancelled;
-            case Preparing -> requestedStatus == OrderStatus.OutForDelivery
-                    || requestedStatus == OrderStatus.Cancelled;
-
-            case OutForDelivery ->
-                requestedStatus == OrderStatus.Delivered;
-
-            case Delivered, Cancelled -> false;
-
-        };
-
-    }
+    
 }
