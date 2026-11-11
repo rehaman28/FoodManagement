@@ -1,7 +1,7 @@
 FoodManagement — Commit History and Observability Status
 Repository: https://github.com/rehaman28/FoodManagement
 Audited branch: main
-Latest audited commit: 9161b49f798757926f17aca73050c874111050f2 — Align architecture roadmap with AWS deployment phase — 2026-11-07
+Latest audited implementation commit: d3de2ecde792ae2b854d957313b0cbbd2a7fbb34 — Helper classes for feignclients — 2026-11-11
 Total commits returned by GitHub commit history at audit time: 161
 
 ============================================================
@@ -42,8 +42,8 @@ Docker scope:
 - Full application containerization remains deferred to the later Docker phase.
 - Current upstream observability images are prom/prometheus:latest and grafana/grafana:latest.
 
-Current next phase:
-Phase 12 — Resilience and Fault Tolerance, next control: Circuit Breaker.
+Current roadmap state:
+Phase 12 core resilience scope is COMPLETE and validated. Later resilience and observability hardening is deferred.
 
 AWS roadmap alignment:
 - The AWS deployment phase is gated until Phases 12–18C are complete and validated.
@@ -173,12 +173,12 @@ Project roadmap and README alignment commits since the previous audit:
     Commit: https://github.com/rehaman28/FoodManagement/commit/96ecf591c108df360fd70d26080c4e08804a4806
 
 Project-level roadmap state:
-- Phase 11 API Gateway + synchronous communication: COMPLETE
+- Phase 11 API Gateway + synchronous communication: COMPLETE and validated
 - Phase 18A Observability Foundation: COMPLETE and locally validated
-- Phase 12 Fault Tolerance: NEXT, beginning with Timeouts
-- Failure-path testing: after resilience controls
-- Observability Expansion: after failure-path testing
-- Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+- Phase 12 core Fault Tolerance: COMPLETE and validated
+- Later resilience work: Bulkhead isolation and rate limiting are deferred
+- Later observability work: Correlation IDs, distributed tracing, and alerts are deferred
+- Phase 11B Kafka / Event-Driven Architecture: deferred behind the later resilience/observability gates
 - Full application Dockerization: later platform phase
 - Kubernetes / CI/CD / AWS / Production Hardening: later platform phases
 
@@ -1309,15 +1309,18 @@ Postman synchronization:
 - Both requests use {{testBaseUrl}} and the existing Bearer-token collection authentication.
 - No other Order Management failure-path scenarios were added in this update.
 
-Current Phase 12 gate:
+Current Phase 12 core gate:
 - Downstream service-unavailable handling -> VALIDATED.
 - Downstream timeout handling -> VALIDATED.
-- Retry policies -> PENDING.
-- Circuit breakers -> PENDING.
-- Fallbacks -> PENDING.
-- Bulkhead isolation -> PENDING.
-- Rate limiting -> PENDING.
-- Broader resilience/failure-path validation -> PENDING.
+- Retry policies -> VALIDATED.
+- Circuit breakers -> VALIDATED.
+- Fallbacks -> VALIDATED.
+- Failure-path validation for the current core controls -> VALIDATED.
+- Bulkhead isolation -> DEFERRED.
+- Rate limiting -> DEFERRED.
+- Correlation IDs -> DEFERRED.
+- Distributed tracing -> DEFERRED.
+- Alerts -> DEFERRED.
 
 Postman update commits:
 - 08e0a7c823d50de4f543ec628c75e4b1e83c7be0 — canonical Order Management Postman failure-path cases.
@@ -1343,13 +1346,54 @@ Validation status:
 - Restaurant Service Timeout [504] -> PASS.
 - Permanent not-found behavior -> PASS.
 
-Phase 12 status:
+Phase 12 core status:
 - Timeouts -> VALIDATED.
 - Downstream service-unavailable handling -> VALIDATED.
 - Retry policies -> VALIDATED.
-- Next control -> Circuit Breaker.
-- Fallbacks -> PENDING.
-- Bulkhead isolation -> PENDING.
-- Rate limiting -> PENDING.
-- Broader resilience/failure-path validation -> PENDING.
+- Circuit breakers -> VALIDATED.
+- Fallbacks -> VALIDATED.
+- Failure-path validation -> VALIDATED.
+- Bulkhead isolation -> DEFERRED.
+- Rate limiting -> DEFERRED.
+- Correlation IDs -> DEFERRED.
+- Distributed tracing -> DEFERRED.
+- Alerts -> DEFERRED.
 
+
+
+============================================================
+LATEST PHASE 12 CORE CLOSURE / DOCUMENTATION DELTA — 2026-11-11
+============================================================
+
+Latest implementation commits:
+- d3de2ecde792ae2b854d957313b0cbbd2a7fbb34 — Helper classes for feignclients.
+- e6d9214549e9a3106c8c1a2c280b1efac6f5ad0b — CircuitBreaker&Fallback.
+
+Phase 12 core validation:
+- Timeout behavior -> PASS.
+- Downstream service-unavailable behavior -> PASS.
+- Retry policy behavior -> PASS.
+- Circuit Breaker CLOSED state -> PASS.
+- Fallback invocation -> PASS.
+- Circuit Breaker OPEN transition -> PASS.
+- OPEN circuit rejection without another downstream call -> PASS.
+- OPEN -> HALF_OPEN -> CLOSED recovery -> PASS.
+- HALF_OPEN failure -> OPEN -> PASS.
+- 404 business errors remain non-breaker failures -> PASS.
+
+Phase 12 core completion:
+- Timeouts -> VALIDATED.
+- Downstream service-unavailable handling -> VALIDATED.
+- Retry policies -> VALIDATED.
+- Circuit breakers -> VALIDATED.
+- Fallbacks -> VALIDATED.
+- Core failure-path validation -> VALIDATED.
+
+Deferred later work:
+- Bulkhead isolation.
+- Rate limiting.
+- Correlation IDs if not introduced in a future logging slice.
+- Distributed tracing.
+- Alerts.
+
+The deferred items are intentionally outside the current Phase 12 core completion gate and remain part of the later resilience/observability roadmap.
