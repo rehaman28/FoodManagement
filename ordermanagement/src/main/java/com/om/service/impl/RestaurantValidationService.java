@@ -76,7 +76,19 @@ public class RestaurantValidationService {
 
     @SuppressWarnings("unused")
     private String getRestaurantNameFallback(Long restaurantId, Throwable ex) {
-        log.error("Restaurant Management unavailable for restaurantId={}", restaurantId, ex);
+        if (downstreamValidationHelper.isTimeout(ex)) {
+            log.warn(
+                    "Restaurant Management timed out while fetching restaurantId={}; returning 504",
+                    restaurantId,
+                    ex);
+            throw new DownstreamServiceTimeoutException(
+                    "Restaurant Management service did not respond within the configured timeout",
+                    ex);
+        }
+        log.warn(
+                "Restaurant Management is unavailable while fetching restaurantId={}; returning 503",
+                restaurantId,
+                ex);
         throw new DownstreamServiceUnavailableException(
                 "Restaurant Management service is currently unavailable",
                 ex);
@@ -84,8 +96,18 @@ public class RestaurantValidationService {
 
     @SuppressWarnings("unused")
     private ItemResponseDto getItemFallback(Long restaurantId, Long itemId, Throwable ex) {
-        log.error(
-                "Restaurant Management unavailable for restaurantId={}, itemId={}",
+        if (downstreamValidationHelper.isTimeout(ex)) {
+            log.warn(
+                    "Restaurant Management timed out while fetching restaurantId={}, itemId={}; returning 504",
+                    restaurantId,
+                    itemId,
+                    ex);
+            throw new DownstreamServiceTimeoutException(
+                    "Restaurant Management service did not respond within the configured timeout",
+                    ex);
+        }
+        log.warn(
+                "Restaurant Management is unavailable while fetching restaurantId={}, itemId={}; returning 503",
                 restaurantId,
                 itemId,
                 ex);

@@ -1,7 +1,10 @@
 package com.om.helper;
 
+import java.net.SocketTimeoutException;
+
 import org.springframework.stereotype.Component;
 
+import com.om.exception.DownstreamServiceTimeoutException;
 import com.om.exception.DownstreamServiceUnavailableException;
 
 import feign.FeignException;
@@ -20,6 +23,18 @@ public class DownstreamValidationHelper {
         }
         for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
             if (cause instanceof FeignException.ServiceUnavailable) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTimeout(Throwable exception) {
+        for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
+            if (cause instanceof DownstreamServiceTimeoutException
+                    || cause instanceof SocketTimeoutException
+                    || cause instanceof RetryableException retryableException
+                            && !isServiceUnavailable(retryableException)) {
                 return true;
             }
         }

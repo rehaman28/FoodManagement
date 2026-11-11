@@ -60,7 +60,19 @@ public class UserValidationService {
     private UserResponseDto getUserFallback(
             Long userId,
             Throwable ex) {
-        log.error("User Management unavailable for userId={}", userId, ex);
+        if (downstreamValidationHelper.isTimeout(ex)) {
+            log.warn(
+                    "User Management timed out while fetching userId={}; returning 504",
+                    userId,
+                    ex);
+            throw new DownstreamServiceTimeoutException(
+                    "User Management service did not respond within the configured timeout",
+                    ex);
+        }
+        log.warn(
+                "User Management is unavailable while fetching userId={}; returning 503",
+                userId,
+                ex);
         throw new UserManagementUnavailableException(
                 "User Management service is currently unavailable",
                 ex);
