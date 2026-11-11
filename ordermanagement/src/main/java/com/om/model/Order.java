@@ -1,8 +1,10 @@
 package com.om.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +33,15 @@ public class Order {
 
     private long userId;
     private long restaurantId;
-    private double orderPrice;
+    
+    @Column(
+    name = "order_price",
+    precision = 19,
+    scale = 2,
+    nullable = false
+    )
+    private BigDecimal orderPrice;
+    
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 

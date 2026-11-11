@@ -1,5 +1,6 @@
 package com.om.builder;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import com.om.model.OrderItem;
 
 public class OrderResponseBuilder {
 
-    public static OrderResponseDto buildOrderResponseDtoFromOrder(Order order, double price) {
+    public static OrderResponseDto buildOrderResponseDtoFromOrder(Order order, BigDecimal price) {
         return OrderResponseDto.builder()
                 .orderId(order.getOrderId())
                 .orderStatus(order.getOrderStatus())

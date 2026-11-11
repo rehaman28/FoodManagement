@@ -1,5 +1,7 @@
 package com.rm.dto.request;
 
+import java.math.BigDecimal;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import jakarta.validation.constraints.DecimalMax;
@@ -26,7 +28,7 @@ public class ItemRequestDto {
     @NotNull
     @Positive
     @Schema(description = "Price of the menu item.")
-    private Double itemPrice;
+    private BigDecimal itemPrice;
 
     @NotBlank
     @Schema(description = "Category of the menu item.")

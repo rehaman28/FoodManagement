@@ -2,6 +2,7 @@ package com.om.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -32,7 +33,7 @@ public class OrderResponseDto {
     @Schema(description = "Name of the restaurant.")
     private String restaurantName;
     @Schema(description = "Total price of the order.")
-    private double orderPrice;
+    private BigDecimal orderPrice;
     @Schema(description = "Current order status.")
     private OrderStatus orderStatus;
     /*

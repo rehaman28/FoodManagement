@@ -1,5 +1,6 @@
 package com.om.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
         userValidationService.validateUser(orderRequest.getUserId());
         String restaurantName = restaurantValidationService.getRestaurantName(orderRequest.getRestaurantId());
 
-        double totalPrice = calculateOrderPrice(orderRequest);
+        BigDecimal totalPrice = calculateOrderPrice(orderRequest);
         Order order = OrderRequestBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
         order.setOrderPrice(totalPrice);
         Order savedOrder = orderRepository.save(order);
@@ -170,16 +171,16 @@ public class OrderServiceImpl implements OrderService {
     // }
 
     // Helper Method to calculate the order price
-    private double calculateOrderPrice(OrderRequestDto orderRequestDto) {
-        double totalPrice = 0;
+    private BigDecimal calculateOrderPrice(OrderRequestDto orderRequestDto) {
+        BigDecimal totalPrice = BigDecimal.ZERO;
         for (OrderItemRequestDto orderItem : orderRequestDto.getOrderItemsRequest()) {
             ItemResponseDto itemResponseDto = restaurantValidationService.getItem(
                     orderRequestDto.getRestaurantId(),
                     orderItem.getItemId());
-            double itemPrice = itemResponseDto.getItemPrice();
-            long quantity = orderItem.getQuantity();
-            double itemTotal = itemPrice * quantity;
-            totalPrice = totalPrice + itemTotal;
+            BigDecimal itemPrice = itemResponseDto.getItemPrice();
+            BigDecimal quantity = BigDecimal.valueOf(orderItem.getQuantity());
+            BigDecimal itemTotal = itemPrice.multiply(quantity);
+            totalPrice = totalPrice.add(itemTotal);
         }
         return totalPrice;
     }
