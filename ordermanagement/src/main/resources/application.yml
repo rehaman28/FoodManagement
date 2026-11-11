@@ -11,6 +11,22 @@ spring:
       ddl-auto: update
     show-sql: true
   cloud:
+    loadbalancer:
+      clients:
+        restaurantmanagement:
+          retry:
+            enabled: true
+            max-retries-on-next-service-instance: 0
+            max-retries-on-same-service-instance: 1
+            retry-on-all-exceptions: false
+            retry-on-all-operations: false
+        usermanagement:
+          retry:
+            enabled: true
+            max-retries-on-next-service-instance: 0
+            max-retries-on-same-service-instance: 1
+            retry-on-all-exceptions: false
+            retry-on-all-operations: false
     openfeign:
       client:
         config:
@@ -23,6 +39,10 @@ spring:
           restaurantmanagement:
             connectTimeout: 2000
             readTimeout: 3000
+logging:
+  level:
+    "[org.springframework.cloud.loadbalancer]": DEBUG
+    "[org.springframework.cloud.openfeign]": DEBUG
 server:
   port: 8003
 security:

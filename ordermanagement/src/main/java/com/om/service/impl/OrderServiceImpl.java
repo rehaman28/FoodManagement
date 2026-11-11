@@ -2,6 +2,8 @@ package com.om.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -35,6 +37,8 @@ import feign.RetryableException;
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
     // private final RestTemplate restTemplate;
@@ -199,11 +203,22 @@ public class OrderServiceImpl implements OrderService {
                     "Restaurant was not found with Id: "
                             + restaurantId);
         } catch (FeignException.ServiceUnavailable ex) {
+            log.warn(
+                "Restaurant Management downstream call failed after retry processing. restaurantId={}",
+                restaurantId,
+                ex
+            );
             throw downstreamUnavailable("Restaurant Management", ex);
         } catch (RetryableException ex) {
             if (isServiceUnavailable(ex)) {
+                log.warn(
+                    "Restaurant Management downstream call failed after retry processing. restaurantId={}",
+                    restaurantId,
+                    ex
+                );
                 throw downstreamUnavailable("Restaurant Management", ex);
             }
+            log.warn("Restaurant Management downstream call timed out. restaurantId={}", restaurantId, ex);
             throw new DownstreamServiceTimeoutException(
                     "Restaurant Management service did not respond within the configured timeout",
                     ex);
@@ -240,11 +255,28 @@ public class OrderServiceImpl implements OrderService {
                             + " not found in Restaurant "
                             + restaurantId);
         } catch (FeignException.ServiceUnavailable ex) {
+            log.warn(
+                "Restaurant Management downstream call failed after retry processing. restaurantId={}, itemId={}",
+                restaurantId,
+                itemId,
+                ex
+            );
             throw downstreamUnavailable("Restaurant Management", ex);
         } catch (RetryableException ex) {
             if (isServiceUnavailable(ex)) {
+                log.warn(
+                    "Restaurant Management downstream call failed after retry processing. restaurantId={}, itemId={}",
+                    restaurantId,
+                    itemId,
+                    ex
+                );
                 throw downstreamUnavailable("Restaurant Management", ex);
             }
+            log.warn(
+                    "Restaurant Management downstream call timed out. restaurantId={}, itemId={}",
+                    restaurantId,
+                    itemId,
+                    ex);
             throw new DownstreamServiceTimeoutException(
                     "Restaurant Management service did not respond within the configured timeout",
                     ex);
