@@ -2,6 +2,8 @@ package com.rm.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.AllArgsConstructor;
@@ -27,7 +29,7 @@ public class ItemResponseDto {
     @Schema(description = "Name of the menu item.")
     private String itemName;
     @Schema(description = "Price of the menu item.")
-    private Double itemPrice;
+    private BigDecimal itemPrice;
     @Schema(description = "Category of the menu item.")
     private String itemCategory;
     @Schema(description = "Type of the menu item.")

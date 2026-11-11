@@ -13,11 +13,11 @@ import com.om.builder.OrderRequestBuilder;
 import com.om.builder.OrderResponseBuilder;
 import com.om.dao.OrderRepository;
 import com.om.dto.response.ItemResponseDto;
-import com.om.dto.request.OrderItemRequestDto;
 import com.om.dto.request.OrderRequestDto;
 import com.om.dto.response.OrderResponseDto;
 import com.om.dto.request.OrderStatusRequestDto;
 import com.om.model.Order;
+import com.om.model.OrderItem;
 import com.om.model.OrderStatus;
 import com.om.service.OrderService;
 
@@ -49,8 +49,8 @@ public class OrderServiceImpl implements OrderService {
         userValidationService.validateUser(orderRequest.getUserId());
         String restaurantName = restaurantValidationService.getRestaurantName(orderRequest.getRestaurantId());
 
-        BigDecimal totalPrice = calculateOrderPrice(orderRequest);
         Order order = OrderRequestBuilder.buildOrderResponseFromOrderRequestDto(orderRequest);
+        BigDecimal totalPrice = calculateOrderPrice(order);
         order.setOrderPrice(totalPrice);
         Order savedOrder = orderRepository.save(order);
         OrderResponseDto orderResponseDto = OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder, totalPrice);
@@ -171,15 +171,15 @@ public class OrderServiceImpl implements OrderService {
     // }
 
     // Helper Method to calculate the order price
-    private BigDecimal calculateOrderPrice(OrderRequestDto orderRequestDto) {
+    private BigDecimal calculateOrderPrice(Order order) {
         BigDecimal totalPrice = BigDecimal.ZERO;
-        for (OrderItemRequestDto orderItem : orderRequestDto.getOrderItemsRequest()) {
+        for (OrderItem orderItem : order.getOrderItems()) {
             ItemResponseDto itemResponseDto = restaurantValidationService.getItem(
-                    orderRequestDto.getRestaurantId(),
+                    order.getRestaurantId(),
                     orderItem.getItemId());
-            BigDecimal itemPrice = itemResponseDto.getItemPrice();
-            BigDecimal quantity = BigDecimal.valueOf(orderItem.getQuantity());
-            BigDecimal itemTotal = itemPrice.multiply(quantity);
+            BigDecimal unitPrice = itemResponseDto.getItemPrice();
+            orderItem.setUnitPriceAtOrder(unitPrice);
+            BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(orderItem.getQuantity()));
             totalPrice = totalPrice.add(itemTotal);
         }
         return totalPrice;

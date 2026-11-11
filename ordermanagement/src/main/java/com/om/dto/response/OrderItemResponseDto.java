@@ -2,6 +2,8 @@ package com.om.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +19,8 @@ import lombok.NoArgsConstructor;
 @JsonPropertyOrder({
     "orderItemId",
     "itemId",
-    "quantity"
+    "quantity",
+    "unitPriceAtOrder"
 })
 @Schema(description = "Response data for an item in an order.")
 public class OrderItemResponseDto {
@@ -28,4 +31,6 @@ public class OrderItemResponseDto {
     private long quantity;
     @Schema(description = "Identifier of the menu item.")
     private long itemId;
+    @Schema(description = "Unit price captured when the order was placed.")
+    private BigDecimal unitPriceAtOrder;
 }

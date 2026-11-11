@@ -28,6 +28,7 @@ public class OrderResponseBuilder {
             orderItemResponseDto.setItemId(orderItem.getItemId());
             orderItemResponseDto.setOrderItemId(orderItem.getOrderItemId());
             orderItemResponseDto.setQuantity(orderItem.getQuantity());
+            orderItemResponseDto.setUnitPriceAtOrder(orderItem.getUnitPriceAtOrder());
             orderResponseDtosList.add(orderItemResponseDto);
         }
         return orderResponseDtosList;
