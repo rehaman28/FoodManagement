@@ -43,7 +43,7 @@ Docker scope:
 - Current upstream observability images are prom/prometheus:latest and grafana/grafana:latest.
 
 Current next phase:
-Phase 12 — Resilience and Fault Tolerance, beginning with Timeouts.
+Phase 12 — Resilience and Fault Tolerance, next control: Circuit Breaker.
 
 AWS roadmap alignment:
 - The AWS deployment phase is gated until Phases 12–18C are complete and validated.
@@ -238,8 +238,8 @@ Current execution gate:
 - Phase 7A User Administration Hardening: COMPLETE and validated.
 - Phase 11 / 11A synchronous communication + API Gateway: COMPLETE and validated.
 - Phase 18A Observability Foundation: COMPLETE and validated.
-- Phase 12 Fault Tolerance: IN PROGRESS; downstream service-unavailable (503) and timeout (504) failure paths are implemented and validated.
-- Remaining Phase 12 work: retries, circuit breakers, fallbacks, bulkhead isolation, rate limiting, and broader failure-path validation.
+- Phase 12 Fault Tolerance: IN PROGRESS; downstream service-unavailable (503), timeout (504), and retry policies are implemented and validated.
+- Remaining Phase 12 work: circuit breakers, fallbacks, bulkhead isolation, rate limiting, and broader failure-path validation.
 - Phase 18B/18C observability expansion: PENDING after the remaining resilience controls and failure-path gates.
 - Phase 11B Kafka / Event-Driven Architecture: DEFERRED until resilience and observability gates pass.
 
@@ -1322,4 +1322,34 @@ Current Phase 12 gate:
 Postman update commits:
 - 08e0a7c823d50de4f543ec628c75e4b1e83c7be0 — canonical Order Management Postman failure-path cases.
 - 6dc090d9ef77ae5620aa2bc086ca731ad91f3a76 — synchronized Order Management integration Postman collection.
+
+============================================================
+LATEST PHASE 12 RETRY POLICY VALIDATION DELTA — 2026-11-11
+============================================================
+
+Latest implementation commit:
+- b8a8cb7394fa6f72e4b585bcfa7758b7d3720147 — retry changes
+
+Implementation reviewed:
+- Client-specific Spring Cloud LoadBalancer retry configuration is present for `restaurantmanagement`.
+- Client-specific Spring Cloud LoadBalancer retry configuration is present for `usermanagement`.
+- Retry is enabled without enabling all-exception or all-operation retries.
+- Existing Order Management 503 and 504 exception classification remains intact.
+- DEBUG logging for Spring Cloud LoadBalancer and OpenFeign is enabled for local retry validation.
+
+Validation status:
+- Retry policy -> PASS.
+- Restaurant Service Unavailable [503] -> PASS.
+- Restaurant Service Timeout [504] -> PASS.
+- Permanent not-found behavior -> PASS.
+
+Phase 12 status:
+- Timeouts -> VALIDATED.
+- Downstream service-unavailable handling -> VALIDATED.
+- Retry policies -> VALIDATED.
+- Next control -> Circuit Breaker.
+- Fallbacks -> PENDING.
+- Bulkhead isolation -> PENDING.
+- Rate limiting -> PENDING.
+- Broader resilience/failure-path validation -> PENDING.
 
