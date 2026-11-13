@@ -18,7 +18,7 @@ The master project wiki is this README. Service-specific implementation and API 
 | Pending task matrix | [Pending Task Matrix](#pending-task-matrix) |
 | Implementation details | [Phase implementation details](#phase-implementation-details) |
 | API testing | [API testing documentation](#api-testing-with-sample-data) |
-| Architecture | [Architecture roadmap](FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md) |
+| Architecture | [Architecture roadmap](FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md) · [Phase 11B Event-Driven Architecture](PHASE_11B_EVENT_DRIVEN_ARCHITECTURE.md) |
 | Service documentation | [API Gateway](apigateway/README.md) · [Delivery](deliverymanagement/README.md) · [Eureka](eureka/README.md) · [Observability](observability/README.md) · [Order](ordermanagement/README.md) · [Restaurant](restaurantmanagement/README.md) · [User](usermanagement/README.md) |
 
 ## Planned phases
