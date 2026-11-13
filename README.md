@@ -2,31 +2,164 @@
 
 FoodManagement is a Java 21 / Spring Boot microservices project for managing users, restaurants, food items, orders, and delivery operations. The project is built incrementally to demonstrate authentication, authorization, service discovery, synchronous service communication, event-driven communication, resilience, testing, containerization, CI/CD, observability, and cloud deployment.
 
-## Pending work through Phase 14
+## Pending work tracker — Phase 0 through Phase 19L
 
-[**Jump to the pending-work tracker**](#pending-work-through-phase-14)
+[**Jump to the pending-work tracker**](#pending-work-tracker--phase-0-through-phase-19l)
 
-This section is the current decision point for the roadmap. No remaining items below are marked complete until they are implemented and validated.
+This is the single roadmap decision point for the project. It covers every phase from the project-foundation placeholder through the final AWS deployment. ✅ means complete and validated, 🟡 means partially complete or staged, and ⏳ means pending / not yet implemented.
+
+> **Phase 0 note:** The current repository does not define a formal Phase 0 scope. It is listed here as a roadmap placeholder rather than inventing requirements.
+
+### Phase 0 — Project Foundation
+**Status: Not formally defined in the current roadmap**
+
+Pending:
+- Define an explicit Phase 0 scope if the project needs one.
+
+### Phase 1 — User Management
+**Status: ✅ Complete**
+
+Pending:
+- None in the current roadmap.
+
+### Phase 2 — Restaurant Management
+**Status: ✅ Complete**
+
+Pending:
+- None in the current roadmap.
+
+### Phase 3 — Order Management
+**Status: 🟡 Core complete**
+
+Completed:
+- Order creation and retrieval
+- Order listing and status transitions
+- Restaurant/item lookup
+- Order price calculation
+
+Hardening was moved into Phase 13.
+
+### Phase 4 — Delivery Management
+**Status: 🟡 Core complete**
+
+Pending:
+- Later event-driven integration and broader quality hardening are covered by later phases.
+
+### Phase 5 — API Test Baseline
+**Status: ✅ Complete**
+
+Pending:
+- Expanded automated testing is covered by Phase 14.
+
+### Phase 6 — JWT Authentication
+**Status: ✅ Complete**
+
+Pending:
+- None in the current roadmap.
+
+### Phase 7 — Role-Based Authorization
+**Status: ✅ Complete**
+
+Pending:
+- None in the current roadmap.
+
+### Phase 7A — User Administration Hardening
+**Status: ✅ Complete and validated**
+
+Pending:
+- None in the current roadmap.
+
+### Phase 8 — Security Postman Regression
+**Status: ✅ Complete**
+
+Pending:
+- Broader automated security testing is covered by Phase 14.
+
+### Phase 9 — Eureka Service Discovery
+**Status: ✅ Complete**
+
+Pending:
+- Kubernetes-native discovery is evaluated later in the AWS/Kubernetes roadmap.
+
+### Phase 10 — OpenFeign + Eureka
+**Status: ✅ Complete and validated**
+
+Pending:
+- Cleanup of unused legacy RestTemplate artifacts is explicitly deferred.
+
+### Phase 11 — Synchronous + Edge + Event-Driven Architecture
+**Status: 🟡 Synchronous + edge complete; Kafka remains pending**
+
+Completed:
+- Order → User synchronous communication
+- Order → Restaurant synchronous communication
+- API Gateway edge layer
+
+Pending:
+- Phase 11B Kafka / event-driven implementation
+- Kafka producers/consumers, topics, groups, retries/error handling, idempotency, and Kafka integration tests
+
+#### Phase 11A — API Gateway
+**Status: ✅ Complete and validated**
+
+Pending:
+- None in the current roadmap.
+
+#### Phase 11B — Kafka / Event-Driven Architecture
+**Status: ⏳ Pending / deferred**
+
+Pending:
+- Kafka infrastructure
+- Domain events
+- Producers
+- Consumers
+- Topics and consumer groups
+- Retry/error handling
+- Idempotency
+- Integration tests
+
+### Phase 12 — Resilience and Fault Tolerance
+**Status: ✅ Core scope complete and validated**
+
+Completed:
+- Timeouts
+- Service-unavailable handling
+- Retry policies
+- Circuit breakers
+- Fallbacks
+- Failure-path validation
+
+Deferred:
+- Bulkhead isolation
+- Rate limiting
+- Correlation IDs
+- Distributed tracing
+- Alerts
 
 ### Phase 13 — Data and Transaction Hardening
+**Status: 🟡 Partially complete**
 
-**Completed:**
-- BigDecimal for money — ✅ Complete
-- Price snapshots — ✅ Complete
-- Transaction boundaries — ✅ Complete and validated at the design/implementation level
+Completed:
+- BigDecimal for money — ✅
+- Price snapshots — ✅
+- Transaction boundaries — ✅
 
-**Pending:**
+Pending:
 1. Database indexes and constraints
 2. Pagination and sorting
 3. Audit fields
 4. Ownership checks
 5. Concurrency handling
 
+Recent implementation commits:
+- `92d5fb0389fa91e76960ca2f11ffb4d0fcf28173` — BigDecimal for money
+- `850a951ff313c394cc030100549fd815e074bad1` — Price snapshots
+- `b728271ddd293551f49843710849ad2e88adf56f` — Final transaction/read-flow fix
+
 ### Phase 14 — Testing and Quality Engineering
+**Status: ⏳ Pending**
 
-**Status: Pending — next testing/quality phase after the remaining Phase 13 hardening work.**
-
-Pending work:
+Pending:
 1. Unit tests
 2. Controller tests
 3. Repository tests
@@ -38,65 +171,326 @@ Pending work:
 9. WireMock / contract-style testing
 10. Mutation testing
 
-### Recent Phase 13 commit trail
+### Phase 15 — Docker
+**Status: ⏳ Pending**
 
-| Commit | Change | Status |
-|---|---|---|
-| `92d5fb0389fa91e76960ca2f11ffb4d0fcf28173` | BigDecimal for money | Complete |
-| `850a951ff313c394cc030100549fd815e074bad1` | Price snapshots | Complete |
-| `a93eae0763e10f2878112d042f50eb337db6aded` | Order-creation transaction separation — phase 1 | Superseded by later transaction work |
-| `5c0b0c4d95bf4fa43c484459dd1f845725feae6e` | Order-creation transaction separation — phase 2 | Superseded by final read/transaction cleanup |
-| `b728271ddd293551f49843710849ad2e88adf56f` | Fix order lookup | Latest Phase 13 transaction-boundary state |
+Pending:
+1. Dockerfiles
+2. Containerize each service
+3. Containerize Eureka
+4. Compose local infrastructure
+5. Configure service networking
+6. Externalize environment configuration
 
-**Current decision point:** Finish the remaining Phase 13 data-hardening topics first, or deliberately move to Phase 14 testing and return to the remaining Phase 13 topics afterward. The roadmap currently keeps the Phase 13 pending items open so either path can be chosen explicitly.
+### Phase 16 — Kubernetes
+**Status: ⏳ Pending**
 
+Pending:
+1. Deployments
+2. Services
+3. ConfigMaps
+4. Secrets
+5. Ingress
+6. Health probes
+7. Autoscaling
+8. Namespaces
 
-## Project architecture
+### Phase 17 — CI/CD
+**Status: ⏳ Pending**
 
-The current system contains:
+Pending:
+1. Build
+2. Unit testing
+3. Integration testing
+4. Security checks
+5. Container build
+6. Image publication
+7. Deployment
+8. Release automation
 
-- User Management
-- Restaurant Management
-- Order Management
-- Delivery Management
-- Eureka Service Discovery
-- API Gateway (Spring Cloud Gateway Server WebMVC)
-- JWT authentication
-- USER / ADMIN role-based authorization
-- Postman API regression collections
+### Phase 18 — Observability
+**Status: 🟡 Staged**
 
-Current local ports:
+The phase is intentionally split across 18A–18C.
 
-| Component | Application / Service ID | Port |
-|---|---|---:|
-| Eureka Server | \`eureka\` | 8761 |
-| User Management | \`usermanagement\` | 8002 |
-| Restaurant Management | \`restaurantmanagement\` | 8001 |
-| Order Management | \`ordermanagement\` | 8003 |
-| Delivery Management | \`deliverymanagement\` | 8004 |
+#### Phase 18A — Observability Foundation
+**Status: ✅ Complete and locally validated**
 
-> The repository directory is \`restaurantmanagement\`, while the existing Spring application/service ID is \`restaurantmanagement\`. The service ID is intentionally kept unchanged because it is used for discovery.
+Completed:
+- Actuator
+- Health endpoints
+- Micrometer metrics
+- Prometheus metrics
+- Grafana baseline dashboard
+- Request rate / latency / error baseline
 
-## Technology stack
+#### Phase 18B — Resilience Visibility
+**Status: 🟡 Core visibility delivered through Phase 12; later capabilities remain pending**
 
-- Java 21
-- Spring Boot 4.1.x
-- Spring Data JPA / Hibernate
-- Spring Security
-- JWT
-- MySQL
-- Gradle
-- Spring Cloud Netflix Eureka
-- OpenFeign / Spring Cloud LoadBalancer
-- Apache Kafka
-- JUnit 5 / Mockito
-- Postman
-- Docker
-- Kubernetes
-- CI/CD tooling
-- Observability tooling
+Completed:
+- Resilience4j metrics visibility used during the core resilience work
+- Failure-path monitoring baseline
 
-## Project roadmap
+Pending / deferred with later resilience work:
+- Bulkhead visibility
+- Rate-limit visibility
+- Broader resilience/dependency dashboards
+
+#### Phase 18C — Observability Expansion
+**Status: ⏳ Deferred / pending**
+
+Pending:
+1. Centralized logging
+2. Correlation IDs
+3. Distributed tracing
+4. Resilience/dependency Grafana dashboards
+5. Alerts
+
+### Phase 19 — AWS Cloud + Certification-Aligned Deployment
+**Status: ⏳ Planned / gated**
+
+AWS deployment is blocked until the required local/cloud-neutral foundation phases are complete and validated.
+
+#### Phase 19A — Cloud Foundations and Account Governance
+**Status: ⏳ Pending**
+
+Pending:
+- AWS account/environment structure
+- Regions and Availability Zones
+- Shared responsibility
+- Well-Architected
+- Cloud Adoption Framework awareness
+- AWS CLI / CloudShell
+- Tagging
+- Pricing Calculator
+- Cost Explorer
+- Budgets
+- Support/re:Post awareness
+
+#### Phase 19B — IAM and Application Security
+**Status: ⏳ Pending**
+
+Pending:
+- IAM users/groups/roles/policies
+- Least privilege
+- Root protection and MFA
+- Workload IAM / STS
+- EKS Pod Identity
+- Secrets Manager
+- KMS
+- Encryption
+- CloudTrail
+- WAF
+- GuardDuty awareness
+- Application JWT/RBAC versus AWS authorization
+
+#### Phase 19C — VPC and Networking
+**Status: ⏳ Pending**
+
+Pending:
+- VPC and CIDR planning
+- Public/private subnets
+- Route tables
+- Internet Gateway
+- NAT Gateway
+- Security Groups
+- Network ACL awareness
+- Route 53
+- Private database networking
+- Load-balancer networking
+- VPC endpoints / PrivateLink awareness
+- Multi-AZ design
+
+#### Phase 19D — Containers, ECR, and EKS
+**Status: ⏳ Pending**
+
+Pending:
+- Docker image creation/versioning
+- ECR
+- Image scanning/lifecycle
+- EKS
+- Namespaces
+- Deployments
+- Services
+- ConfigMaps
+- Secrets
+- Health probes
+- Requests/limits
+- HPA
+- PDB
+- Rolling deployment
+- AWS Load Balancer Controller
+- EKS logging/observability
+
+#### Phase 19E — Managed Data
+**Status: ⏳ Pending**
+
+Pending:
+- RDS MySQL
+- Private-subnet connectivity
+- Multi-AZ
+- Backups/PITR
+- Parameter groups
+- Secrets Manager database credentials
+- Database migrations
+- DynamoDB fundamentals
+- ElastiCache awareness
+- S3
+
+#### Phase 19F — Application Integration and Event-Driven AWS
+**Status: ⏳ Pending**
+
+Pending:
+- SQS
+- SNS
+- EventBridge
+- Queue vs pub/sub vs event-bus comparison
+- Dead-letter queues
+- Idempotency
+- Retry/backoff
+- Event-driven failure handling
+- Kafka vs AWS managed messaging
+- Future MSK mapping
+
+#### Phase 19G — API, Edge, and Delivery
+**Status: ⏳ Pending**
+
+Pending:
+- Existing Spring Cloud Gateway integration
+- ALB
+- API Gateway comparison/lab
+- Route 53
+- HTTPS/TLS and ACM
+- CloudFront awareness
+- WAF at the edge
+- ALB vs API Gateway comparison
+- Spring Cloud Gateway vs API Gateway comparison
+- Kubernetes discovery vs Eureka comparison
+
+#### Phase 19H — Observability, Troubleshooting, and Performance
+**Status: ⏳ Pending**
+
+Pending:
+- CloudWatch metrics/logs/dashboards/alarms
+- Container Insights
+- X-Ray / distributed tracing concepts
+- Structured logging
+- Correlation IDs
+- Health/readiness/liveness monitoring
+- Root-cause analysis
+- CPU/memory optimization
+- Connection-pool tuning
+- Autoscaling
+- Caching
+- Performance/load testing
+
+#### Phase 19I — CI/CD and Infrastructure as Code
+**Status: ⏳ Pending**
+
+Pending:
+- GitHub source workflow
+- CodeBuild
+- CodePipeline
+- Deployment artifacts
+- Automated tests/security checks
+- Docker build and ECR push
+- Kubernetes deployment
+- Environment promotion
+- Rolling/blue-green/canary strategies
+- Rollback
+- Infrastructure as Code
+- CloudFormation
+- CDK awareness
+- Versioned configuration
+- Release tagging
+
+#### Phase 19J — Serverless and Developer AWS Labs
+**Status: ⏳ Pending**
+
+Pending:
+- Lambda
+- Lambda configuration
+- Lambda timeout/memory/concurrency/retry
+- Lambda + SQS
+- Lambda + EventBridge
+- API Gateway + Lambda
+- AWS SDK for Java
+- AWS CLI workflows
+- Amazon Q Developer
+- Amazon Bedrock awareness/lab
+- AI-sensitive-data and access-control awareness
+
+#### Phase 19K — AWS Cost and Reliability Engineering
+**Status: ⏳ Pending**
+
+Pending:
+- Cost allocation tags
+- Cost Explorer
+- Budgets
+- Pricing Calculator
+- Pricing models
+- Right-sizing
+- EKS/RDS cost drivers
+- Log/metric retention costs
+- Multi-AZ trade-offs
+- Availability/cost trade-offs
+- Well-Architected review
+- Reliability and disaster recovery
+
+#### Phase 19L — Final AWS Deployment
+**Status: ⏳ Pending**
+
+Pending:
+- Route 53
+- ALB
+- EKS
+- API Gateway
+- All business services on EKS
+- RDS MySQL
+- ECR
+- Secrets Manager
+- KMS
+- CloudWatch
+- CloudTrail
+- WAF
+- IAM
+- S3
+- SQS/SNS/EventBridge
+- ACM
+- CodeBuild/CodePipeline
+- X-Ray/tracing
+- Budgets/Cost Explorer
+- Final production validation
+
+### AWS Definition of Done
+**Status: ⏳ Pending**
+
+AWS-ready only after:
+- No localhost runtime dependency
+- No production credentials/JWT secrets in Git
+- Environment-specific configuration
+- Reproducible/versioned images
+- Images in ECR
+- Successful EKS deployment
+- Health probes
+- RDS private connectivity
+- Externalized secrets
+- Working ALB routing
+- HTTPS
+- Least-privilege IAM
+- Application/infrastructure observability
+- CI/CD build/test/publish/deploy/rollback
+- Cost controls
+- Failure testing
+- Well-Architected review
+
+### Current decision point
+**Phase 13:** Steps 4–8 remain pending.  
+**Phase 14:** Entire testing and quality track remains pending.  
+**Later:** Phases 15–19L remain gated behind the preceding phases.
+
+The project should use this tracker as the single place to decide the next implementation stage.
+
 
 ### Phase 1 — User Management
 Status: Complete
