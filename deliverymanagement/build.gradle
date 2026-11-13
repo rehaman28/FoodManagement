@@ -52,6 +52,8 @@ dependencies {
 	// Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus
 	implementation("io.micrometer:micrometer-registry-prometheus:1.17.1")
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	//kafka
+	implementation 'org.springframework.kafka:spring-kafka'
 }
 
 

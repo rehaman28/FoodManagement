@@ -55,6 +55,8 @@ dependencies {
 	implementation("io.micrometer:micrometer-registry-prometheus:1.17.1")
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+	//kafka
+	implementation 'org.springframework.kafka:spring-kafka'
 }
 
 tasks.named('test') {
