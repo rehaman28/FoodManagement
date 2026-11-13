@@ -6,6 +6,8 @@
 
 FoodManagement is a Java 21 / Spring Boot microservices application for users, restaurants, food items, orders, and delivery operations. The project is implemented incrementally so that each architecture capability is introduced, validated, documented, and then used as a foundation for the next phase.
 
+![Detailed_infographic.png](Detailed_infographic.png)
+
 The master project wiki is this README. Service-specific implementation and API details remain in each service's README.
 
 ## Wiki navigation

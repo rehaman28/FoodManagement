@@ -127,21 +127,4 @@ public class OrderServiceImpl implements OrderService {
         return totalPrice;
     }
 
-    // Legacy RestTemplate calls are kept here for reference only; they are not used.
-    // The extracted implementation is in com.om.client.legacy.RestTemplateOrderClient.
-    // private final RestTemplate restTemplate;
-    // public RestTemplateOrderClient(RestTemplate restTemplate) {
-    //     this.restTemplate = restTemplate;
-    // }
-    // private String fetchRestaurantNameFromId(long restaurantId) {
-    //     return restTemplate.getForObject(
-    //             "http://localhost:8001/restaurants/" + restaurantId + "/name",
-    //             String.class);
-    // }
-    // private ItemResponseDto fetchItemsFromRestaurantIdAndItemId(long
-    // restaurantId, long itemId) {
-    //     String url = "http://localhost:8001/restaurants/{restaurantId}/items/{itemId}";
-    //     return restTemplate.getForObject(url, ItemResponseDto.class, restaurantId, itemId);
-    // }
-
 }

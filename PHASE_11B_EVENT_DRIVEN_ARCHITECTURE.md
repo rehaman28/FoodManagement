@@ -32,6 +32,8 @@ Kafka is introduced for asynchronous business events rather than replacing every
 
 ![Phase 11B Event-Driven Architecture](PHASE_11B_EVENT_DRIVEN_ARCHITECTURE.svg)
 
+![FoodManagement Kafka Architecture Guide](<FoodManagement Kafka Architecture Guide.png>)
+
 ### Runtime responsibilities
 
 | Component | Responsibility |

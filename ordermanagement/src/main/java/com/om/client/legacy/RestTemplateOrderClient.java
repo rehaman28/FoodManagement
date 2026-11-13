@@ -1,9 +1,11 @@
 package com.om.client.legacy;
 
 import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Component;
 
 import com.om.dto.response.ItemResponseDto;
 
+@Component
 public class RestTemplateOrderClient {
 
     private final RestTemplate restTemplate;
