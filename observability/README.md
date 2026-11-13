@@ -1,5 +1,16 @@
 # FoodManagement Observability
 
+## Wiki navigation
+
+| Section | Link |
+|---|---|
+| Description | [Service description](#description) |
+| Phase participation | [Phase participation](#phase-participation) |
+| Planned phases | [Master phase plan](../README.md#planned-phases) |
+| Completed phases | [Completed phases](../README.md#completed-phases) |
+| Pending tasks | [Pending Task Matrix](../README.md#pending-task-matrix) |
+| Full project wiki | [FoodManagement README](../README.md) |
+
 ## Purpose
 
 This directory contains the local monitoring infrastructure for FoodManagement.
@@ -112,3 +123,21 @@ Grafana datasource failure:
     http://prometheus:9090
 
 Do not use localhost:9090 from inside the Grafana container.
+
+## Phase participation
+
+The master [planned phase roadmap](../README.md#planned-phases) is the authoritative project scope. This table shows how this service participates in the planned work.
+
+| Phase | Planned status | Sub-phases / implementation steps |
+|---|---|---|
+| [Phase 18A — Observability Foundation](../README.md#phase-18a--observability-foundation) | Completed | Actuator, health, Micrometer, Prometheus and Grafana baseline. |
+| [Phase 18B — Resilience Visibility](../README.md#phase-18b--resilience-visibility) | Pending | Extend resilience/dependency visibility for deferred controls. |
+| [Phase 18C — Observability Expansion](../README.md#phase-18c--observability-expansion) | Pending | Centralized logging, correlation IDs, distributed tracing, richer dashboards and alerts. |
+| [Phase 19H — Observability, Troubleshooting, and Performance](../README.md#phase-19h--observability-troubleshooting-and-performance) | Pending | CloudWatch, tracing, diagnostics, performance tuning and load testing. |
+| [Phase 19L — Final AWS Deployment](../README.md#phase-19l--final-aws-deployment) | Pending | Cloud observability and final production validation. |
+
+## Roadmap status
+
+See the [master phase plan](../README.md#planned-phases), [completed phases](../README.md#completed-phases), and [Pending Task Matrix](../README.md#pending-task-matrix). The phase-participation table above is the service-level view.
+
+Project architecture reference: [FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md](../FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md).

@@ -1,5 +1,16 @@
 # Eureka Service Discovery
 
+## Wiki navigation
+
+| Section | Link |
+|---|---|
+| Description | [Service description](#description) |
+| Phase participation | [Phase participation](#phase-participation) |
+| Planned phases | [Master phase plan](../README.md#planned-phases) |
+| Completed phases | [Completed phases](../README.md#completed-phases) |
+| Pending tasks | [Pending Task Matrix](../README.md#pending-task-matrix) |
+| Full project wiki | [FoodManagement README](../README.md) |
+
 ## Description
 
 The Eureka service is the service-discovery component of FoodManagement. It maintains the registry of the business services so that services can discover each other by logical service name instead of relying on fixed host/port addresses.
@@ -116,31 +127,22 @@ Validated successfully:
 The Kafka/event-driven portion remains planned under Phase 11B and does not change the completed Eureka/Gateway validation baseline.
 
 
-## Current roadmap status
+## Phase participation
 
-Project-level roadmap and architecture:
+The master [planned phase roadmap](../README.md#planned-phases) is the authoritative project scope. This table shows how this service participates in the planned work.
 
-    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+| Phase | Planned status | Sub-phases / implementation steps |
+|---|---|---|
+| [Phase 9 — Eureka Service Discovery](../README.md#phase-9--eureka-service-discovery) | Completed | Eureka server, service registration, service IDs, discovery configuration and validation. |
+| [Phase 10 — OpenFeign + Eureka](../README.md#phase-10--openfeign--eureka) | Completed | Order Management resolves downstream services through Eureka/OpenFeign. |
+| [Phase 11A — API Gateway](../README.md#phase-11a--api-gateway) | Completed | Gateway uses Eureka-backed load-balanced routing. |
+| [Phase 16 — Kubernetes](../README.md#phase-16--kubernetes) | Pending | Evaluate Kubernetes-native service discovery alongside existing Eureka. |
+| [Phase 19D — Containers, ECR, and EKS](../README.md#phase-19d--containers-ecr-and-eks) | Pending | Container platform transition and EKS deployment architecture. |
+| [Phase 19G — API, Edge, and Delivery](../README.md#phase-19g--api-edge-and-delivery) | Pending | Kubernetes discovery vs Eureka and gateway/edge architecture comparison. |
+| [Phase 19L — Final AWS Deployment](../README.md#phase-19l--final-aws-deployment) | Pending | Finalize the service-discovery approach used in production deployment. |
 
-Current execution gate:
+## Roadmap status
 
-1. Phase 7A — User Administration Hardening: Complete and validated
-2. Phase 11 / 11A — Synchronous communication + API Gateway: Complete and validated
-3. Phase 18A — Observability Foundation: Complete and validated
-4. Phase 12 — Fault Tolerance: In progress, beginning with Timeouts
-5. Failure-Path Testing: pending after resilience controls
-6. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
-7. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+See the [master phase plan](../README.md#planned-phases), [completed phases](../README.md#completed-phases), and [Pending Task Matrix](../README.md#pending-task-matrix). The phase-participation table above is the service-level view.
 
-Later platform phases:
-
-    Data and Transaction Hardening
-        -> Testing and Quality Engineering
-        -> Full application Dockerization
-        -> Kubernetes
-        -> CI/CD
-        -> AWS / Cloud Deployment
-        -> Production Hardening
-
-This ordering keeps the project measurable before resilience tuning and prevents Kafka/event-driven complexity from being introduced before failure behavior is observable and controlled.
-
+Project architecture reference: [FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md](../FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md).

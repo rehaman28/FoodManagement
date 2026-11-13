@@ -1,5 +1,17 @@
 # Order Management Service
 
+## Wiki navigation
+
+| Section | Link |
+|---|---|
+| Description | [Service description](#description) |
+| Phase participation | [Phase participation](#phase-participation) |
+| Planned phases | [Master phase plan](../README.md#planned-phases) |
+| Completed phases | [Completed phases](../README.md#completed-phases) |
+| Pending tasks | [Pending Task Matrix](../README.md#pending-task-matrix) |
+| API testing | [API testing documentation](#api-testing-with-sample-data) |
+| Full project wiki | [FoodManagement README](../README.md) |
+
 ## Description
 
 Order Management creates and manages food orders. It calculates order prices from Restaurant Management data and exposes order lifecycle operations.
@@ -489,32 +501,29 @@ Completed implementation and validation:
 Unused legacy RestTemplate code/comments are intentionally retained. Cleanup is deferred and does not block Phase 10 completion.
 
 
-## Current roadmap status
+## Phase participation
 
-Project-level roadmap and architecture:
+The master [planned phase roadmap](../README.md#planned-phases) is the authoritative project scope. This table shows how this service participates in the planned work.
 
-    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+| Phase | Planned status | Sub-phases / implementation steps |
+|---|---|---|
+| [Phase 3 — Order Management](../README.md#phase-3--order-management) | Pending | Core order creation/retrieval/status flows are complete; data hardening continues in Phase 13. |
+| [Phase 5 — API Test Baseline](../README.md#phase-5--api-test-baseline) | Completed | Functional and negative-path Postman baseline. |
+| [Phase 6 — JWT Authentication](../README.md#phase-6--jwt-authentication) | Completed | Protected order APIs with JWT. |
+| [Phase 7 — Role-Based Authorization](../README.md#phase-7--role-based-authorization) | Completed | USER/ADMIN endpoint access controls. |
+| [Phase 8 — Security Postman Regression](../README.md#phase-8--security-postman-regression) | Completed | Security regression coverage. |
+| [Phase 10 — OpenFeign + Eureka](../README.md#phase-10--openfeign--eureka) | Completed | Feign-based Restaurant/User communication with Eureka and JWT propagation. |
+| [Phase 11A — API Gateway](../README.md#phase-11a--api-gateway) | Completed | Gateway routing and edge authentication validated for Order APIs. |
+| [Phase 11B — Kafka / Event-Driven Architecture](../README.md#phase-11b--kafka--event-driven-architecture) | Pending | Asynchronous Order events for downstream delivery processing. |
+| [Phase 12 — Resilience and Fault Tolerance](../README.md#phase-12--resilience-and-fault-tolerance) | Pending | Core resilience is implemented; deferred bulkhead, rate limiting, correlation, tracing and alerts remain. |
+| [Phase 13 — Data and Transaction Hardening](../README.md#phase-13--data-and-transaction-hardening) | Pending | Database indexes/constraints, pagination/sorting, audit fields, ownership checks and concurrency handling. |
+| [Phase 14 — Testing and Quality Engineering](../README.md#phase-14--testing-and-quality-engineering) | Pending | Full automated testing and contract/mutation coverage. |
+| [Phase 15–17](../README.md#phase-15--docker) | Pending | Containerization, Kubernetes deployment, and CI/CD. |
+| [Phase 18A–18C](../README.md#phase-18--observability) | Pending | Foundation is complete; resilience visibility and observability expansion remain. |
+| [Phase 19 — AWS Cloud Deployment](../README.md#phase-19--aws-cloud-deployment) | Pending | EKS/RDS/ECR, messaging, edge delivery, observability, CI/CD and final production deployment. |
 
-Current execution gate:
+## Roadmap status
 
-1. Phase 7A — User Administration Hardening: Complete and validated
-2. Phase 11 / 11A — Synchronous communication + API Gateway: Complete and validated
-3. Phase 18A — Observability Foundation: Complete and validated
-4. Phase 12 — Fault Tolerance: In progress; timeouts, service-unavailable handling, and retry policies validated
-5. Next resilience control: Circuit Breaker
-6. Failure-Path Testing: pending after the remaining resilience controls
-7. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
-8. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+See the [master phase plan](../README.md#planned-phases), [completed phases](../README.md#completed-phases), and [Pending Task Matrix](../README.md#pending-task-matrix). The phase-participation table above is the service-level view.
 
-Later platform phases:
-
-    Data and Transaction Hardening
-        -> Testing and Quality Engineering
-        -> Full application Dockerization
-        -> Kubernetes
-        -> CI/CD
-        -> AWS / Cloud Deployment
-        -> Production Hardening
-
-This ordering keeps the project measurable before resilience tuning and prevents Kafka/event-driven complexity from being introduced before failure behavior is observable and controlled.
-
+Project architecture reference: [FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md](../FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md).

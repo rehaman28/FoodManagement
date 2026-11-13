@@ -1,5 +1,17 @@
 # Restaurant Management Service
 
+## Wiki navigation
+
+| Section | Link |
+|---|---|
+| Description | [Service description](#description) |
+| Phase participation | [Phase participation](#phase-participation) |
+| Planned phases | [Master phase plan](../README.md#planned-phases) |
+| Completed phases | [Completed phases](../README.md#completed-phases) |
+| Pending tasks | [Pending Task Matrix](../README.md#pending-task-matrix) |
+| API testing | [API testing documentation](#api-testing-with-sample-data) |
+| Full project wiki | [FoodManagement README](../README.md) |
+
 ## Description
 
 Restaurant Management owns restaurants, restaurant addresses, food items, ratings, and restaurant/item retrieval used by other services.
@@ -361,31 +373,28 @@ Validated successfully:
 - Existing direct-service Postman collection remains intact for troubleshooting.
 
 
-## Current roadmap status
+## Phase participation
 
-Project-level roadmap and architecture:
+The master [planned phase roadmap](../README.md#planned-phases) is the authoritative project scope. This table shows how this service participates in the planned work.
 
-    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+| Phase | Planned status | Sub-phases / implementation steps |
+|---|---|---|
+| [Phase 2 — Restaurant Management](../README.md#phase-2--restaurant-management) | Completed | Restaurant/item CRUD, ratings, validation and persistence. |
+| [Phase 5 — API Test Baseline](../README.md#phase-5--api-test-baseline) | Completed | Functional and negative-path Postman baseline. |
+| [Phase 6 — JWT Authentication](../README.md#phase-6--jwt-authentication) | Completed | Protected Restaurant APIs with JWT. |
+| [Phase 7 — Role-Based Authorization](../README.md#phase-7--role-based-authorization) | Completed | USER read and ADMIN management boundaries. |
+| [Phase 8 — Security Postman Regression](../README.md#phase-8--security-postman-regression) | Completed | Security regression coverage. |
+| [Phase 9 — Eureka Service Discovery](../README.md#phase-9--eureka-service-discovery) | Completed | Service registration and discovery. |
+| [Phase 10 — OpenFeign + Eureka](../README.md#phase-10--openfeign--eureka) | Completed | Order Management integration through Feign/Eureka. |
+| [Phase 11A — API Gateway](../README.md#phase-11a--api-gateway) | Completed | Gateway Restaurant routing and security validation. |
+| [Phase 13 — Data and Transaction Hardening](../README.md#phase-13--data-and-transaction-hardening) | Pending | Schema indexes/constraints, pagination, audit fields, ownership and concurrency hardening. |
+| [Phase 14 — Testing and Quality Engineering](../README.md#phase-14--testing-and-quality-engineering) | Pending | Automated service and integration test expansion. |
+| [Phase 15–17](../README.md#phase-15--docker) | Pending | Containerization, Kubernetes, CI/CD. |
+| [Phase 18A–18C](../README.md#phase-18--observability) | Pending | Foundation is complete; resilience visibility and observability expansion remain. |
+| [Phase 19 — AWS Cloud Deployment](../README.md#phase-19--aws-cloud-deployment) | Pending | EKS/ECR, managed data, edge delivery, observability, CI/CD and production validation. |
 
-Current execution gate:
+## Roadmap status
 
-1. Phase 7A — User Administration Hardening: Complete and validated
-2. Phase 11 / 11A — Synchronous communication + API Gateway: Complete and validated
-3. Phase 18A — Observability Foundation: Complete and validated
-4. Phase 12 — Fault Tolerance: In progress, beginning with Timeouts
-5. Failure-Path Testing: pending after resilience controls
-6. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
-7. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+See the [master phase plan](../README.md#planned-phases), [completed phases](../README.md#completed-phases), and [Pending Task Matrix](../README.md#pending-task-matrix). The phase-participation table above is the service-level view.
 
-Later platform phases:
-
-    Data and Transaction Hardening
-        -> Testing and Quality Engineering
-        -> Full application Dockerization
-        -> Kubernetes
-        -> CI/CD
-        -> AWS / Cloud Deployment
-        -> Production Hardening
-
-This ordering keeps the project measurable before resilience tuning and prevents Kafka/event-driven complexity from being introduced before failure behavior is observable and controlled.
-
+Project architecture reference: [FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md](../FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md).

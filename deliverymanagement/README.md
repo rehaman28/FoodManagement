@@ -1,5 +1,17 @@
 # Delivery Management Service
 
+## Wiki navigation
+
+| Section | Link |
+|---|---|
+| Description | [Service description](#description) |
+| Phase participation | [Phase participation](#phase-participation) |
+| Planned phases | [Master phase plan](../README.md#planned-phases) |
+| Completed phases | [Completed phases](../README.md#completed-phases) |
+| Pending tasks | [Pending Task Matrix](../README.md#pending-task-matrix) |
+| API testing | [API testing documentation](#api-testing-with-sample-data) |
+| Full project wiki | [FoodManagement README](../README.md) |
+
 ## Description
 
 Delivery Management handles delivery agents, delivery assignments, assignment retrieval, delivery status transitions, and agent availability.
@@ -300,31 +312,29 @@ Response:
     }
 
 
-## Current roadmap status
+## Phase participation
 
-Project-level roadmap and architecture:
+The master [planned phase roadmap](../README.md#planned-phases) is the authoritative project scope. This table shows how this service participates in the planned work.
 
-    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+| Phase | Planned status | Sub-phases / implementation steps |
+|---|---|---|
+| [Phase 4 — Delivery Management](../README.md#phase-4--delivery-management) | Pending | Core delivery flows are implemented; event-driven integration and broader hardening remain. |
+| [Phase 5 — API Test Baseline](../README.md#phase-5--api-test-baseline) | Completed | Baseline Postman happy-path and negative-path API coverage. |
+| [Phase 6 — JWT Authentication](../README.md#phase-6--jwt-authentication) | Completed | JWT authentication for protected delivery operations. |
+| [Phase 7 — Role-Based Authorization](../README.md#phase-7--role-based-authorization) | Completed | USER/ADMIN access boundaries on delivery APIs. |
+| [Phase 8 — Security Postman Regression](../README.md#phase-8--security-postman-regression) | Completed | Repeatable 401/403 security regression coverage. |
+| [Phase 11B — Kafka / Event-Driven Architecture](../README.md#phase-11b--kafka--event-driven-architecture) | Pending | Order-to-Delivery events, producers/consumers, topics, retries, idempotency and integration tests. |
+| [Phase 14 — Testing and Quality Engineering](../README.md#phase-14--testing-and-quality-engineering) | Pending | Automated unit, controller, repository, integration, security and contract-style tests. |
+| [Phase 15 — Docker](../README.md#phase-15--docker) | Pending | Containerize the Delivery Management service. |
+| [Phase 16 — Kubernetes](../README.md#phase-16--kubernetes) | Pending | Deployments, Services, configuration, secrets, probes and autoscaling. |
+| [Phase 17 — CI/CD](../README.md#phase-17--ci-cd) | Pending | Automated build, test, image and deployment pipeline. |
+| [Phase 18A — Observability Foundation](../README.md#phase-18a--observability-foundation) | Completed | Health, metrics, Prometheus and Grafana baseline. |
+| [Phase 18C — Observability Expansion](../README.md#phase-18c--observability-expansion) | Pending | Centralized logs, tracing, correlation IDs, dashboards and alerts. |
+| [Phase 19F — Application Integration and Event-Driven AWS](../README.md#phase-19f--application-integration-and-event-driven-aws) | Pending | AWS messaging integration and event-driven failure handling. |
+| [Phase 19L — Final AWS Deployment](../README.md#phase-19l--final-aws-deployment) | Pending | Production deployment and end-to-end validation. |
 
-Current execution gate:
+## Roadmap status
 
-1. Phase 7A — User Administration Hardening: Complete and validated
-2. Phase 11 / 11A — Synchronous communication + API Gateway: Complete and validated
-3. Phase 18A — Observability Foundation: Complete and validated
-4. Phase 12 — Fault Tolerance: In progress, beginning with Timeouts
-5. Failure-Path Testing: pending after resilience controls
-6. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
-7. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+See the [master phase plan](../README.md#planned-phases), [completed phases](../README.md#completed-phases), and [Pending Task Matrix](../README.md#pending-task-matrix). The phase-participation table above is the service-level view.
 
-Later platform phases:
-
-    Data and Transaction Hardening
-        -> Testing and Quality Engineering
-        -> Full application Dockerization
-        -> Kubernetes
-        -> CI/CD
-        -> AWS / Cloud Deployment
-        -> Production Hardening
-
-This ordering keeps the project measurable before resilience tuning and prevents Kafka/event-driven complexity from being introduced before failure behavior is observable and controlled.
-
+Project architecture reference: [FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md](../FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md).

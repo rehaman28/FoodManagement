@@ -1,5 +1,17 @@
 # API Gateway
 
+## Wiki navigation
+
+| Section | Link |
+|---|---|
+| Description | [Service description](#description) |
+| Phase participation | [Phase participation](#phase-participation) |
+| Planned phases | [Master phase plan](../README.md#planned-phases) |
+| Completed phases | [Completed phases](../README.md#completed-phases) |
+| Pending tasks | [Pending Task Matrix](../README.md#pending-task-matrix) |
+| API testing | [API testing documentation](#api-testing-with-sample-data) |
+| Full project wiki | [FoodManagement README](../README.md) |
+
 ## Description
 
 The API Gateway is the external edge service for FoodManagement. It provides a single entry point for client requests, performs edge-level JWT validation, and routes requests to business services using Eureka service discovery.
@@ -190,31 +202,24 @@ Status: Complete — synchronous communication and API Gateway edge validation s
 Kafka / event-driven communication between Order Management and Delivery Management remains the next planned part of Phase 11. The synchronous and Gateway portions of Phase 11 are complete and validated.
 
 
-## Current roadmap status
+## Phase participation
 
-Project-level roadmap and architecture:
+The master [planned phase roadmap](../README.md#planned-phases) is the authoritative project scope. This table shows how this service participates in the planned work.
 
-    /FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md
+| Phase | Planned status | Sub-phases / implementation steps |
+|---|---|---|
+| [Phase 11A — API Gateway](../README.md#phase-11a--api-gateway) | Completed | Gateway routes, Eureka-backed lb:// discovery, JWT edge validation, preserved paths, Postman regression. |
+| [Phase 15 — Docker](../README.md#phase-15--docker) | Pending | Containerize the Gateway and externalize runtime configuration. |
+| [Phase 16 — Kubernetes](../README.md#phase-16--kubernetes) | Pending | Deployment, Service, configuration, secrets, probes, ingress/load-balancer integration. |
+| [Phase 17 — CI/CD](../README.md#phase-17--ci-cd) | Pending | Build/test/security, image publication, deployment, release and rollback automation. |
+| [Phase 18A — Observability Foundation](../README.md#phase-18a--observability-foundation) | Completed | Actuator, metrics, Prometheus and Grafana baseline. |
+| [Phase 18C — Observability Expansion](../README.md#phase-18c--observability-expansion) | Pending | Centralized logging, tracing, correlation IDs and alerts. |
+| [Phase 19D — Containers, ECR, and EKS](../README.md#phase-19d--containers-ecr-and-eks) | Pending | ECR images and EKS deployment of the Gateway. |
+| [Phase 19G — API, Edge, and Delivery](../README.md#phase-19g--api-edge-and-delivery) | Pending | ALB/API Gateway/Route 53/ACM/WAF integration and edge-architecture comparisons. |
+| [Phase 19L — Final AWS Deployment](../README.md#phase-19l--final-aws-deployment) | Pending | Production routing, HTTPS, security, observability and final deployment validation. |
 
-Current execution gate:
+## Roadmap status
 
-1. Phase 7A — User Administration Hardening: Complete and validated
-2. Phase 11 / 11A — Synchronous communication + API Gateway: Complete and validated
-3. Phase 18A — Observability Foundation: Complete and validated
-4. Phase 12 — Fault Tolerance: In progress, beginning with Timeouts
-5. Failure-Path Testing: pending after resilience controls
-6. Phase 18B / 18C — Resilience visibility and Observability Expansion: pending after failure-path testing
-7. Phase 11B — Kafka / Event-Driven Architecture: deferred until the resilience and observability gates pass
+See the [master phase plan](../README.md#planned-phases), [completed phases](../README.md#completed-phases), and [Pending Task Matrix](../README.md#pending-task-matrix). The phase-participation table above is the service-level view.
 
-Later platform phases:
-
-    Data and Transaction Hardening
-        -> Testing and Quality Engineering
-        -> Full application Dockerization
-        -> Kubernetes
-        -> CI/CD
-        -> AWS / Cloud Deployment
-        -> Production Hardening
-
-This ordering keeps the project measurable before resilience tuning and prevents Kafka/event-driven complexity from being introduced before failure behavior is observable and controlled.
-
+Project architecture reference: [FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md](../FOODMANAGEMENT_ROADMAP_ARCHITECTURE.md).
