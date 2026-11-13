@@ -1,5 +1,7 @@
 package com.om.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,11 +42,11 @@ public class OrderPersistenceService {
                             + requestedOrderStatus);
 
         }
+        order.setOrderStatus(requestedOrderStatus);
         return saveOrder(order);
 
     }
     
-    @Transactional
     public OrderResponseDto saveOrder(Order order) {
         Order savedOrder = orderRepository.save(order);
         return OrderResponseBuilder.buildOrderResponseDtoFromOrder(savedOrder);
@@ -72,5 +74,58 @@ public class OrderPersistenceService {
 
         };
 
+    }
+
+    @Transactional(readOnly = true)
+    public OrderReadResult getOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order Not Found"));
+        return new OrderReadResult(
+                OrderResponseBuilder.buildOrderResponseDtoFromOrder(order),
+                order.getRestaurantId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderReadResult> getAllOrder() {
+        return  orderRepository.findAll()
+                    .stream()
+                    .map(this::toReadOrderResult)
+                    .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderReadResult> getOrdersByUserId(Long userId) {
+        return orderRepository.findByUserId(userId)
+                    .stream()
+                    .map(this::toReadOrderResult)
+                    .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderReadResult> getOrdersByRestaurantId(Long restaurantId) {
+        List<Order> orders = orderRepository.findByRestaurantId(restaurantId);
+        if (orders.isEmpty()) {
+            throw new OrderNotFoundException("No orders found for restaurant with Id: " + restaurantId);
+        }
+        return orders.stream()
+                .map(this::toReadOrderResult)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderReadResult> getOrdersByStatus(OrderStatus orderStatus) {
+        return orderRepository.findByOrderStatus(orderStatus)
+        .stream()
+        .map(this::toReadOrderResult)
+        .toList();
+    }
+
+    private  OrderReadResult toReadOrderResult(Order order){
+        return  new OrderReadResult(OrderResponseBuilder.buildOrderResponseDtoFromOrder(order), order.getRestaurantId());
+    }
+
+    public record OrderReadResult(
+            OrderResponseDto response,
+            long restaurantId) {
     }
 }
