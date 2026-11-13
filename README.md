@@ -4,7 +4,7 @@ FoodManagement is a Java 21 / Spring Boot microservices project for managing use
 
 ## Pending work tracker — Phase 0 through Phase 19L
 
-[**Jump to the pending-work tracker**](#pending-work-tracker--phase-0-through-phase-19l)
+[**Jump to the pending-work tracker**](#current-project-phase-status)
 
 This is the single roadmap decision point for the project. It covers every phase from the project-foundation placeholder through the final AWS deployment. ✅ means complete and validated, 🟡 means partially complete or staged, and ⏳ means pending / not yet implemented.
 
@@ -1266,6 +1266,7 @@ AWS deployment is blocked until all of the following are complete and validated:
 
 | Phase | Status | Pending items |
 |---|---|---|
+| 0 | Not formally defined | Define Phase 0 scope if needed |
 | 1–2 | Complete | None |
 | 3–4 | Core complete | Hardening items remain |
 | 5–9 | Complete | None |
@@ -1276,7 +1277,7 @@ AWS deployment is blocked until all of the following are complete and validated:
 | 13–17 | Pending | Data hardening, testing, Docker, Kubernetes, CI/CD |
 | 18A | Complete & validated | None |
 | 18B–18C | Deferred / staged | Later resilience visibility, correlation, tracing, dashboards, and alerts |
-| 19 | Planned / gated | Starts only after Phases 12–18C and platform gates are complete |
+| 19A–19L | Planned / gated | AWS foundations, platform setup, cloud deployment, and final validation after preceding gates |
 
 ### Phase 12 validation and closure
 
