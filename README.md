@@ -2,6 +2,55 @@
 
 FoodManagement is a Java 21 / Spring Boot microservices project for managing users, restaurants, food items, orders, and delivery operations. The project is built incrementally to demonstrate authentication, authorization, service discovery, synchronous service communication, event-driven communication, resilience, testing, containerization, CI/CD, observability, and cloud deployment.
 
+## Pending work through Phase 14
+
+[**Jump to the pending-work tracker**](#pending-work-through-phase-14)
+
+This section is the current decision point for the roadmap. No remaining items below are marked complete until they are implemented and validated.
+
+### Phase 13 — Data and Transaction Hardening
+
+**Completed:**
+- BigDecimal for money — ✅ Complete
+- Price snapshots — ✅ Complete
+- Transaction boundaries — ✅ Complete and validated at the design/implementation level
+
+**Pending:**
+1. Database indexes and constraints
+2. Pagination and sorting
+3. Audit fields
+4. Ownership checks
+5. Concurrency handling
+
+### Phase 14 — Testing and Quality Engineering
+
+**Status: Pending — next testing/quality phase after the remaining Phase 13 hardening work.**
+
+Pending work:
+1. Unit tests
+2. Controller tests
+3. Repository tests
+4. Integration tests
+5. Security tests
+6. Service-to-service tests
+7. Kafka tests
+8. Testcontainers
+9. WireMock / contract-style testing
+10. Mutation testing
+
+### Recent Phase 13 commit trail
+
+| Commit | Change | Status |
+|---|---|---|
+| `92d5fb0389fa91e76960ca2f11ffb4d0fcf28173` | BigDecimal for money | Complete |
+| `850a951ff313c394cc030100549fd815e074bad1` | Price snapshots | Complete |
+| `a93eae0763e10f2878112d042f50eb337db6aded` | Order-creation transaction separation — phase 1 | Superseded by later transaction work |
+| `5c0b0c4d95bf4fa43c484459dd1f845725feae6e` | Order-creation transaction separation — phase 2 | Superseded by final read/transaction cleanup |
+| `b728271ddd293551f49843710849ad2e88adf56f` | Fix order lookup | Latest Phase 13 transaction-boundary state |
+
+**Current decision point:** Finish the remaining Phase 13 data-hardening topics first, or deliberately move to Phase 14 testing and return to the remaining Phase 13 topics afterward. The roadmap currently keeps the Phase 13 pending items open so either path can be chosen explicitly.
+
+
 ## Project architecture
 
 The current system contains:
