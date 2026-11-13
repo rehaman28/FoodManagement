@@ -1397,3 +1397,39 @@ Deferred later work:
 - Alerts.
 
 The deferred items are intentionally outside the current Phase 12 core completion gate and remain part of the later resilience/observability roadmap.
+
+
+============================================================
+LATEST PHASE 13 / PHASE 14 DOCUMENTATION DELTA — 2026-11-13
+============================================================
+
+Phase 13 implementation status:
+- 92d5fb0389fa91e76960ca2f11ffb4d0fcf28173 — BigDecimal for money — COMPLETE
+- 850a951ff313c394cc030100549fd815e074bad1 — Price snapshots — COMPLETE
+- a93eae0763e10f2878112d042f50eb337db6aded — Order-creation transaction separation phase 1 — superseded by later transaction work
+- 5c0b0c4d95bf4fa43c484459dd1f845725feae6e — Order-creation transaction separation phase 2 — superseded by final transaction cleanup
+- b728271ddd293551f49843710849ad2e88adf56f — Fix order lookup — latest Phase 13 transaction-boundary state
+
+Phase 13 remaining pending work:
+1. Database indexes and constraints
+2. Pagination and sorting
+3. Audit fields
+4. Ownership checks
+5. Concurrency handling
+
+Phase 14 — Testing and Quality Engineering is also pending:
+1. Unit tests
+2. Controller tests
+3. Repository tests
+4. Integration tests
+5. Security tests
+6. Service-to-service tests
+7. Kafka tests
+8. Testcontainers
+9. WireMock / contract-style testing
+10. Mutation testing
+
+Decision point:
+- Phase 13 is partially complete; Steps 1–3 are complete and Steps 4–8 remain pending.
+- Phase 14 is the next major testing/quality phase but is not started.
+- The documentation intentionally keeps both scopes open so the next implementation target can be selected explicitly.
